@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="62mkv">
+
+        <createTable tableName="REPRESENTATIONS">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="representation" type="varchar(150)">
+                <constraints unique="true" uniqueConstraintName="REPRESENTATION_MUST_BE_UNIQUE" nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="FORM_TYPES">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="eki_representation" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="wikidata_codes" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="PARTS_OF_SPEECH">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="eki_representation" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="wikidata_codes" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+        <createTable tableName="ARTICLES">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="uuid" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="word_representation_id" type="int">
+                <constraints foreignKeyName="FK_ARTICLE_REPRESENTATION" referencedTableName="REPRESENTATIONS"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="part_of_speech_id" type="int">
+                <constraints foreignKeyName="FK_ARTICLE_PARTOFSPEECH" referencedTableName="PARTS_OF_SPEECH"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="WORD_FORMS">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="article_id" type="int">
+                <constraints foreignKeyName="FK_WORD_FORM_ARTICLE" referencedTableName="ARTICLES"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="word_representation_id" type="int">
+                <constraints foreignKeyName="FK_WORDFORM_REPRESENTATION" referencedTableName="REPRESENTATIONS"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="form_type_id" type="int">
+                <constraints foreignKeyName="FK_WORDFORM_FORMTYPE" referencedTableName="FORM_TYPES"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="part_of_speech" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="declination_type" type="int"></column>
+            <column name="stem_length" type="int"></column>
+
+        </createTable>
+
+    </changeSet>
+</databaseChangeLog>

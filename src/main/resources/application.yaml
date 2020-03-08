@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:C:\Users\kiril\Documents\temp\db\forms
+    username: estonian
+    password:
+  liquibase:
+    changelog: db/changelog/master.xml
+
