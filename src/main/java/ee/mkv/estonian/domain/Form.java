@@ -1,12 +1,14 @@
 package ee.mkv.estonian.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Data
-@Entity(name = "FORMS")
+@Entity
+@Table(name = "WORD_FORMS")
 public class Form {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +16,7 @@ public class Form {
 
     @ManyToOne
     @JoinColumn(name = "article_id")
+    @EqualsAndHashCode.Exclude
     Article article;
 
     @ManyToMany

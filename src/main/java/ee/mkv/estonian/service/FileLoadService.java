@@ -1,23 +1,12 @@
 package ee.mkv.estonian.service;
 
-import com.opencsv.CSVReader;
-import ee.mkv.estonian.domain.FormType;
-import ee.mkv.estonian.domain.Representation;
-import ee.mkv.estonian.repository.FormTypeRepository;
-import ee.mkv.estonian.repository.RepresentationsRepository;
+import ee.mkv.estonian.domain.*;
+import ee.mkv.estonian.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static ee.mkv.estonian.utils.StringUtils.splitFormCode;
+import java.util.Collections;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -29,13 +18,22 @@ public class FileLoadService {
 
     private final RepresentationsRepository representationsRepository;
     private final FormTypeRepository formTypeRepository;
+    private final ArticleRepository articleRepository;
+    private final FormRepository formRepository;
+    private final PartOfSpeechRepository partOfSpeechRepository;
 
-    public FileLoadService(RepresentationsRepository representationsRepository, FormTypeRepository formTypeRepository) {
+    public FileLoadService(RepresentationsRepository representationsRepository, FormTypeRepository formTypeRepository, ArticleRepository articleRepository, FormRepository formRepository, PartOfSpeechRepository partOfSpeechRepository) {
         this.representationsRepository = representationsRepository;
         this.formTypeRepository = formTypeRepository;
+        this.articleRepository = articleRepository;
+        this.formRepository = formRepository;
+        this.partOfSpeechRepository = partOfSpeechRepository;
     }
 
     public void loadFilesFromPath(String dirPath) {
 
+    }
+
+    public void dummyInitialize() {
     }
 }
