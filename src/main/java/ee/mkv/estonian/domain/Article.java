@@ -1,11 +1,28 @@
 package ee.mkv.estonian.domain;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.Data;
+
+import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
-@Table(name = "ARTICLES")
+@Data
+@Entity(name = "ARTICLES")
 public class Article {
     @Id
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    UUID uuid;
+
+    @ManyToOne
+    @JoinColumn(name = "word_representation_id")
+    Representation baseForm;
+
+    @ManyToMany
+    @JoinTable(name = "articles_parts_of_speech")
+    Set<PartOfSpeech> partOfSpeech;
+
+    @OneToMany(mappedBy = "article")
+    Set<Form> forms;
 }

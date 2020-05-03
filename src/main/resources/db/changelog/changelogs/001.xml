@@ -9,7 +9,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="representation" type="varchar(150)">
-                <constraints unique="true" uniqueConstraintName="REPRESENTATION_MUST_BE_UNIQUE" nullable="false"/>
+                <constraints unique="true" uniqueConstraintName="UNQ_REPRESENTATION" nullable="false"/>
             </column>
         </createTable>
 
@@ -18,10 +18,10 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="eki_representation" type="varchar(20)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true" uniqueConstraintName="UNQ_EKI_FORM_TYPE"/>
             </column>
 
-            <column name="wikidata_codes" type="varchar(200)">
+            <column name="wikidata_code" type="varchar(20)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -30,11 +30,15 @@
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="eki_representation" type="varchar(20)">
+            <column name="part_of_speech" type="varchar(20)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="wikidata_codes" type="varchar(200)">
+            <column name="eki_codes" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="wikidata_code" type="varchar(20)">
                 <constraints nullable="false"/>
             </column>
 

@@ -7,11 +7,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity(name = "REPRESENTATIONS")
 @Data
-public class Representation {
+@Entity(name = "PARTS_OF_SPEECH")
+public class PartOfSpeech {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String representation;
+    Long id;
+
+    String ekiRepresentation;
+
+    String evsRepresentation;
+
+    String wikidataCode;
 }

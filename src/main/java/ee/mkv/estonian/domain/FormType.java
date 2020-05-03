@@ -1,17 +1,20 @@
 package ee.mkv.estonian.domain;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity(name = "REPRESENTATIONS")
 @Data
-public class Representation {
+@Entity(name = "form_types")
+public class FormType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String representation;
+    Long id;
+
+    String ekiCode;
+
+    String wikidataCode;
 }

@@ -27,6 +27,6 @@ public class EstonianFormsApplication implements CommandLineRunner {
             log.info("args[{}]: {}", i, args[i]);
         }
 
-        service.loadFromPath(args[0]);
+        service.loadFilesFromPath(args[0]);
     }
 }
