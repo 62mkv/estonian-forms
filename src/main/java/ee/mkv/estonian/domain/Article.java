@@ -1,6 +1,8 @@
 package ee.mkv.estonian.domain;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -9,6 +11,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "ARTICLES")
+@NoArgsConstructor
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

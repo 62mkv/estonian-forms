@@ -1,12 +1,15 @@
 package ee.mkv.estonian.service;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.repository.*;
+import ee.mkv.estonian.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.UUID;
+import java.io.*;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -30,10 +33,104 @@ public class FileLoadService {
         this.partOfSpeechRepository = partOfSpeechRepository;
     }
 
-    public void loadFilesFromPath(String dirPath) {
+    public void loadFilesFromPath(String dirPath) throws IOException {
+        for (String[] record: loadFile(dirPath, ARTICLES)) {
+            String baseForm = record[0];
+            UUID articleGuid = UUID.fromString(record[1]);
+            createAndSaveArticle(baseForm, articleGuid);
+        }
 
+        for (String[] record: loadFile(dirPath, ARTICLES_PART_OF_SPEECH)) {
+            UUID articleGuid = UUID.fromString(record[0]);
+            String partOfSpeech = record[1];
+            updateArticlePartOfSpeech(articleGuid, createAndSavePartOfSpeech(partOfSpeech));
+        }
+
+        for (String[] record: loadFile(dirPath, WORD_FORMS)) {
+            // GUID,Part of speech,Declination type,Options count,Parallel forms count,Form code,Form representation,Stem length
+            UUID articleGuid = UUID.fromString(record[0]);
+            String ekiPartOfSpeech = record[1];
+            Integer declinationType = Integer.parseInt(record[2]);
+            Integer optionsCount = Integer.parseInt(record[3]);
+            Integer parallelFormsCount = Integer.parseInt(record[4]);
+            String formCode = record[5];
+            String formRepresentation = record[6];
+            Integer stemLength = Integer.parseInt(record[7]);
+            createAndSaveForm(articleGuid, ekiPartOfSpeech, declinationType, optionsCount, parallelFormsCount, formCode, formRepresentation, stemLength);
+        }
     }
 
-    public void dummyInitialize() {
+    private Form createAndSaveForm(UUID articleGuid, String ekiPartOfSpeech, Integer declinationType, Integer optionsCount, Integer parallelFormsCount, String formCode, String formRepresentation, Integer stemLength) {
+        try {
+            Article article = articleRepository.findByUuid(articleGuid).get();
+            Form form = new Form();
+            form.setArticle(article);
+            boolean formFitsArticle = false;
+            for (PartOfSpeech partOfSpeech : partOfSpeechRepository.findByEkiRepresentation(ekiPartOfSpeech)) {
+                if (article.getPartOfSpeech().contains(partOfSpeech)) {
+                    formFitsArticle = true;
+                    break;
+                }
+            }
+
+            if (!formFitsArticle) {
+                log.warn("Form {}:{} does not fit article UUID {}", formRepresentation, ekiPartOfSpeech, articleGuid);
+            }
+
+            form.setFormTypes(new HashSet<>());
+            for (String ekiForm : StringUtils.splitFormCode(formCode)) {
+                FormType formType = formTypeRepository.findByEkiRepresentation(ekiForm);
+                form.getFormTypes().add(formType);
+            }
+
+            Representation representation = createAndSaveRepresentation(formRepresentation);
+            form.setRepresentation(representation);
+
+            return formRepository.save(form);
+        } catch (Exception e) {
+            log.error("Exception in creation of form", e);
+            throw e;
+        }
     }
+
+    private PartOfSpeech createAndSavePartOfSpeech(String partOfSpeech) {
+        return partOfSpeechRepository.findByPartOfSpeech(partOfSpeech).get();
+    }
+
+    private void updateArticlePartOfSpeech(UUID articleGuid, PartOfSpeech partOfSpeech) {
+        articleRepository.findByUuid(articleGuid).ifPresent(article -> {
+            article.getPartOfSpeech().add(partOfSpeech);
+            articleRepository.save(article);
+        });
+    }
+
+    private Article createAndSaveArticle(String baseForm, UUID articleGuid) {
+        final Article article = articleRepository.findByUuid(articleGuid)
+                .orElseGet(() -> {
+                    Article result = new Article();
+                    result.setBaseForm(createAndSaveRepresentation(baseForm));
+                    result.setUuid(articleGuid);
+                    return result;
+                });
+        return articleRepository.save(article);
+    }
+
+    private Representation createAndSaveRepresentation(String baseForm) {
+        final Representation representation = representationsRepository.findByRepresentation(baseForm)
+                .orElseGet(() -> {
+                    Representation result = new Representation();
+                    result.setRepresentation(baseForm);
+                    return result;
+                });
+        return representationsRepository.save(representation);
+    }
+
+    private List<String[]> loadFile(String dirPath, String filename) throws IOException {
+
+        return new CSVReaderBuilder(new FileReader(dirPath.concat(File.separator).concat(filename)))
+                .withSkipLines(1)
+                .build()
+                .readAll();
+    }
+
 }

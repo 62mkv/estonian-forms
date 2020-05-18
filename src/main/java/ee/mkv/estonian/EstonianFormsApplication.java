@@ -35,7 +35,6 @@ public class EstonianFormsApplication implements CommandLineRunner {
                 service.loadFilesFromPath(path);
             }
         } else {
-            service.dummyInitialize();
         }
     }
 }

@@ -2,6 +2,7 @@ package ee.mkv.estonian.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -9,6 +10,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "WORD_FORMS")
+@NoArgsConstructor
 public class Form {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
