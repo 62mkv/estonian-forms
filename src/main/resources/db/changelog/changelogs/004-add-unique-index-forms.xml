@@ -1,10 +1,12 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
-    <changeSet id="4-2" author="62mkv">
-        <createIndex tableName="WORD_FORMS" indexName="UQ_CONTENT" unique="true">
-            <column name="article_id"/>
-            <column name="word_representation_id"/>
-        </createIndex>
+    <changeSet id="4-1" author="62mkv">
+        <addColumn tableName="WORD_FORMS">
+            <column name="form_type_combination_id" type="bigint">
+                <constraints foreignKeyName="FK_WORD_FORM_TO_FORM_TYPE_COMBINATION" referencedTableName="FORM_TYPE_COMBINATIONS" referencedColumnNames="id" nullable="false"/>
+            </column>
+        </addColumn>
     </changeSet>
+
 </databaseChangeLog>

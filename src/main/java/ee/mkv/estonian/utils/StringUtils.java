@@ -28,4 +28,10 @@ public class StringUtils {
         }
         return result;
     }
+
+    public static String adaptBaseForm(String form) {
+        return form
+                .replaceAll("\\+", "")
+                .replaceAll("\\!", "");
+    }
 }

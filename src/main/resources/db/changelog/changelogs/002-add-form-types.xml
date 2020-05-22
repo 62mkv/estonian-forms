@@ -18,6 +18,5 @@
     
     <changeSet id="3" author="62mkv">
         <dropColumn tableName="WORD_FORMS" columnName="part_of_speech"/>
-        <dropColumn tableName="WORD_FORMS" columnName="declination_type"/>
     </changeSet>
 </databaseChangeLog>

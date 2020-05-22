@@ -3,21 +3,31 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <changeSet id="4" author="62mkv" runOnChange="true">
+
         <createTable tableName="ARTICLES_PARTS_OF_SPEECH">
             <column name="article_id" type="bigint">
-                <constraints foreignKeyName="FK_ARTICLE" referencedTableName="ARTICLES" referencedColumnNames="ID"/>
+                <constraints foreignKeyName="FK_ARTICLE" referencedTableName="ARTICLES" referencedColumnNames="ID" deleteCascade="true"/>
             </column>
             <column name="part_of_speech_id" type="bigint">
                 <constraints foreignKeyName="FK_PART_OF_SPEECH" referencedTableName="PARTS_OF_SPEECH" referencedColumnNames="ID"/>
             </column>
         </createTable>
 
+        <createTable tableName="FORM_TYPE_COMBINATIONS">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="eki_representation" type="varchar(20)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
         <createTable tableName="FORMS_FORM_TYPES">
-            <column name="FORM_ID" type="bigint">
-                <constraints foreignKeyName="FK_FORM" referencedTableName="WORD_FORMS" referencedColumnNames="ID"/>
+            <column name="form_type_combination_id" type="int">
+                <constraints nullable="false" foreignKeyName="FK_form_type_combination" referencedTableName="FORM_TYPE_COMBINATIONS" referencedColumnNames="id" deleteCascade="true"/>
             </column>
             <column name="FORM_TYPES_ID" type="bigint">
-                <constraints foreignKeyName="FK_FORM_TYPE" referencedTableName="FORM_TYPES" referencedColumnNames="ID"/>
+                <constraints foreignKeyName="FK_FORM_TYPE" referencedTableName="FORM_TYPES" referencedColumnNames="ID" deleteCascade="true"/>
             </column>
         </createTable>
     </changeSet>
