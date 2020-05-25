@@ -8,5 +8,6 @@
     <include file="changelogs/004-add-unique-index-forms.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/005-add-forms-to-parts-of-speech-mapping.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/006-add-declination_type_per_article.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/007-add-unique-index-for-word-forms.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
 
