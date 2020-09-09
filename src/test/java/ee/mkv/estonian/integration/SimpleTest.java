@@ -86,7 +86,7 @@ public class SimpleTest {
         // this one should be rejected, as it's part of speech is not one of defined per article
         fileLoadService.createAndSaveForm(ARTICLE_UUID, "A", 1, 1, 2, "SgN", "emab", 3);
 
-        Iterable<Form> formsCreated = formRepository.findAll();
+        Iterable<ArticleForm> formsCreated = formRepository.findAll();
         assertThat(formsCreated).hasSize(2);
     }
 }

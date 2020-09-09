@@ -4,7 +4,9 @@
     <changeSet id="6" author="62mkv">
         <createTable tableName="ARTICLE_DECLINATION_TYPES">
             <column name="article_id" type="bigint">
-                <constraints nullable="false" deleteCascade="true" foreignKeyName="FK_ARTICLES" referencedTableName="ARTICLE" referencedColumnNames="id"/>
+                <constraints nullable="false" deleteCascade="true"
+                             foreignKeyName="FK_ARTICLES" referencedTableName="ARTICLES"
+                             referencedColumnNames="id"/>
             </column>
             <column name="declination_type" type="int">
                 <constraints nullable="false"/>

@@ -1,16 +1,16 @@
 package ee.mkv.estonian.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "LEXEME_FORMS")
+@Table(name = "LEXEMES")
 @NoArgsConstructor
-public class Form {
+public class Lexeme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -19,18 +19,15 @@ public class Form {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "representation_id")
-    Representation representation;
+    Representation lemma;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "lexeme_id")
-    Lexeme lexeme;
+    @JoinColumn(name = "part_of_speech_id")
+    PartOfSpeech partOfSpeech;
 
-    @ManyToOne
-    @JoinColumn(name = "form_type_combination_id")
-    @EqualsAndHashCode.Exclude
-    FormTypeCombination formTypeCombination;
+    @OneToMany(mappedBy = "lexeme")
+    Set<Article> articles;
 
-    Integer declinationType;
-
-    Integer stemLength;
+    @OneToMany(mappedBy = "lexeme")
+    Set<Form> forms;
 }

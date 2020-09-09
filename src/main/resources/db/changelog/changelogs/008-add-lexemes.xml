@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="8" author="62mkv">
+        <createTable tableName="LEXEMES">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="representation_id" type="int">
+                <constraints foreignKeyName="FK_LEXEME_REPRESENTATION" referencedTableName="REPRESENTATIONS"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="part_of_speech_id" type="int">
+                <constraints foreignKeyName="FK_LEXEME_PARTOFSPEECH" referencedTableName="PARTS_OF_SPEECH"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="wikidata_id" type="varchar(20)"/>
+        </createTable>
+
+        <createTable tableName="LEXEME_FORMS">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="lexeme_id" type="int">
+                <constraints foreignKeyName="FK_LEXEME_FORM_LEXEME" referencedTableName="LEXEMES"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="representation_id" type="int">
+                <constraints foreignKeyName="FK_LEXEME_FORM_REPRESENTATION" referencedTableName="REPRESENTATIONS"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="form_type_combination_id" type="bigint">
+                <constraints foreignKeyName="FK_LEXEME_FORM_TO_FORM_TYPE_COMBINATION"
+                             referencedTableName="FORM_TYPE_COMBINATIONS"
+                             referencedColumnNames="id" nullable="false"/>
+            </column>
+
+            <column name="wikidata_id" type="varchar(20)"/>
+            <column name="declination_type" type="int"/>
+            <column name="stem_length" type="int"/>
+        </createTable>
+
+        <createIndex tableName="LEXEME_FORMS" indexName="UNQ_LEXEME_FORMS" unique="true">
+            <column name="lexeme_id"/>
+            <column name="declination_type"/>
+            <column name="form_type_combination_id"/>
+            <column name="representation_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="8-1" author="62mkv">
+        <addColumn tableName="ARTICLES">
+            <column name="FORM_FINGERPRINT" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="8-2" author="62mkv">
+        <sql dbms="sqlite">
+            ALTER TABLE ARTICLES
+            ADD COLUMN lexeme_id int
+            REFERENCES LEXEMES(id) ON DELETE CASCADE
+        </sql>
+    </changeSet>
+</databaseChangeLog>

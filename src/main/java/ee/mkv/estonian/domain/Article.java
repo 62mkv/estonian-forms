@@ -19,16 +19,25 @@ public class Article {
 
     UUID uuid;
 
+    /**
+     * Represents unique hash of all forms for a given article, bar the nominal form
+     */
+    String formFingerprint;
+
     @ManyToOne
     @JoinColumn(name = "word_representation_id")
     Representation baseForm;
+
+    @ManyToOne
+    @JoinColumn(name = "lexeme_id")
+    Lexeme lexeme;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "articles_parts_of_speech")
     Set<PartOfSpeech> partOfSpeech;
 
     @OneToMany(mappedBy = "article")
-    Set<Form> forms;
+    Set<ArticleForm> forms;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "ARTICLE_DECLINATION_TYPES", joinColumns = @JoinColumn(name = "article_id"))
