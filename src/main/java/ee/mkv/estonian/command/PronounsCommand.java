@@ -2,12 +2,10 @@ package ee.mkv.estonian.command;
 
 import ee.mkv.estonian.domain.Article;
 import ee.mkv.estonian.domain.PartOfSpeech;
-import ee.mkv.estonian.domain.Representation;
 import ee.mkv.estonian.repository.ArticleRepository;
 import ee.mkv.estonian.repository.PartOfSpeechRepository;
 import ee.mkv.estonian.service.FormFingerprintCalculator;
-import liquibase.pro.packaged.L;
-import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import picocli.CommandLine;
@@ -18,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Component
 @CommandLine.Command(name = "pronouns")
+@Slf4j
 class PronounsCommand implements Runnable {
 
     public static final String PRONOUN = "Pronoun";
@@ -34,6 +33,7 @@ class PronounsCommand implements Runnable {
     @Override
     @Transactional
     public void run() {
+        log.info("Starting processing command 'pronoun'");
         PartOfSpeech pronoun = partOfSpeechRepository.findByPartOfSpeech(PRONOUN).orElseThrow(() -> new RuntimeException("Pronoun part of speech not found!"));
         List<Article> pronouns = repository.findByPartOfSpeech(pronoun)
                 .stream()
@@ -41,13 +41,13 @@ class PronounsCommand implements Runnable {
                 .collect(Collectors.toList());
 
         LexemeCandidateMap lexemeCandidateMap = new LexemeCandidateMap();
-        for (Article article: pronouns) {
+        for (Article article : pronouns) {
             lexemeCandidateMap.add(article);
         }
 
-        for (String fingerprint: lexemeCandidateMap.keys()) {
+        for (String fingerprint : lexemeCandidateMap.keys()) {
             final Collection<Article> articles = lexemeCandidateMap.getArticles(fingerprint);
-            if (articles.size()>1) {
+            if (articles.size() > 1) {
                 System.out.println(String.format("Fingerprint: %s; articles: %s",
                         fingerprint,
                         articles
@@ -58,6 +58,7 @@ class PronounsCommand implements Runnable {
                 ));
             }
         }
+        log.info("Finished processing command 'pronoun'");
     }
 
     class LexemeCandidateMap {
