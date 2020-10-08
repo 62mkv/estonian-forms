@@ -25,14 +25,14 @@ public class FileLoadService {
     private final RepresentationsRepository representationsRepository;
     private final FormTypeRepository formTypeRepository;
     private final ArticleRepository articleRepository;
-    private final FormRepository formRepository;
+    private final ArticleFormRepository articleFormRepository;
     private final PartOfSpeechRepository partOfSpeechRepository;
 
-    public FileLoadService(RepresentationsRepository representationsRepository, FormTypeRepository formTypeRepository, ArticleRepository articleRepository, FormRepository formRepository, PartOfSpeechRepository partOfSpeechRepository, FormTypeCombinationRepository formTypeCombinationRepository) {
+    public FileLoadService(RepresentationsRepository representationsRepository, FormTypeRepository formTypeRepository, ArticleRepository articleRepository, ArticleFormRepository articleFormRepository, PartOfSpeechRepository partOfSpeechRepository, FormTypeCombinationRepository formTypeCombinationRepository) {
         this.representationsRepository = representationsRepository;
         this.formTypeRepository = formTypeRepository;
         this.articleRepository = articleRepository;
-        this.formRepository = formRepository;
+        this.articleFormRepository = articleFormRepository;
         this.partOfSpeechRepository = partOfSpeechRepository;
         this.formTypeCombinationRepository = formTypeCombinationRepository;
     }
@@ -137,7 +137,7 @@ public class FileLoadService {
         articleForm.setDeclinationType(declinationType);
         articleForm.setStemLength(stemLength);
         try {
-            formRepository.save(articleForm);
+            articleFormRepository.save(articleForm);
         } catch (Exception e) {
             log.error("Exception in creation of form {}:{}:{} {}", articleGuid, formCode, formRepresentation, e.getMessage());
         }
