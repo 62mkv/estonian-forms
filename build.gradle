@@ -10,6 +10,7 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
         url 'https://repo.spring.io/release'
@@ -24,6 +25,8 @@ dependencies {
     implementation group: 'com.kakawait', name: 'picocli-spring-boot-starter', version: '0.2.0'
 
     implementation group: 'org.eclipse.rdf4j', name: 'rdf4j-repository-sparql', version: '3.2.2'
+    implementation group: 'org.wikidata.wdtk', name: 'wdtk-datamodel', version: '0.11.2'
+    implementation group: 'org.wikidata.wdtk', name: 'wdtk-wikibaseapi', version: '0.11.2'
 
     runtime 'io.github.willena:sqlite-jdbc:3.31.1'
     runtime 'com.github.gwenn:sqlite-dialect:0.1.0'

@@ -1,9 +1,11 @@
 package ee.mkv.estonian.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -26,8 +28,10 @@ public class Lexeme {
     PartOfSpeech partOfSpeech;
 
     @OneToMany(mappedBy = "lexeme")
-    Set<Article> articles;
+    @EqualsAndHashCode.Exclude
+    Set<Article> articles = new HashSet<>();
 
     @OneToMany(mappedBy = "lexeme")
-    Set<Form> forms;
+    @EqualsAndHashCode.Exclude
+    Set<Form> forms = new HashSet<>();
 }
