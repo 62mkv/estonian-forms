@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -85,4 +88,15 @@ public class ProcessingService {
         }
     }
 
+    public void processFile(String sourceFile) throws IOException, MediaWikiApiErrorException {
+        for (String line : Files.readAllLines(Paths.get(sourceFile), Charset.defaultCharset())) {
+            String[] lineComponents = line.split(";");
+            if (lineComponents.length < 2) {
+                log.error("Unsupported line: {}", line);
+                continue;
+            }
+
+            processLemmas(lineComponents[0], lineComponents[1]);
+        }
+    }
 }

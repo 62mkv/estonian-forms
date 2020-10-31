@@ -56,7 +56,14 @@ public class WikidataUploader {
                 languageId,
                 Collections.singletonList(Datamodel.makeMonolingualTextValue(lexeme.getLemma().getRepresentation(), LANGUAGE_CODE)));
 
-        return addFormsAndUpdate(lexeme, lexemeDocument);
+        lexemeDocument = getLexemeDocumentWithForms(lexeme, lexemeDocument);
+
+        lexemeDocument = editor.createLexemeDocument(lexemeDocument,
+                String.format("Bot creating lexeme '%s'", lexeme.getLemma().getRepresentation()),
+                null
+        );
+
+        return lexemeDocument.getEntityId().getId();
     }
 
     /**
@@ -73,13 +80,21 @@ public class WikidataUploader {
 
         LexemeDocument lexemeDocument = (LexemeDocument) fetcher.getEntityDocument(id);
 
-        return addFormsAndUpdate(lexeme, lexemeDocument);
+        lexemeDocument = getLexemeDocumentWithForms(lexeme, lexemeDocument);
+
+        lexemeDocument = editor.updateLexemeDocument(lexemeDocument,
+                String.format("Bot adding forms to lexeme '%s'", lexeme.getLemma().getRepresentation()),
+                null
+        );
+
+        return lexemeDocument.getEntityId().getId();
     }
 
-    private String addFormsAndUpdate(Lexeme lexeme, LexemeDocument lexemeDocument) throws IOException, MediaWikiApiErrorException {
+    private LexemeDocument getLexemeDocumentWithForms(Lexeme lexeme, LexemeDocument lexemeDocument) {
         final List<Form> forms = lexeme
                 .getForms()
                 .stream()
+                .filter(form -> !"Rpl".equalsIgnoreCase(form.getFormTypeCombination().getEkiRepresentation()))
                 .sorted(Comparator.comparing(form -> form.getFormTypeCombination().getId()))
                 .collect(Collectors.toList());
 
@@ -87,13 +102,7 @@ public class WikidataUploader {
             FormDocument formDocument = createFormDocument(lexemeDocument, form);
             lexemeDocument = lexemeDocument.withForm(formDocument);
         }
-
-        lexemeDocument = editor.createLexemeDocument(lexemeDocument,
-                String.format("Bot processing lexeme '%s'", lexeme.getLemma().getRepresentation()),
-                null
-        );
-
-        return lexemeDocument.getEntityId().getId();
+        return lexemeDocument;
     }
 
     private ItemIdValue createItemId(String id) {
