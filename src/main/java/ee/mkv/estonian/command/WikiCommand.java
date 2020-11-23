@@ -32,6 +32,7 @@ public class WikiCommand implements Runnable {
 
     @Override
     public void run() {
+//        throw new RuntimeException("Sort out algus first!");
         try {
             if (lemma != null && partOfSpeech != null) {
                 processSingleOption();

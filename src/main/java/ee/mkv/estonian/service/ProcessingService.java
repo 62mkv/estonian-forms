@@ -33,10 +33,15 @@ public class ProcessingService {
         this.site = properties.getSite();
     }
 
-    public void processLemmas(String lemmaList, String partOfSpeech) throws MediaWikiApiErrorException, IOException {
+    public void processLemmas(String lemmaList, String partOfSpeech) {
         for (String lemma : lemmaList.split(",")) {
             log.info("Processing lemma {}", lemma);
-            processLemma(lemma, partOfSpeech);
+            try {
+                processLemma(lemma, partOfSpeech);
+            } catch (MediaWikiApiErrorException | IOException e) {
+                log.error("Exception while processing lemma {}/{}: {}", lemma, partOfSpeech, e.getMessage(), e);
+            }
+
         }
     }
 
