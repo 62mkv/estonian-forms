@@ -20,6 +20,10 @@ public class EkilexParadigm {
     Representation baseForm;
 
     @ManyToOne
+    @JoinColumn(name = "part_of_speech_id")
+    PartOfSpeech partOfSpeech;
+
+    @ManyToOne
     @JoinColumn(name = "lexeme_id")
     Lexeme lexeme;
 

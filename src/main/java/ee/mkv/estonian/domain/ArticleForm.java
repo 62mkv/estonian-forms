@@ -34,7 +34,7 @@ public class ArticleForm {
     @ManyToMany
     @JoinTable
     @EqualsAndHashCode.Exclude
-    Set<PartOfSpeech> partOfSpeech = new HashSet<>();
+    Set<PartOfSpeech> partOfSpeechEntities = new HashSet<>();
 
     Integer declinationType;
 

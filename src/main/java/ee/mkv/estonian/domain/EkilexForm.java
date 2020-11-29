@@ -28,6 +28,4 @@ public class EkilexForm {
     @ManyToOne
     @JoinColumn(name = "word_representation_id")
     Representation representation;
-
-    String inflectionType;
 }

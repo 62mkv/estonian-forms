@@ -94,6 +94,7 @@
     </changeSet>
 
     <changeSet id="8-4" author="62mkv">
+        <dropIndex tableName="LEXEME_FORMS" indexName="UNQ_LEXEME_FORMS"/>
         <createIndex tableName="LEXEME_FORMS" indexName="UNQ_LEXEME_FORMS_CONTENT" unique="true">
             <column name="lexeme_id"/>
             <column name="representation_id"/>
