@@ -6,6 +6,7 @@ import ee.mkv.estonian.error.NonSingularValueException;
 import ee.mkv.estonian.model.PartOfSpeechEnum;
 import ee.mkv.estonian.repository.EkilexFormRepository;
 import ee.mkv.estonian.repository.EkilexParadigmRepository;
+import ee.mkv.estonian.utils.SetUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,18 +33,15 @@ public class LexemeFromEkiLexService {
      * @param partOfSpeech
      * @return
      */
-    public Set<Lexeme> buildLexemesFromEkiLexParadigms(String lemma, PartOfSpeechEnum partOfSpeech) {
-        Set<Lexeme> result = new HashSet<>();
+    public List<Lexeme> buildLexemesFromEkiLexParadigms(String lemma, PartOfSpeechEnum partOfSpeech) {
+        List<Lexeme> result = new ArrayList<>();
 
         Map<Long, Set<EkilexParadigm>> paradigmsByWordId =
                 Streams.stream(paradigmRepository.findByBaseFormRepresentationAndPartOfSpeechPartOfSpeech(lemma, partOfSpeech.getRepresentation()))
                         .collect(Collectors.toMap(
                                 EkilexParadigm::getWordId,
                                 Collections::singleton,
-                                (set1, set2) -> {
-                                    set1.addAll(set2);
-                                    return set1;
-                                }
+                                SetUtils::combineSets
                         ));
 
         for (Map.Entry<Long, Set<EkilexParadigm>> word : paradigmsByWordId.entrySet()) {
@@ -80,10 +78,10 @@ public class LexemeFromEkiLexService {
             for (EkilexForm ekilexForm : paradigm.getForms()) {
                 final MyFormForLexeme formForLexeme = MyFormForLexeme.fromEkilexForm(ekilexForm);
                 if (inflectionTypesPerForm.containsKey(formForLexeme)) {
-                    inflectionTypesPerForm.get(formForLexeme).add(paradigm.getInflectionTypeNr());
+                    inflectionTypesPerForm.get(formForLexeme).add(paradigm.getInflectionType());
                 } else {
                     Set<String> newTypes = new HashSet<>();
-                    newTypes.add(paradigm.getInflectionTypeNr());
+                    newTypes.add(paradigm.getInflectionType());
                     inflectionTypesPerForm.put(formForLexeme, newTypes);
                 }
             }
@@ -91,7 +89,7 @@ public class LexemeFromEkiLexService {
 
         Set<Form> result = new HashSet<>();
         for (Map.Entry<MyFormForLexeme, Set<String>> entry : inflectionTypesPerForm.entrySet()) {
-            String inflectionTypes = String.join(",", entry.getValue());
+            String inflectionTypes = String.join(",", entry.getValue().stream().sorted().collect(Collectors.toList()));
             MyFormForLexeme formForLexeme = entry.getKey();
 
             Form form = new Form();
