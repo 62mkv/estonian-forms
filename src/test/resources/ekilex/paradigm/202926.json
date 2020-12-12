@@ -1,0 +1,407 @@
+[
+  {
+    "wordId": 202926,
+    "example": null,
+    "inflectionTypeNr": "0",
+    "inflectionType": "0",
+    "secondary": false,
+    "forms": [
+      {
+        "mode": "WORD",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "SgN",
+        "morphExists": true,
+        "value": "mina",
+        "valuePrese": "mina",
+        "components": [
+          "mina"
+        ],
+        "displayForm": "mina",
+        "vocalForm": null,
+        "audioFile": "h_10776.mp3",
+        "orderBy": 2
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "SgG",
+        "morphExists": true,
+        "value": "minu",
+        "valuePrese": "minu",
+        "components": [
+          "minu"
+        ],
+        "displayForm": "minu",
+        "vocalForm": null,
+        "audioFile": "h_10777.mp3",
+        "orderBy": 3
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "SgP",
+        "morphExists": true,
+        "value": "mind",
+        "valuePrese": "mind",
+        "components": [
+          "mind"
+        ],
+        "displayForm": "m`in[d",
+        "vocalForm": null,
+        "audioFile": "h_10778.mp3",
+        "orderBy": 4
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgIll",
+        "morphExists": true,
+        "value": "minusse",
+        "valuePrese": "minusse",
+        "components": [
+          "minusse"
+        ],
+        "displayForm": "minu[sse",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 6
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgIn",
+        "morphExists": true,
+        "value": "minus",
+        "valuePrese": "minus",
+        "components": [
+          "minus"
+        ],
+        "displayForm": "minu[s",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 7
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgEl",
+        "morphExists": true,
+        "value": "minust",
+        "valuePrese": "minust",
+        "components": [
+          "minust"
+        ],
+        "displayForm": "minu[st",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 8
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAll",
+        "morphExists": true,
+        "value": "minule",
+        "valuePrese": "minule",
+        "components": [
+          "minule"
+        ],
+        "displayForm": "minu[le",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 9
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAd",
+        "morphExists": true,
+        "value": "minul",
+        "valuePrese": "minul",
+        "components": [
+          "minul"
+        ],
+        "displayForm": "minu[l",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 10
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAbl",
+        "morphExists": true,
+        "value": "minult",
+        "valuePrese": "minult",
+        "components": [
+          "minult"
+        ],
+        "displayForm": "minu[lt",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 11
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgTr",
+        "morphExists": true,
+        "value": "minuks",
+        "valuePrese": "minuks",
+        "components": [
+          "minuks"
+        ],
+        "displayForm": "minu[ks",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 12
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgTer",
+        "morphExists": true,
+        "value": "minuni",
+        "valuePrese": "minuni",
+        "components": [
+          "minuni"
+        ],
+        "displayForm": "minu[ni",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 13
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgEs",
+        "morphExists": true,
+        "value": "minuna",
+        "valuePrese": "minuna",
+        "components": [
+          "minuna"
+        ],
+        "displayForm": "minu[na",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 14
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAb",
+        "morphExists": true,
+        "value": "minuta",
+        "valuePrese": "minuta",
+        "components": [
+          "minuta"
+        ],
+        "displayForm": "minu[ta",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 15
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgKom",
+        "morphExists": true,
+        "value": "minuga",
+        "valuePrese": "minuga",
+        "components": [
+          "minuga"
+        ],
+        "displayForm": "minu[ga",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 16
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "PlN",
+        "morphExists": true,
+        "value": "meie",
+        "valuePrese": "meie",
+        "components": [
+          "meie"
+        ],
+        "displayForm": "meie",
+        "vocalForm": null,
+        "audioFile": "h_16295.mp3",
+        "orderBy": 17
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "PlG",
+        "morphExists": true,
+        "value": "meie",
+        "valuePrese": "meie",
+        "components": [
+          "meie"
+        ],
+        "displayForm": "meie",
+        "vocalForm": null,
+        "audioFile": "h_16295.mp3",
+        "orderBy": 18
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "PlP",
+        "morphExists": true,
+        "value": "meid",
+        "valuePrese": "meid",
+        "components": [
+          "meid"
+        ],
+        "displayForm": "m`e[id",
+        "vocalForm": null,
+        "audioFile": "h_16296.mp3",
+        "orderBy": 19
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlTr",
+        "morphExists": true,
+        "value": "meieks",
+        "valuePrese": "meieks",
+        "components": [
+          "meieks"
+        ],
+        "displayForm": "meie[ks",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 26
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlTer",
+        "morphExists": true,
+        "value": "meieni",
+        "valuePrese": "meieni",
+        "components": [
+          "meieni"
+        ],
+        "displayForm": "meie[ni",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 27
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlEs",
+        "morphExists": true,
+        "value": "meiena",
+        "valuePrese": "meiena",
+        "components": [
+          "meiena"
+        ],
+        "displayForm": "meie[na",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 28
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlAb",
+        "morphExists": true,
+        "value": "meieta",
+        "valuePrese": "meieta",
+        "components": [
+          "meieta"
+        ],
+        "displayForm": "meie[ta",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 29
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlKom",
+        "morphExists": true,
+        "value": "meiega",
+        "valuePrese": "meiega",
+        "components": [
+          "meiega"
+        ],
+        "displayForm": "meie[ga",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 30
+      }
+    ]
+  }
+]

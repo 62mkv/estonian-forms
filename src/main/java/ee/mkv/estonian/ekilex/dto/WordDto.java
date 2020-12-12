@@ -1,4 +1,4 @@
-package ee.mkv.estonian.dto;
+package ee.mkv.estonian.ekilex.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -10,6 +10,7 @@ public class WordDto {
     private String wordValue;
     private String lang;
     private String wordClass;
+    private Integer homonymNr;
 
 /*
             "wordId": 261443,

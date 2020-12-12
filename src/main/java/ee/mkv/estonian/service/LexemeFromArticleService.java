@@ -1,10 +1,10 @@
 package ee.mkv.estonian.service;
 
 import ee.mkv.estonian.domain.*;
-import ee.mkv.estonian.dto.FormForLexeme;
 import ee.mkv.estonian.repository.ArticleRepository;
 import ee.mkv.estonian.repository.FormRepository;
 import ee.mkv.estonian.repository.LexemeRepository;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -85,4 +85,17 @@ public class LexemeFromArticleService {
         return forms;
     }
 
+    @Data
+    public static class FormForLexeme {
+        private final String representation;
+        private final String features;
+
+        public static FormForLexeme fromArticleForm(ArticleForm articleForm) {
+            return new FormForLexeme(
+                    articleForm.getRepresentation().getRepresentation(),
+                    articleForm.getFormTypeCombination().getEkiRepresentation()
+            );
+        }
+
+    }
 }

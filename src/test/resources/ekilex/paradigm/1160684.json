@@ -1,0 +1,27 @@
+[
+  {
+    "wordId": 1160684,
+    "example": null,
+    "inflectionTypeNr": null,
+    "inflectionType": null,
+    "secondary": false,
+    "forms": [
+      {
+        "mode": "WORD",
+        "morphGroup1": null,
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "SgN",
+        "morphExists": true,
+        "value": "mina",
+        "valuePrese": "mina",
+        "components": null,
+        "displayForm": "minan",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 144897
+      }
+    ]
+  }
+]

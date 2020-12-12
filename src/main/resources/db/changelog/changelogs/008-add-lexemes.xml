@@ -106,4 +106,5 @@
             <column name="declination_types" type="varchar(16)"></column>
         </addColumn>
     </changeSet>
+
 </databaseChangeLog>

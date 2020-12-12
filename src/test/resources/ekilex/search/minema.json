@@ -1,0 +1,66 @@
+{
+  "totalCount": 2,
+  "words": [
+    {
+      "wordId": 202944,
+      "wordValue": "minema",
+      "wordValuePrese": "minema",
+      "vocalForm": null,
+      "homonymNr": 1,
+      "lang": "est",
+      "wordClass": "verb",
+      "genderCode": null,
+      "aspectCode": null,
+      "morphCode": null,
+      "displayMorphCode": null,
+      "wordTypeCodes": null,
+      "wordTypes": null,
+      "prefixoid": false,
+      "suffixoid": false,
+      "foreign": false,
+      "lexemesArePublic": null,
+      "lexemesValueStateCodes": [],
+      "lexemesTagNames": [],
+      "datasetCodes": [
+        "ety",
+        "gal",
+        "les",
+        "sss"
+      ],
+      "notes": null,
+      "relations": null,
+      "groups": null,
+      "etymology": null,
+      "odWordRecommendations": null
+    },
+    {
+      "wordId": 202945,
+      "wordValue": "minema",
+      "wordValuePrese": "minema",
+      "vocalForm": null,
+      "homonymNr": 2,
+      "lang": "est",
+      "wordClass": "verb",
+      "genderCode": null,
+      "aspectCode": null,
+      "morphCode": null,
+      "displayMorphCode": null,
+      "wordTypeCodes": null,
+      "wordTypes": null,
+      "prefixoid": false,
+      "suffixoid": false,
+      "foreign": false,
+      "lexemesArePublic": null,
+      "lexemesValueStateCodes": [],
+      "lexemesTagNames": [],
+      "datasetCodes": [
+        "sss"
+      ],
+      "notes": null,
+      "relations": null,
+      "groups": null,
+      "etymology": null,
+      "odWordRecommendations": null
+    }
+  ]
+}

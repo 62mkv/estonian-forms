@@ -1,8 +1,9 @@
-package ee.mkv.estonian.service;
+package ee.mkv.estonian.ekilex;
 
-import ee.mkv.estonian.dto.ParadigmDto;
-import ee.mkv.estonian.dto.SearchResultDto;
-import ee.mkv.estonian.dto.WordDto;
+import ee.mkv.estonian.ekilex.dto.DetailsDto;
+import ee.mkv.estonian.ekilex.dto.ParadigmDto;
+import ee.mkv.estonian.ekilex.dto.SearchResultDto;
+import ee.mkv.estonian.ekilex.dto.WordDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -26,19 +27,16 @@ public class EkiLexRetrievalService {
         this.restTemplate = restTemplate;
     }
 
-    public Set<Long> findWords(String word, String partOfSpeech) {
-        if (!supportedPartsOfSpeech.contains(partOfSpeech)) {
-            throw new RuntimeException(String.format("Part of speech %s is not supported for search yet"));
-        }
+    public Set<Long> findWords(String word) {
 
         SearchResultDto result = restTemplate.getForObject("/api/word/search/{word}", SearchResultDto.class, word);
         return result.getWords().stream()
-                .filter(wordDto -> matchesPartOfSpeech(wordDto, partOfSpeech))
+                .filter(wordDto -> "est".equalsIgnoreCase(wordDto.getLang()))
                 .map(WordDto::getWordId)
                 .collect(Collectors.toSet());
     }
 
-    public ParadigmDto[] getParadigmById(Long id) {
+    private ParadigmDto[] getParadigmById(Long id) {
         return restTemplate.getForObject("/api/paradigm/details/{id}/", ParadigmDto[].class, id);
     }
 
@@ -48,5 +46,9 @@ public class EkiLexRetrievalService {
         }
 
         return false;
+    }
+
+    public DetailsDto getDetails(Long id) {
+        return restTemplate.getForObject("/api/word/details/{id}/sss/", DetailsDto.class, id);
     }
 }
