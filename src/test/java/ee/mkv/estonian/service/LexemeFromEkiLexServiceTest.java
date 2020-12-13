@@ -2,9 +2,10 @@ package ee.mkv.estonian.service;
 
 import ee.mkv.estonian.domain.Form;
 import ee.mkv.estonian.domain.Lexeme;
-import ee.mkv.estonian.model.PartOfSpeechEnum;
 import ee.mkv.estonian.repository.EkilexFormRepository;
+import ee.mkv.estonian.repository.EkilexLexemeRepository;
 import ee.mkv.estonian.repository.EkilexParadigmRepository;
+import ee.mkv.estonian.repository.EkilexWordRepository;
 import org.assertj.core.api.Condition;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,16 +31,22 @@ public class LexemeFromEkiLexServiceTest {
     @Autowired
     private EkilexFormRepository ekilexFormRepository;
 
+    @Autowired
+    private EkilexLexemeRepository ekilexLexemeRepository;
+
+    @Autowired
+    private EkilexWordRepository wordRepository;
+
     private LexemeFromEkiLexService lexemeFromEkiLexService;
 
     @Before
     public void setUp() {
-        this.lexemeFromEkiLexService = new LexemeFromEkiLexService(ekilexParadigmRepository, ekilexFormRepository);
+        this.lexemeFromEkiLexService = new LexemeFromEkiLexService(ekilexParadigmRepository, ekilexLexemeRepository, wordRepository);
     }
 
     @Test
     public void testNounSingleParadigm() {
-        List<Lexeme> lexemeSet = lexemeFromEkiLexService.buildLexemesFromEkiLexParadigms("ema", PartOfSpeechEnum.NOUN);
+        List<Lexeme> lexemeSet = lexemeFromEkiLexService.buildLexemesFromEkiLexDetails("ema");
         assertThat(lexemeSet).size().isEqualTo(1);
         Lexeme lexeme = lexemeSet.toArray(new Lexeme[]{})[0];
         assertThat(lexeme.getForms()).size().isEqualTo(3);
@@ -47,22 +54,21 @@ public class LexemeFromEkiLexServiceTest {
     }
 
     @Test
-    public void testNounDoubleParadigm() {
-        List<Lexeme> lexemeSet = lexemeFromEkiLexService.buildLexemesFromEkiLexParadigms("koer", PartOfSpeechEnum.NOUN);
-        assertThat(lexemeSet).size().isEqualTo(1);
-        Lexeme lexeme = lexemeSet.toArray(new Lexeme[]{})[0];
-        assertThat(lexeme.getForms()).size().isEqualTo(4);
-        assertThat(lexeme.getForms()).areAtLeast(2, new Condition<>(getFormDeclinationTypePredicate("22,23"), " has all necessary declinations"));
-        assertThat(lexeme.getForms()).areAtLeastOne(new Condition<>(getFormDeclinationTypePredicate("22"), " has declination 22"));
-        assertThat(lexeme.getForms()).areAtLeastOne(new Condition<>(getFormDeclinationTypePredicate("23"), " has declination 23"));
+    public void testDoubleParadigm() {
+        List<Lexeme> lexemeSet = lexemeFromEkiLexService.buildLexemesFromEkiLexDetails("koer");
+        assertThat(lexemeSet).size().isEqualTo(2);
+        assertThat(lexemeSet).areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("noun")));
+        assertThat(lexemeSet).areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("adjective")));
+        for (Lexeme lexeme : lexemeSet) {
+            assertThat(lexeme.getForms()).size().isEqualTo(4);
+            assertThat(lexeme.getForms()).areAtLeast(2, new Condition<>(getFormDeclinationTypePredicate("22,23"), " has all necessary declinations"));
+            assertThat(lexeme.getForms()).areAtLeastOne(new Condition<>(getFormDeclinationTypePredicate("22"), " has declination 22"));
+            assertThat(lexeme.getForms()).areAtLeastOne(new Condition<>(getFormDeclinationTypePredicate("23"), " has declination 23"));
+        }
     }
 
-    @Test
-    public void testNounHomonyms() {
-        List<Lexeme> lexemeSet = lexemeFromEkiLexService.buildLexemesFromEkiLexParadigms("minema", PartOfSpeechEnum.NOUN);
-        assertThat(lexemeSet).size().isEqualTo(2);
-        assertThat(lexemeSet).allMatch(lexeme -> lexeme.getForms().size() == 2);
-
+    private <T> Condition<? super T> lc(Predicate<T> predicate, Object... args) {
+        return new Condition<>(predicate, "my condition", args);
     }
 
     private Predicate<Form> getFormDeclinationTypePredicate(String declinationType) {
