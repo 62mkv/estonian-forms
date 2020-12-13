@@ -86,6 +86,8 @@ public class EkiLexRetrievalService {
 
     private void saveEkiLexParadigm(EkilexWord word, DetailsParadigmDto paradigmDto) {
         EkilexParadigm paradigm = new EkilexParadigm();
+        paradigm.setWord(word);
+        paradigm.setInflectionType(paradigmDto.getInflectionTypeNr());
         paradigmRepository.save(paradigm);
         for (FormDto formDto : paradigmDto.getForms()) {
             saveEkiLexForm(paradigm, formDto);
@@ -98,6 +100,7 @@ public class EkiLexRetrievalService {
         form.setRepresentation(getRepresentation(formDto.getValue()));
         form.setFormTypeCombination(getFormTypeCombination(formDto.getMorphCode()));
         ekilexFormRepository.save(form);
+        paradigm.getForms().add(form);
     }
 
     private FormTypeCombination getFormTypeCombination(String morphCode) {

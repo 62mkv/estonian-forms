@@ -1,8 +1,12 @@
 package ee.mkv.estonian.ekilex;
 
+import ee.mkv.estonian.domain.EkilexLexeme;
+import ee.mkv.estonian.domain.EkilexParadigm;
 import ee.mkv.estonian.domain.EkilexWord;
+import ee.mkv.estonian.domain.PartOfSpeech;
 import ee.mkv.estonian.ekilex.dto.*;
 import ee.mkv.estonian.repository.*;
+import org.assertj.core.api.Condition;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,10 +62,39 @@ public class EkiLexRetrievalServiceTest {
 
     @Test
     public void testKoer() {
-        given(this.ekiLexClient.findWords("koer")).willReturn(Collections.singleton(1L));
-        given(this.ekiLexClient.getDetails(1L)).willReturn(getKoerDetailsDto());
+        final long wordId = 1L;
+        given(this.ekiLexClient.findWords("koer")).willReturn(Collections.singleton(wordId));
+        given(this.ekiLexClient.getDetails(wordId)).willReturn(getKoerDetailsDto());
         final List<EkilexWord> ekilexWords = sut.retrieveByLemma("koer", false);
         assertThat(ekilexWords).hasSize(1);
+
+        Iterable<EkilexParadigm> paradigms = paradigmRepository.findAllByWordId(wordId);
+        assertThat(paradigms)
+                .hasSize(3)
+                .allMatch(ekilexParadigm -> ekilexParadigm.getForms().size() == 3);
+
+        Iterable<EkilexLexeme> lexemes = lexemeRepository.findAllByWordId(wordId);
+        assertThat(lexemes)
+                .hasSize(2)
+                .areAtLeastOne(new Condition<>(ekilexLexeme -> hasPos(ekilexLexeme, "Noun"), "has Noun POS"))
+                .areAtLeastOne(new Condition<>(ekilexLexeme -> hasPos(ekilexLexeme, "Adjective"), "has Adjective POS"));
+    }
+
+    private boolean hasPos(EkilexLexeme ekilexLexeme, String posName) {
+        return ekilexLexeme
+                .getPos()
+                .stream()
+                .map(PartOfSpeech::getPartOfSpeech)
+                .collect(Collectors.toSet())
+                .contains(posName);
+    }
+
+    private <T> Collection<T> fromIterable(Iterable<T> iterable) {
+        List<T> collection = new ArrayList<>();
+        for (T item : iterable) {
+            collection.add(item);
+        }
+        return collection;
     }
 
     private DetailsDto getKoerDetailsDto() {

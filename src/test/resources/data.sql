@@ -1,11 +1,5 @@
 INSERT INTO FORM_TYPE_COMBINATIONS(id, eki_representation)
-VALUES (1,' SgN'),(2,'SgG'),('3','SgP');
-
-INSERT INTO PARTS_OF_SPEECH(id, part_of_speech, eki_codes)
-VALUES (1, 'Noun', 'GS');
-
-INSERT INTO PARTS_OF_SPEECH(id, part_of_speech, eki_codes)
-VALUES (2, 'Adjective', 'AH');
+VALUES (1,'SgN'),(2,'SgG'),('3','SgP');
 
 INSERT INTO REPRESENTATIONS(id, representation) VALUES (1, 'ema');
 

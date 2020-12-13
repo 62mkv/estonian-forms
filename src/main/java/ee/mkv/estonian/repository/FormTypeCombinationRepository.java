@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface FormTypeCombinationRepository extends CrudRepository<FormTypeCombination, Long> {
-    Optional<FormTypeCombination> findByEkiRepresentation(String ekirRepresentation);
+    Optional<FormTypeCombination> findByEkiRepresentation(String ekiRepresentation);
 }
