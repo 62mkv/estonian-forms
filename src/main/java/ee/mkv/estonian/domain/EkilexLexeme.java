@@ -3,7 +3,7 @@ package ee.mkv.estonian.domain;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -23,5 +23,5 @@ public class EkilexLexeme {
             joinColumns = {@JoinColumn(name = "ekilex_lexeme_id")},
             inverseJoinColumns = {@JoinColumn(name = "part_of_speech_id")}
     )
-    List<PartOfSpeech> pos;
+    Set<PartOfSpeech> pos;
 }

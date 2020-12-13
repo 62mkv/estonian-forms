@@ -1,6 +1,6 @@
 package ee.mkv.estonian.command;
 
-import ee.mkv.estonian.ekilex.EkiLexRetrievalService;
+import ee.mkv.estonian.ekilex.EkiLexClient;
 import ee.mkv.estonian.ekilex.dto.DetailsDto;
 import ee.mkv.estonian.ekilex.dto.DetailsLexemeDto;
 import ee.mkv.estonian.ekilex.dto.DetailsParadigmDto;
@@ -17,20 +17,20 @@ import java.util.Objects;
 @CommandLine.Command(name = "ekilex")
 @Slf4j
 public class EkiLexCommand implements Runnable {
-    private final EkiLexRetrievalService ekiLexRetrievalService;
+    private final EkiLexClient ekiLexClient;
     @CommandLine.Option(names = {"-l", "--lemma-list"})
     private String lemma;
     @CommandLine.Option(names = {"-p", "--partOfSpeech"})
     private String partOfSpeech;
 
-    public EkiLexCommand(EkiLexRetrievalService ekiLexRetrievalService) {
-        this.ekiLexRetrievalService = ekiLexRetrievalService;
+    public EkiLexCommand(EkiLexClient ekiLexClient) {
+        this.ekiLexClient = ekiLexClient;
     }
 
     @Override
     public void run() {
-        for (Long id : ekiLexRetrievalService.findWords(lemma)) {
-            DetailsDto detailsDto = ekiLexRetrievalService.getDetails(id);
+        for (Long id : ekiLexClient.findWords(lemma)) {
+            DetailsDto detailsDto = ekiLexClient.getDetails(id);
 
             final Long wordId = detailsDto.getWord().getWordId();
             final List<DetailsParadigmDto> paradigms = wrapSafe(detailsDto.getParadigms());

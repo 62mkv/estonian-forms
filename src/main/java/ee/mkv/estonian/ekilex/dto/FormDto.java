@@ -6,10 +6,6 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FormDto {
-    private String mode;
-    private String morphGroup1;
-    private String morphGroup2;
-    private String morphGroup3;
     private String morphCode;
     private boolean morphExists;
     private String value;
