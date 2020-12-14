@@ -10,5 +10,6 @@
     <include file="changelogs/006-add-declination_type_per_article.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/007-add-unique-index-for-word-forms.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/008-add-lexemes.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/009-add-ekilex.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
 

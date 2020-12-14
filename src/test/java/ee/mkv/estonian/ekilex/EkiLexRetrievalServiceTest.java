@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.*;
@@ -61,6 +62,7 @@ public class EkiLexRetrievalServiceTest {
     }
 
     @Test
+    @Sql("classpath:sql/retrieval-koer.sql")
     public void testKoer() {
         final long wordId = 1L;
         given(this.ekiLexClient.findWords("koer")).willReturn(Collections.singleton(wordId));
@@ -112,7 +114,7 @@ public class EkiLexRetrievalServiceTest {
     private Map<String, String> getParadigmAsMap(String... values) {
         Map<String, String> result = new HashMap<>();
 
-        Integer i = 0;
+        int i = 0;
         for (String value : values) {
             if (i < FORM_TYPE_CODES.length) {
                 result.put(FORM_TYPE_CODES[i], value);
@@ -137,10 +139,10 @@ public class EkiLexRetrievalServiceTest {
     private List<DetailsParadigmDto> getParadigmDtoList(List<Map<String, String>> paradigms) {
         List<DetailsParadigmDto> result = new ArrayList<>();
 
-        Integer i = 1;
+        int i = 1;
         for (Map<String, String> paradigm : paradigms) {
             DetailsParadigmDto paradigmDto = new DetailsParadigmDto();
-            paradigmDto.setParadigmId(Long.valueOf(i));
+            paradigmDto.setParadigmId((long) i);
             paradigmDto.setInflectionTypeNr("22");
             paradigmDto.setForms(getFormDtoList(paradigm));
             result.add(paradigmDto);
@@ -162,10 +164,10 @@ public class EkiLexRetrievalServiceTest {
 
     private List<DetailsLexemeDto> getLexemeDtoList(Long wordId, List<String> partsOfSpeech) {
         List<DetailsLexemeDto> result = new ArrayList<>();
-        Integer i = 1;
+        int i = 1;
         for (String code : partsOfSpeech) {
             DetailsLexemeDto lexemeDto = new DetailsLexemeDto();
-            lexemeDto.setLexemeId(Long.valueOf(i++));
+            lexemeDto.setLexemeId((long) i++);
             lexemeDto.setWordId(wordId);
             lexemeDto.setPos(getClassifierDtos(code));
             result.add(lexemeDto);
