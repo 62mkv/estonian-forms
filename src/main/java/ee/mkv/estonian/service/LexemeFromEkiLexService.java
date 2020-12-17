@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LexemeFromEkiLexService {
 
+    private final EkilexWordRepository wordRepository;
     private final EkilexParadigmRepository paradigmRepository;
     private final EkilexLexemeRepository ekilexLexemeRepository;
-    private final EkilexWordRepository wordRepository;
 
     public LexemeFromEkiLexService(EkilexParadigmRepository paradigmRepository, EkilexLexemeRepository ekilexLexemeRepository, EkilexWordRepository wordRepository) {
         this.paradigmRepository = paradigmRepository;

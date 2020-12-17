@@ -8,14 +8,14 @@ import ee.mkv.estonian.error.NotImplementedException;
 import ee.mkv.estonian.error.PartOfSpeechNotFoundException;
 import ee.mkv.estonian.model.PartOfSpeechEnum;
 import ee.mkv.estonian.repository.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.transaction.Transactional;
+import java.util.*;
 
 @Service
+@Slf4j
 public class EkiLexRetrievalService {
 
     private static final Long INITIAL_WORD_ID = 154_451L;
@@ -40,11 +40,11 @@ public class EkiLexRetrievalService {
         this.formTypeRepository = formTypeRepository;
     }
 
-    public EkilexWord retrieveByNextWordId(boolean forceOverwrite) {
-        Long lastRetrievedWordId = wordRepository.getLastRetrievedWordId().orElse(INITIAL_WORD_ID);
-        return retrieveById(lastRetrievedWordId, forceOverwrite);
+    public long getLastPersistedWordId() {
+        return wordRepository.getLastRetrievedWordId().orElse(INITIAL_WORD_ID);
     }
 
+    @Transactional
     public List<EkilexWord> retrieveByLemma(String lemma, boolean forceOverwrite) {
         List<EkilexWord> result = new ArrayList<>();
         for (Long wordId : ekiLexClient.findWords(lemma)) {
@@ -54,6 +54,7 @@ public class EkiLexRetrievalService {
         return result;
     }
 
+    @Transactional
     public EkilexWord retrieveById(Long wordId, boolean forceOverwrite) {
 
         if (wordRepository.existsById(wordId)) {
@@ -68,12 +69,18 @@ public class EkiLexRetrievalService {
 
         EkilexWord word = getEkilexWord(detailsDto.getWord());
 
+        List<EkilexLexeme> myLexemes = new ArrayList<>();
         for (DetailsLexemeDto lexemeDto : detailsDto.getLexemes()) {
-            saveEkiLexLexeme(word, lexemeDto);
+            try {
+                myLexemes.add(saveEkiLexLexeme(word, lexemeDto));
+            } catch (Exception e) {
+                log.error("Error while saving a lexeme: {}", e.getMessage());
+            }
         }
 
+        List<EkilexParadigm> myParadigms = new ArrayList<>();
         for (DetailsParadigmDto paradigmDto : detailsDto.getParadigms()) {
-            saveEkiLexParadigm(word, paradigmDto);
+            myParadigms.add(saveEkiLexParadigm(word, paradigmDto));
         }
 
         return word;
@@ -90,14 +97,20 @@ public class EkiLexRetrievalService {
         return word;
     }
 
-    private void saveEkiLexParadigm(EkilexWord word, DetailsParadigmDto paradigmDto) {
+    private EkilexParadigm saveEkiLexParadigm(EkilexWord word, DetailsParadigmDto paradigmDto) {
         EkilexParadigm paradigm = new EkilexParadigm();
         paradigm.setWord(word);
         paradigm.setInflectionType(paradigmDto.getInflectionTypeNr());
-        paradigmRepository.save(paradigm);
+        final EkilexParadigm ekilexParadigm = paradigmRepository.save(paradigm);
         for (FormDto formDto : paradigmDto.getForms()) {
-            saveEkiLexForm(paradigm, formDto);
+            try {
+                saveEkiLexForm(paradigm, formDto);
+            } catch (Exception e) {
+                log.error("Error while saving form: {}", e.getMessage());
+            }
         }
+
+        return ekilexParadigm;
     }
 
     private void saveEkiLexForm(EkilexParadigm paradigm, FormDto formDto) {
@@ -114,14 +127,15 @@ public class EkiLexRetrievalService {
                 .orElseThrow(() -> new FormTypeCombinationNotFound(morphCode));
     }
 
-    private void saveEkiLexLexeme(EkilexWord word, DetailsLexemeDto lexemeDto) {
+    private EkilexLexeme saveEkiLexLexeme(EkilexWord word, DetailsLexemeDto lexemeDto) {
         EkilexLexeme lexeme = new EkilexLexeme();
         lexeme.setWord(word);
         lexeme.setPos(getPos(lexemeDto.getPos()));
-        lexemeRepository.save(lexeme);
+        return lexemeRepository.save(lexeme);
     }
 
     private Set<PartOfSpeech> getPos(List<DetailsClassifierDto> posList) {
+        Objects.requireNonNull(posList, "pos field must be defined");
         Set<PartOfSpeech> result = new HashSet<>();
         for (DetailsClassifierDto classifierDto : posList) {
             if (classifierDto.getName().equalsIgnoreCase("POS")) {
