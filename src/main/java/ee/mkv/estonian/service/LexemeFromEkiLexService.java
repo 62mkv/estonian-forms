@@ -6,6 +6,7 @@ import ee.mkv.estonian.error.WordNotFoundException;
 import ee.mkv.estonian.repository.EkilexLexemeRepository;
 import ee.mkv.estonian.repository.EkilexParadigmRepository;
 import ee.mkv.estonian.repository.EkilexWordRepository;
+import ee.mkv.estonian.repository.LexemeToEkilexMappingRepository;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,14 +21,16 @@ public class LexemeFromEkiLexService {
     private final EkilexWordRepository wordRepository;
     private final EkilexParadigmRepository paradigmRepository;
     private final EkilexLexemeRepository ekilexLexemeRepository;
+    private final LexemeToEkilexMappingRepository mappingRepository;
 
-    public LexemeFromEkiLexService(EkilexParadigmRepository paradigmRepository, EkilexLexemeRepository ekilexLexemeRepository, EkilexWordRepository wordRepository) {
+    public LexemeFromEkiLexService(EkilexParadigmRepository paradigmRepository, EkilexLexemeRepository ekilexLexemeRepository, EkilexWordRepository wordRepository, LexemeToEkilexMappingRepository mappingRepository) {
         this.paradigmRepository = paradigmRepository;
         this.ekilexLexemeRepository = ekilexLexemeRepository;
         this.wordRepository = wordRepository;
+        this.mappingRepository = mappingRepository;
     }
 
-    public List<Lexeme> buildLexemesFromEkiLexDetails(String lemma) {
+    public List<LexemeToEkiLexMapping> buildLexemesFromEkiLexDetails(String lemma) {
         return Streams.stream(wordRepository.findAllByBaseFormRepresentation(lemma))
                 .flatMap(word -> buildLexemesFromEkiLexWord(word.getId()).stream())
                 .collect(Collectors.toList());
@@ -39,8 +42,8 @@ public class LexemeFromEkiLexService {
      * @param wordId EkiLex wordId
      * @return set of lexemes, built based on existing EkiLex paradigms and forms
      */
-    private List<Lexeme> buildLexemesFromEkiLexWord(Long wordId) {
-        List<Lexeme> result = new ArrayList<>();
+    private List<LexemeToEkiLexMapping> buildLexemesFromEkiLexWord(Long wordId) {
+        List<LexemeToEkiLexMapping> result = new ArrayList<>();
 
         EkilexWord word = wordRepository.findById(wordId).orElseThrow(() -> new WordNotFoundException(wordId));
         Set<PartOfSpeech> distinctPosForWord = getPartsOfSpeechForEkilexWordId(wordId);
@@ -48,7 +51,7 @@ public class LexemeFromEkiLexService {
         List<EkilexParadigm> paradigmsForWord = getParadigmsForWordId(wordId);
 
         for (PartOfSpeech partOfSpeech : distinctPosForWord) {
-            result.add(lexemeFromParadigms(paradigmsForWord, word.getBaseForm(), partOfSpeech));
+            result.add(lexemeFromParadigms(paradigmsForWord, word, partOfSpeech));
         }
 
         return result;
@@ -66,13 +69,25 @@ public class LexemeFromEkiLexService {
                 .collect(Collectors.toSet());
     }
 
-    private Lexeme lexemeFromParadigms(List<EkilexParadigm> paradigms, Representation representation, PartOfSpeech partOfSpeech) {
-        Lexeme lexeme = new Lexeme();
+    private LexemeToEkiLexMapping lexemeFromParadigms(List<EkilexParadigm> paradigms, EkilexWord word, PartOfSpeech partOfSpeech) {
+        return mappingRepository.findByEkilexWordAndPartOfSpeech(word, partOfSpeech)
+                .orElseGet(() -> {
+                    Lexeme lexeme = new Lexeme();
 
-        lexeme.setLemma(representation);
-        lexeme.setPartOfSpeech(partOfSpeech);
-        lexeme.setForms(buildFormsFromParadigms(paradigms, lexeme));
-        return lexeme;
+                    lexeme.setLemma(word.getBaseForm());
+                    lexeme.setPartOfSpeech(partOfSpeech);
+                    lexeme.setForms(buildFormsFromParadigms(paradigms, lexeme));
+
+                    return createMappings(lexeme, word, partOfSpeech);
+                });
+    }
+
+    private LexemeToEkiLexMapping createMappings(Lexeme lexeme, EkilexWord word, PartOfSpeech partOfSpeech) {
+        LexemeToEkiLexMapping mapping = new LexemeToEkiLexMapping();
+        mapping.setLexeme(lexeme);
+        mapping.setEkilexWord(word);
+        mapping.setPartOfSpeech(partOfSpeech);
+        return mapping;
     }
 
     private Set<Form> buildFormsFromParadigms(List<EkilexParadigm> paradigms, Lexeme lexeme) {

@@ -11,5 +11,7 @@
     <include file="changelogs/007-add-unique-index-for-word-forms.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/008-add-lexemes.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/009-add-ekilex.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/010-add-ekilex-to-lexeme-mapping.xml" relativeToChangelogFile="true"/>
+
 </databaseChangeLog>
 
