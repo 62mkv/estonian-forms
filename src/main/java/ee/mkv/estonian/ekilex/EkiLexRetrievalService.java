@@ -18,7 +18,7 @@ import java.util.*;
 @Slf4j
 public class EkiLexRetrievalService {
 
-    private static final Long INITIAL_WORD_ID = 154_451L;
+    public static final Long INITIAL_WORD_ID = 154_451L;
     private final EkiLexClient ekiLexClient;
 
     private final RepresentationsRepository representationsRepository;
