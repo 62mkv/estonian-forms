@@ -44,10 +44,6 @@ public class WikidataUploader {
      * @return id of the newly created Lexeme
      */
     public String createLexemeWithForms(Lexeme lexeme) throws IOException, MediaWikiApiErrorException {
-        if (lexeme.getForms().isEmpty()) {
-            throw new RuntimeException("We'll not pollute Wikidata with empty lexemes!");
-        }
-
         final ItemIdValue lexicalCategory = createItemId(lexeme.getPartOfSpeech().getWikidataCode());
 
         LexemeDocument lexemeDocument = Datamodel.makeLexemeDocument(
