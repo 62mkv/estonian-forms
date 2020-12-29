@@ -47,7 +47,7 @@ public class WikiUploadService {
         log.info("Uploading lexeme {} with lemma {}", lexeme.getId(), lexeme.getLemma().getRepresentation());
         try {
             processLexeme(lexemeRepository.findById(lexeme.getId()).get());
-        } catch (MediaWikiApiErrorException | IOException e) {
+        } catch (Exception e) {
             log.error("Exception while processing lexeme {}/{}: {}", lexeme.getId(), lexeme.getLemma().getRepresentation(), e.getMessage(), e);
         }
     }
