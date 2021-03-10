@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface EkilexParadigmRepository extends CrudRepository<EkilexParadigm, Long> {
 
     Iterable<EkilexParadigm> findAllByWordId(Long id);
+
+    boolean existsByWordId(Long id);
 }

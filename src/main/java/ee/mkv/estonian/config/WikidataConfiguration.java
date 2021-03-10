@@ -1,6 +1,7 @@
 package ee.mkv.estonian.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 
 @Configuration
+@ConditionalOnProperty("wikidata.site")
 @EnableConfigurationProperties(WikidataProperties.class)
 @Slf4j
 public class WikidataConfiguration {

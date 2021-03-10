@@ -1,4 +1,4 @@
-package ee.mkv.estonian.command;
+package ee.mkv.estonian.command.ekilex;
 
 import ee.mkv.estonian.domain.EkilexWord;
 import ee.mkv.estonian.ekilex.EkiLexRetrievalService;

@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EkilexLexemeRepository extends CrudRepository<EkilexLexeme, Long> {
     Iterable<EkilexLexeme> findAllByWordId(Long wordId);
+
+    boolean existsByWordId(Long id);
 }
