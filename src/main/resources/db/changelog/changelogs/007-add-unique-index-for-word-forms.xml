@@ -1,0 +1,12 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="7" author="62mkv">
+        <createIndex tableName="WORD_FORMS" indexName="UNQ_WORD_FORMS" unique="true">
+            <column name="article_id"/>
+            <column name="declination_type"/>
+            <column name="form_type_combination_id"/>
+            <column name="word_representation_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
