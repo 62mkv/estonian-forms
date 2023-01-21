@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,8 @@ public class LexemeFromEkiLexService {
      * @param wordId EkiLex wordId
      * @return set of lexemes, built based on existing EkiLex paradigms and forms
      */
-    private List<LexemeToEkiLexMapping> buildLexemesFromEkiLexWord(Long wordId) {
+    @Transactional
+    public List<LexemeToEkiLexMapping> buildLexemesFromEkiLexWord(Long wordId) {
         List<LexemeToEkiLexMapping> result = new ArrayList<>();
 
         EkilexWord word = wordRepository.findById(wordId).orElseThrow(() -> new WordNotFoundException(wordId));

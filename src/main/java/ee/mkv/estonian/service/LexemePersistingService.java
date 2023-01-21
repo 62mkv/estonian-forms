@@ -9,6 +9,8 @@ import ee.mkv.estonian.repository.LexemeRepository;
 import ee.mkv.estonian.repository.LexemeToEkilexMappingRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class LexemePersistingService {
     private final LexemeRepository lexemeRepository;
@@ -21,6 +23,7 @@ public class LexemePersistingService {
         this.mappingRepository = mappingRepository;
     }
 
+    @Transactional
     public void save(LexemeToEkiLexMapping mapping) {
         final Lexeme lexeme = mapping.getLexeme();
         final PartOfSpeech partOfSpeech = lexeme.getPartOfSpeech();
