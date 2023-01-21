@@ -16,7 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import picocli.CommandLine;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @CommandLine.Command(name = "extract-rpl")
@@ -34,17 +38,36 @@ public class ExtractRootPluralCommand extends HelpAwarePicocliCommand {
     public ExitStatus call() throws Exception {
         this.formTypeCombination = formTypeCombinationRepository.findByEkiRepresentation("Rpl").orElseThrow();
 
-        final List<DiscrepancyProjection> nextCandidatesForRootPlural = ekilexParadigmRepository.findNextCandidatesForRootPlural()
-                .toList();
-        for (DiscrepancyProjection discrepancyProjection : nextCandidatesForRootPlural) {
-            String inflected = discrepancyProjection.getInflected();
-            Long paradigm = discrepancyProjection.getId();
-            log.info("Found paradigm {} with discrepancy {} ", paradigm, inflected);
+        while (true) {
+            Set<Long> uniqueParadigms = new HashSet<>();
+            final Set<DiscrepancyProjection> nextCandidatesForRootPlural = ekilexParadigmRepository.findNextCandidatesForRootPlural()
+                    .stream()
+                    .filter(p -> !uniqueParadigms.contains(p.getId()))
+                    .peek(p -> uniqueParadigms.add(p.getId()))
+                    .collect(Collectors.toSet());
 
-            var representation = addRepresentation(getRootFormFromInflected(inflected));
-            var newForm = newRootPluralForm(paradigm, representation);
+            if (nextCandidatesForRootPlural.isEmpty()) {
+                break;
+            }
 
-            log.info("Added new RPl form: paradigm {}, representation {}", newForm.getEkilexParadigm().getId(), newForm.getRepresentation().getRepresentation());
+            List<Long> ids = nextCandidatesForRootPlural.stream().map(DiscrepancyProjection::getId).collect(Collectors.toList());
+            var paradigms = ids.stream().collect(Collectors.toSet());
+
+            if (paradigms.size() < ids.size()) {
+                var map = ids.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+                log.error("Found duplicated paradigm in results: {}", map);
+                throw new RuntimeException("Found duplicated paradigm in results");
+            }
+            for (DiscrepancyProjection discrepancyProjection : nextCandidatesForRootPlural) {
+                String inflected = discrepancyProjection.getInflected();
+                Long paradigm = discrepancyProjection.getId();
+                log.info("Found paradigm {} with discrepancy {} ", paradigm, inflected);
+
+                var representation = addRepresentation(getRootFormFromInflected(inflected));
+                var newForm = newRootPluralForm(paradigm, representation);
+
+                log.info("Added new RPl form: paradigm {}, representation {}", newForm.getEkilexParadigm().getId(), newForm.getRepresentation().getRepresentation());
+            }
         }
 
         return ExitStatus.OK;

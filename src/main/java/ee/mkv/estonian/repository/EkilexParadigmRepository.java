@@ -41,7 +41,7 @@ public interface EkilexParadigmRepository extends CrudRepository<EkilexParadigm,
             ")\n" +
             "select ep.*, d.inflected from discrepancies d\n" +
             "join ekilex_paradigms ep on d.id = ep.id\n" +
-            "where not exists (select 1 from rootplural where id = d.id)\n" +
-            "limit 10", nativeQuery = true)
+            "where not exists (select 1 from rootplural rp where ep.id = rp.id)\n" +
+            "limit 100", nativeQuery = true)
     Streamable<DiscrepancyProjection> findNextCandidatesForRootPlural();
 }
