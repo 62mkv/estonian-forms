@@ -1,0 +1,14 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="5" author="62mkv">
+        <createTable tableName="WORD_FORMS_PART_OF_SPEECH">
+            <column name="form_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="FK_TO_WORD_FORMS" referencedTableName="word_forms" referencedColumnNames="id" deleteCascade="true"/>
+            </column>
+            <column name="part_of_speech_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="FK_TO_PARTS_OF_SPEECH" referencedTableName="parts_of_speech" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

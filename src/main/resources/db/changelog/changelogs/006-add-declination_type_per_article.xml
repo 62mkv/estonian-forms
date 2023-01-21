@@ -1,0 +1,19 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="6" author="62mkv">
+        <createTable tableName="ARTICLE_DECLINATION_TYPES">
+            <column name="article_id" type="bigint">
+                <constraints nullable="false" deleteCascade="true" foreignKeyName="FK_ARTICLES" referencedTableName="ARTICLE" referencedColumnNames="id"/>
+            </column>
+            <column name="declination_type" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="ARTICLE_DECLINATION_TYPES" indexName="UNQ_DECLINATION_TYPE_PER_ARTICLE" unique="true">
+            <column name="article_id"/>
+            <column name="declination_type"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

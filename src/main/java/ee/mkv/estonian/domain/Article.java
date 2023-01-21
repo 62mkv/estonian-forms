@@ -1,10 +1,10 @@
 package ee.mkv.estonian.domain;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,4 +29,9 @@ public class Article {
 
     @OneToMany(mappedBy = "article")
     Set<Form> forms;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ARTICLE_DECLINATION_TYPES", joinColumns = @JoinColumn(name = "article_id"))
+    @Column(name = "declination_type")
+    Set<Integer> declinationTypes = new HashSet<>();
 }
