@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EkilexParadigmRepository extends CrudRepository<EkilexParadigm, Long> {
 
-    Iterable<EkilexParadigm> findByBaseFormRepresentationAndPartOfSpeechPartOfSpeech(String representation, String partOfSpeech);
+    Iterable<EkilexParadigm> findAllByWordId(Long id);
 }

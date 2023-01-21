@@ -1,7 +1,6 @@
 package ee.mkv.estonian.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -17,12 +16,10 @@ public class EkilexForm {
 
     @ManyToOne
     @JoinColumn(name = "paradigm_id")
-    @EqualsAndHashCode.Exclude
     EkilexParadigm ekilexParadigm;
 
     @ManyToOne
     @JoinColumn(name = "form_type_combination_id")
-    @EqualsAndHashCode.Exclude
     FormTypeCombination formTypeCombination;
 
     @ManyToOne

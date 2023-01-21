@@ -1,6 +1,7 @@
 package ee.mkv.estonian.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -16,21 +17,13 @@ public class EkilexParadigm {
     Long id;
 
     @ManyToOne
-    @JoinColumn(name = "word_representation_id")
-    Representation baseForm;
+    @JoinColumn(name = "word_id")
+    EkilexWord word;
 
-    @ManyToOne
-    @JoinColumn(name = "part_of_speech_id")
-    PartOfSpeech partOfSpeech;
-
-    @ManyToOne
-    @JoinColumn(name = "lexeme_id")
-    Lexeme lexeme;
-
-    private Long wordId;
     private String inflectionType;
     private Boolean secondary;
 
     @OneToMany(mappedBy = "ekilexParadigm")
+    @EqualsAndHashCode.Exclude
     private List<EkilexForm> forms;
 }
