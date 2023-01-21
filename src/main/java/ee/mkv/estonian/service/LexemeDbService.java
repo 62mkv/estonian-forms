@@ -2,6 +2,7 @@ package ee.mkv.estonian.service;
 
 import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.repository.*;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -94,15 +95,37 @@ public class LexemeDbService {
 
     private Set<Form> createFormsForLexeme(Lexeme lexeme, Article article) {
         Set<Form> forms = new HashSet<>();
+        Map<FormForLexeme, Set<ArticleForm>> formDict = new HashMap<>();
+
         for (ArticleForm articleForm : article.getForms()) {
+
+            final FormForLexeme key = FormForLexeme.fromArticleForm(articleForm);
+            if (formDict.containsKey(key)) {
+                formDict.get(key).add(articleForm);
+            } else {
+                Set<ArticleForm> formsForKey = new HashSet<>();
+                formsForKey.add(articleForm);
+                formDict.put(key, formsForKey);
+            }
+        }
+
+        for (FormForLexeme key : formDict.keySet()) {
             Form form = new Form();
-            form.setDeclinationType(articleForm.getDeclinationType());
+            List<ArticleForm> articleForms = new ArrayList<>(formDict.get(key));
+            ArticleForm articleForm = articleForms.get(0);
             form.setFormTypeCombination(articleForm.getFormTypeCombination());
             form.setRepresentation(articleForm.getRepresentation());
-            form.setStemLength(articleForm.getStemLength());
+
+            String declinationTypes = articleForms.stream()
+                    .map(ArticleForm::getDeclinationType)
+                    .map(i -> Integer.toString(i))
+                    .collect(Collectors.joining(","));
+
+            form.setDeclinationTypes(declinationTypes);
             form.setLexeme(lexeme);
-            formRepository.save(form);
-            forms.add(form);
+            if (forms.add(form)) {
+                formRepository.save(form);
+            }
         }
         return forms;
     }
@@ -110,5 +133,18 @@ public class LexemeDbService {
     public void updateWikidataIdOnLexeme(Lexeme lexeme, String id) {
         lexeme.setWikidataId(id);
         lexemeRepository.save(lexeme);
+    }
+
+    @Data
+    static class FormForLexeme {
+        private final String representation;
+        private final String features;
+
+        static FormForLexeme fromArticleForm(ArticleForm articleForm) {
+            return new FormForLexeme(
+                    articleForm.getRepresentation().getRepresentation(),
+                    articleForm.getFormTypeCombination().getEkiRepresentation()
+            );
+        }
     }
 }

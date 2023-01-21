@@ -1,8 +1,10 @@
 spring:
+  jpa.hibernate.ddl-auto: none
   datasource:
     url:
     username: estonian
     password:
   liquibase:
     changelog: db/changelog/master.xml
-
+ekilex:
+  uri: https://ekilex.ee

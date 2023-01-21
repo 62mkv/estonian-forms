@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
 
     <changeSet id="8" author="62mkv">
         <createTable tableName="LEXEMES">
@@ -65,5 +65,44 @@
             ADD COLUMN lexeme_id int
             REFERENCES LEXEMES(id) ON DELETE CASCADE
         </sql>
+    </changeSet>
+
+    <changeSet id="8-3" author="62mkv">
+        <comment>Trying to fix ON DELETE CASCADE on ARTICLES to LEXEMES</comment>
+        <sql dbms="sqlite">
+            CREATE TABLE ARTICLES_temporary (
+            id INTEGER CONSTRAINT PK_ARTICLES PRIMARY KEY AUTOINCREMENT NOT NULL,
+            uuid TEXT NOT NULL,
+            word_representation_id INTEGER,
+            part_of_speech_id INTEGER,
+            FORM_FINGERPRINT TEXT,
+            lexeme_id int,
+            CONSTRAINT FK_LEXEME_ARTICLE FOREIGN KEY (lexeme_id) REFERENCES LEXEMES(id) ON DELETE SET NULL ON UPDATE SET
+            NULL,
+            CONSTRAINT FK_ARTICLE_REPRESENTATION FOREIGN KEY (word_representation_id) REFERENCES REPRESENTATIONS(id),
+            CONSTRAINT FK_ARTICLE_PARTOFSPEECH FOREIGN KEY (part_of_speech_id) REFERENCES PARTS_OF_SPEECH(id)
+            );
+
+            INSERT INTO ARTICLES_temporary (id, uuid, word_representation_id, part_of_speech_id, form_fingerprint,
+            lexeme_id)
+            SELECT id, uuid, word_representation_id, part_of_speech_id, form_fingerprint, lexeme_id FROM ARTICLES;
+
+            DROP TABLE ARTICLES;
+
+            ALTER TABLE ARTICLES_temporary RENAME TO ARTICLES;
+        </sql>
+    </changeSet>
+
+    <changeSet id="8-4" author="62mkv">
+        <createIndex tableName="LEXEME_FORMS" indexName="UNQ_LEXEME_FORMS_CONTENT" unique="true">
+            <column name="lexeme_id"/>
+            <column name="representation_id"/>
+            <column name="form_type_combination_id"/>
+        </createIndex>
+        <dropColumn tableName="LEXEME_FORMS" columnName="declination_type"/>
+        <dropColumn tableName="LEXEME_FORMS" columnName="stem_length"/>
+        <addColumn tableName="LEXEME_FORMS">
+            <column name="declination_types" type="varchar(16)"></column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

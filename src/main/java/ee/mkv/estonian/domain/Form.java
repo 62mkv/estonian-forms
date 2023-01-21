@@ -1,7 +1,6 @@
 package ee.mkv.estonian.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -27,10 +26,7 @@ public class Form {
 
     @ManyToOne
     @JoinColumn(name = "form_type_combination_id")
-    @EqualsAndHashCode.Exclude
     FormTypeCombination formTypeCombination;
 
-    Integer declinationType;
-
-    Integer stemLength;
+    String declinationTypes;
 }
