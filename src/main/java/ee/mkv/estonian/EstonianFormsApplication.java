@@ -17,6 +17,7 @@ public class EstonianFormsApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(EstonianFormsApplication.class, args);
+        System.exit(0);
     }
 
 }

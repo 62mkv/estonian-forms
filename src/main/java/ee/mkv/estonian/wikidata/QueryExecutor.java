@@ -3,19 +3,21 @@ package ee.mkv.estonian.wikidata;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.eclipse.rdf4j.http.client.RDF4JProtocolSession;
 import org.eclipse.rdf4j.query.Dataset;
 import org.eclipse.rdf4j.query.QueryLanguage;
 import org.eclipse.rdf4j.query.TupleQueryResult;
 import org.eclipse.rdf4j.query.impl.SimpleDataset;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
 
 @Component
-public class QueryExecutor {
+public class QueryExecutor implements DisposableBean {
     private static final String BASE_URI = "https://query.wikidata.org/sparql";
 
     private final HttpClient httpClient = HttpClients.custom()
@@ -36,5 +38,13 @@ public class QueryExecutor {
 
     public TupleQueryResult executeQuery(String query) throws IOException {
         return session.sendTupleQuery(QueryLanguage.SPARQL, query, BASE_URI, dataset, false, 10);
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("Query executor is closing");
+        session.close();
+        ((CloseableHttpClient) httpClient).close();
+        System.out.println("Query executor is closed");
     }
 }
