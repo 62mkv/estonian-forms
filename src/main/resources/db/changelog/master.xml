@@ -5,5 +5,7 @@
     <include file="changelogs/001.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/002-add-form-types.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/003-add-join-tables.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/004-add-unique-index-forms.xml" relativeToChangelogFile="true"/>
+
 </databaseChangeLog>
 

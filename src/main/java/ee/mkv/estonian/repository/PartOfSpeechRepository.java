@@ -6,11 +6,12 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PartOfSpeechRepository extends CrudRepository<PartOfSpeech, Long> {
     @Query("SELECT p from PartOfSpeech p where p.ekiCodes like CONCAT('%',:ekiRepresentation,'%')")
     List<PartOfSpeech> findByEkiRepresentation(String ekiRepresentation);
 
-    PartOfSpeech findByPartOfSpeech(String partOfSpeech);
+    Optional<PartOfSpeech> findByPartOfSpeech(String partOfSpeech);
 }
