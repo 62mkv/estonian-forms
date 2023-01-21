@@ -42,9 +42,7 @@ public class QueryExecutor implements DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-        System.out.println("Query executor is closing");
         session.close();
         ((CloseableHttpClient) httpClient).close();
-        System.out.println("Query executor is closed");
     }
 }

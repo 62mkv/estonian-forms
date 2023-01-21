@@ -27,17 +27,19 @@ public class LexemeDbService {
     }
 
     @Transactional
-    public List<Lexeme> getLexeme(String lemma, String partOfSpeech) {
-        return getLexeme(lemma, partOfSpeech, false)
+    public List<Lexeme> getLexemes(String lemma, String partOfSpeech) {
+        return getLexemes(lemma, partOfSpeech, false)
                 .stream()
                 .map(lexeme -> {
                     lexeme.getForms().size();
+                    lexeme.getForms()
+                            .forEach(form -> form.getFormTypeCombination().getFormTypes().forEach(formType -> form.getFormTypeCombination().getFormTypes()));
                     return lexeme;
                 })
                 .collect(Collectors.toList());
     }
 
-    private List<Lexeme> getLexeme(String lemma, String partOfSpeech, boolean recursive) {
+    private List<Lexeme> getLexemes(String lemma, String partOfSpeech, boolean recursive) {
         // try to find a lexeme in Db for our parameters
         final List<Lexeme> lexemeList = partOfSpeechRepository
                 .findByPartOfSpeech(partOfSpeech)
@@ -50,8 +52,10 @@ public class LexemeDbService {
             log.warn("Not found lexeme, will try to create them");
             return createLexemes(lemma, partOfSpeech);
         }
-        return lexemeList;
 
+        lexemeList.forEach(lexeme -> lexeme.getForms().forEach(form -> form.getFormTypeCombination()));
+
+        return lexemeList;
     }
 
     private List<Lexeme> createLexemes(String lemma, String partOfSpeech) {
@@ -72,8 +76,8 @@ public class LexemeDbService {
                 Lexeme lexeme = new Lexeme();
                 lexeme.setLemma(article.getBaseForm());
                 lexeme.setPartOfSpeech(partOfSpeech);
-                createFormsForLexeme(lexeme, article);
-                //lexeme.setForms();
+                ;
+                lexeme.setForms(createFormsForLexeme(lexeme, article));
                 Set<Article> articleSet = new HashSet<>();
                 articleSet.add(article);
                 lexeme.setArticles(articleSet);
@@ -90,7 +94,7 @@ public class LexemeDbService {
 
     private Set<Form> createFormsForLexeme(Lexeme lexeme, Article article) {
         Set<Form> forms = new HashSet<>();
-        for (ArticleForm articleForm: article.getForms()) {
+        for (ArticleForm articleForm : article.getForms()) {
             Form form = new Form();
             form.setDeclinationType(articleForm.getDeclinationType());
             form.setFormTypeCombination(articleForm.getFormTypeCombination());
@@ -103,4 +107,8 @@ public class LexemeDbService {
         return forms;
     }
 
+    public void updateWikidataIdOnLexeme(Lexeme lexeme, String id) {
+        lexeme.setWikidataId(id);
+        lexemeRepository.save(lexeme);
+    }
 }
