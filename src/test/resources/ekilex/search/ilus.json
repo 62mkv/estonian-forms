@@ -1,0 +1,37 @@
+{
+  "totalCount": 1,
+  "words": [
+    {
+      "wordId": 171855,
+      "wordValue": "ilus",
+      "wordValuePrese": "ilus",
+      "vocalForm": null,
+      "homonymNr": 1,
+      "lang": "est",
+      "wordClass": "noomen",
+      "genderCode": null,
+      "aspectCode": null,
+      "morphCode": null,
+      "displayMorphCode": null,
+      "wordTypeCodes": null,
+      "wordTypes": null,
+      "prefixoid": false,
+      "suffixoid": false,
+      "foreign": false,
+      "lexemesArePublic": null,
+      "lexemesValueStateCodes": [],
+      "lexemesTagNames": [],
+      "datasetCodes": [
+        "ety",
+        "gal",
+        "les",
+        "sss"
+      ],
+      "notes": null,
+      "relations": null,
+      "groups": null,
+      "etymology": null,
+      "odWordRecommendations": null
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-package ee.mkv.estonian.dto;
+package ee.mkv.estonian.ekilex.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

@@ -1,0 +1,1352 @@
+[
+  {
+    "wordId": 183007,
+    "example": null,
+    "inflectionTypeNr": "23",
+    "inflectionType": "23i",
+    "secondary": false,
+    "forms": [
+      {
+        "mode": "WORD",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "SgN",
+        "morphExists": true,
+        "value": "koer",
+        "valuePrese": "koer",
+        "components": [
+          "koer"
+        ],
+        "displayForm": "k`oer",
+        "vocalForm": null,
+        "audioFile": "h_10474.mp3",
+        "orderBy": 2
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "SgG",
+        "morphExists": true,
+        "value": "koera",
+        "valuePrese": "koera",
+        "components": [
+          "koera"
+        ],
+        "displayForm": "koera",
+        "vocalForm": null,
+        "audioFile": "h_10475.mp3",
+        "orderBy": 3
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "SgP",
+        "morphExists": true,
+        "value": "koera",
+        "valuePrese": "koera",
+        "components": [
+          "koera"
+        ],
+        "displayForm": "k`oera",
+        "vocalForm": null,
+        "audioFile": "h_10476.mp3",
+        "orderBy": 4
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAdt",
+        "morphExists": true,
+        "value": "koera",
+        "valuePrese": "koera",
+        "components": [
+          "koera"
+        ],
+        "displayForm": "k`oera",
+        "vocalForm": null,
+        "audioFile": "h_10476.mp3",
+        "orderBy": 5
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgIll",
+        "morphExists": true,
+        "value": "koerasse",
+        "valuePrese": "koerasse",
+        "components": [
+          "koerasse"
+        ],
+        "displayForm": "koera[sse",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 6
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgIn",
+        "morphExists": true,
+        "value": "koeras",
+        "valuePrese": "koeras",
+        "components": [
+          "koeras"
+        ],
+        "displayForm": "koera[s",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 7
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgEl",
+        "morphExists": true,
+        "value": "koerast",
+        "valuePrese": "koerast",
+        "components": [
+          "koerast"
+        ],
+        "displayForm": "koera[st",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 8
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAll",
+        "morphExists": true,
+        "value": "koerale",
+        "valuePrese": "koerale",
+        "components": [
+          "koerale"
+        ],
+        "displayForm": "koera[le",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 9
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAd",
+        "morphExists": true,
+        "value": "koeral",
+        "valuePrese": "koeral",
+        "components": [
+          "koeral"
+        ],
+        "displayForm": "koera[l",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 10
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAbl",
+        "morphExists": true,
+        "value": "koeralt",
+        "valuePrese": "koeralt",
+        "components": [
+          "koeralt"
+        ],
+        "displayForm": "koera[lt",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 11
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgTr",
+        "morphExists": true,
+        "value": "koeraks",
+        "valuePrese": "koeraks",
+        "components": [
+          "koeraks"
+        ],
+        "displayForm": "koera[ks",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 12
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgTer",
+        "morphExists": true,
+        "value": "koerani",
+        "valuePrese": "koerani",
+        "components": [
+          "koerani"
+        ],
+        "displayForm": "koera[ni",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 13
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgEs",
+        "morphExists": true,
+        "value": "koerana",
+        "valuePrese": "koerana",
+        "components": [
+          "koerana"
+        ],
+        "displayForm": "koera[na",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 14
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAb",
+        "morphExists": true,
+        "value": "koerata",
+        "valuePrese": "koerata",
+        "components": [
+          "koerata"
+        ],
+        "displayForm": "koera[ta",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 15
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgKom",
+        "morphExists": true,
+        "value": "koeraga",
+        "valuePrese": "koeraga",
+        "components": [
+          "koeraga"
+        ],
+        "displayForm": "koera[ga",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 16
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "PlN",
+        "morphExists": true,
+        "value": "koerad",
+        "valuePrese": "koerad",
+        "components": [
+          "koerad"
+        ],
+        "displayForm": "koera[d",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 17
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "PlG",
+        "morphExists": true,
+        "value": "koerte",
+        "valuePrese": "koerte",
+        "components": [
+          "koerte"
+        ],
+        "displayForm": "koer[te",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 18
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "PlP",
+        "morphExists": true,
+        "value": "koeri",
+        "valuePrese": "koeri",
+        "components": [
+          "koeri"
+        ],
+        "displayForm": "k`oeri",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 19
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "PlP",
+        "morphExists": true,
+        "value": "koerasid",
+        "valuePrese": "koerasid",
+        "components": [
+          "koerasid"
+        ],
+        "displayForm": "k`oera[sid",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 19
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlIll",
+        "morphExists": true,
+        "value": "koertesse",
+        "valuePrese": "koertesse",
+        "components": [
+          "koertesse"
+        ],
+        "displayForm": "koer[tesse",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 20
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlIll",
+        "morphExists": true,
+        "value": "koerisse",
+        "valuePrese": "koerisse",
+        "components": [
+          "koerisse"
+        ],
+        "displayForm": "koeri[sse",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 20
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlIn",
+        "morphExists": true,
+        "value": "koertes",
+        "valuePrese": "koertes",
+        "components": [
+          "koertes"
+        ],
+        "displayForm": "koer[tes",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 21
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlIn",
+        "morphExists": true,
+        "value": "koeris",
+        "valuePrese": "koeris",
+        "components": [
+          "koeris"
+        ],
+        "displayForm": "koeri[s",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 21
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlEl",
+        "morphExists": true,
+        "value": "koertest",
+        "valuePrese": "koertest",
+        "components": [
+          "koertest"
+        ],
+        "displayForm": "koer[test",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 22
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlEl",
+        "morphExists": true,
+        "value": "koerist",
+        "valuePrese": "koerist",
+        "components": [
+          "koerist"
+        ],
+        "displayForm": "koeri[st",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 22
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlAll",
+        "morphExists": true,
+        "value": "koertele",
+        "valuePrese": "koertele",
+        "components": [
+          "koertele"
+        ],
+        "displayForm": "koer[tele",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 23
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlAll",
+        "morphExists": true,
+        "value": "koerile",
+        "valuePrese": "koerile",
+        "components": [
+          "koerile"
+        ],
+        "displayForm": "koeri[le",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 23
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlAd",
+        "morphExists": true,
+        "value": "koertel",
+        "valuePrese": "koertel",
+        "components": [
+          "koertel"
+        ],
+        "displayForm": "koer[tel",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 24
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlAd",
+        "morphExists": true,
+        "value": "koeril",
+        "valuePrese": "koeril",
+        "components": [
+          "koeril"
+        ],
+        "displayForm": "koeri[l",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 24
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlAbl",
+        "morphExists": true,
+        "value": "koertelt",
+        "valuePrese": "koertelt",
+        "components": [
+          "koertelt"
+        ],
+        "displayForm": "koer[telt",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 25
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlAbl",
+        "morphExists": true,
+        "value": "koerilt",
+        "valuePrese": "koerilt",
+        "components": [
+          "koerilt"
+        ],
+        "displayForm": "koeri[lt",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 25
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlTr",
+        "morphExists": true,
+        "value": "koerteks",
+        "valuePrese": "koerteks",
+        "components": [
+          "koerteks"
+        ],
+        "displayForm": "koer[teks",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 26
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlTr",
+        "morphExists": true,
+        "value": "koeriks",
+        "valuePrese": "koeriks",
+        "components": [
+          "koeriks"
+        ],
+        "displayForm": "koeri[ks",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 26
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlTer",
+        "morphExists": true,
+        "value": "koerteni",
+        "valuePrese": "koerteni",
+        "components": [
+          "koerteni"
+        ],
+        "displayForm": "koer[teni",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 27
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlEs",
+        "morphExists": true,
+        "value": "koertena",
+        "valuePrese": "koertena",
+        "components": [
+          "koertena"
+        ],
+        "displayForm": "koer[tena",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 28
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlAb",
+        "morphExists": true,
+        "value": "koerteta",
+        "valuePrese": "koerteta",
+        "components": [
+          "koerteta"
+        ],
+        "displayForm": "koer[teta",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 29
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlKom",
+        "morphExists": true,
+        "value": "koertega",
+        "valuePrese": "koertega",
+        "components": [
+          "koertega"
+        ],
+        "displayForm": "koer[tega",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 30
+      }
+    ]
+  },
+  {
+    "wordId": 183007,
+    "example": null,
+    "inflectionTypeNr": "22",
+    "inflectionType": "(22i)",
+    "secondary": false,
+    "forms": [
+      {
+        "mode": "WORD",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "SgN",
+        "morphExists": true,
+        "value": "koer",
+        "valuePrese": "koer",
+        "components": [
+          "koer"
+        ],
+        "displayForm": "k`oer",
+        "vocalForm": null,
+        "audioFile": "h_10474.mp3",
+        "orderBy": 2
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "SgG",
+        "morphExists": true,
+        "value": "koera",
+        "valuePrese": "koera",
+        "components": [
+          "koera"
+        ],
+        "displayForm": "koera",
+        "vocalForm": null,
+        "audioFile": "h_10475.mp3",
+        "orderBy": 3
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "SgP",
+        "morphExists": true,
+        "value": "koera",
+        "valuePrese": "koera",
+        "components": [
+          "koera"
+        ],
+        "displayForm": "k`oera",
+        "vocalForm": null,
+        "audioFile": "h_10476.mp3",
+        "orderBy": 4
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAdt",
+        "morphExists": true,
+        "value": "koera",
+        "valuePrese": "koera",
+        "components": [
+          "koera"
+        ],
+        "displayForm": "k`oera",
+        "vocalForm": null,
+        "audioFile": "h_10476.mp3",
+        "orderBy": 5
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgIll",
+        "morphExists": true,
+        "value": "koerasse",
+        "valuePrese": "koerasse",
+        "components": [
+          "koerasse"
+        ],
+        "displayForm": "koera[sse",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 6
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgIn",
+        "morphExists": true,
+        "value": "koeras",
+        "valuePrese": "koeras",
+        "components": [
+          "koeras"
+        ],
+        "displayForm": "koera[s",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 7
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgEl",
+        "morphExists": true,
+        "value": "koerast",
+        "valuePrese": "koerast",
+        "components": [
+          "koerast"
+        ],
+        "displayForm": "koera[st",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 8
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAll",
+        "morphExists": true,
+        "value": "koerale",
+        "valuePrese": "koerale",
+        "components": [
+          "koerale"
+        ],
+        "displayForm": "koera[le",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 9
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAd",
+        "morphExists": true,
+        "value": "koeral",
+        "valuePrese": "koeral",
+        "components": [
+          "koeral"
+        ],
+        "displayForm": "koera[l",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 10
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAbl",
+        "morphExists": true,
+        "value": "koeralt",
+        "valuePrese": "koeralt",
+        "components": [
+          "koeralt"
+        ],
+        "displayForm": "koera[lt",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 11
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgTr",
+        "morphExists": true,
+        "value": "koeraks",
+        "valuePrese": "koeraks",
+        "components": [
+          "koeraks"
+        ],
+        "displayForm": "koera[ks",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 12
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgTer",
+        "morphExists": true,
+        "value": "koerani",
+        "valuePrese": "koerani",
+        "components": [
+          "koerani"
+        ],
+        "displayForm": "koera[ni",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 13
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgEs",
+        "morphExists": true,
+        "value": "koerana",
+        "valuePrese": "koerana",
+        "components": [
+          "koerana"
+        ],
+        "displayForm": "koera[na",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 14
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgAb",
+        "morphExists": true,
+        "value": "koerata",
+        "valuePrese": "koerata",
+        "components": [
+          "koerata"
+        ],
+        "displayForm": "koera[ta",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 15
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "ainsus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "SgKom",
+        "morphExists": true,
+        "value": "koeraga",
+        "valuePrese": "koeraga",
+        "components": [
+          "koeraga"
+        ],
+        "displayForm": "koera[ga",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 16
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "PlN",
+        "morphExists": true,
+        "value": "koerad",
+        "valuePrese": "koerad",
+        "components": [
+          "koerad"
+        ],
+        "displayForm": "koera[d",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 17
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "PlG",
+        "morphExists": true,
+        "value": "koerade",
+        "valuePrese": "koerade",
+        "components": [
+          "koerade"
+        ],
+        "displayForm": "k`oera[de",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 18
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "PlP",
+        "morphExists": true,
+        "value": "koeri",
+        "valuePrese": "koeri",
+        "components": [
+          "koeri"
+        ],
+        "displayForm": "k`oeri",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 19
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 1,
+        "morphCode": "PlP",
+        "morphExists": true,
+        "value": "koerasid",
+        "valuePrese": "koerasid",
+        "components": [
+          "koerasid"
+        ],
+        "displayForm": "k`oera[sid",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 19
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlIll",
+        "morphExists": true,
+        "value": "koeradesse",
+        "valuePrese": "koeradesse",
+        "components": [
+          "koeradesse"
+        ],
+        "displayForm": "k`oera[desse",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 20
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlIll",
+        "morphExists": true,
+        "value": "koerisse",
+        "valuePrese": "koerisse",
+        "components": [
+          "koerisse"
+        ],
+        "displayForm": "koeri[sse",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 20
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlIn",
+        "morphExists": true,
+        "value": "koerades",
+        "valuePrese": "koerades",
+        "components": [
+          "koerades"
+        ],
+        "displayForm": "k`oera[des",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 21
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlIn",
+        "morphExists": true,
+        "value": "koeris",
+        "valuePrese": "koeris",
+        "components": [
+          "koeris"
+        ],
+        "displayForm": "koeri[s",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 21
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlEl",
+        "morphExists": true,
+        "value": "koeradest",
+        "valuePrese": "koeradest",
+        "components": [
+          "koeradest"
+        ],
+        "displayForm": "k`oera[dest",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 22
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlEl",
+        "morphExists": true,
+        "value": "koerist",
+        "valuePrese": "koerist",
+        "components": [
+          "koerist"
+        ],
+        "displayForm": "koeri[st",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 22
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlAll",
+        "morphExists": true,
+        "value": "koeradele",
+        "valuePrese": "koeradele",
+        "components": [
+          "koeradele"
+        ],
+        "displayForm": "k`oera[dele",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 23
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlAll",
+        "morphExists": true,
+        "value": "koerile",
+        "valuePrese": "koerile",
+        "components": [
+          "koerile"
+        ],
+        "displayForm": "koeri[le",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 23
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlAd",
+        "morphExists": true,
+        "value": "koeradel",
+        "valuePrese": "koeradel",
+        "components": [
+          "koeradel"
+        ],
+        "displayForm": "k`oera[del",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 24
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlAd",
+        "morphExists": true,
+        "value": "koeril",
+        "valuePrese": "koeril",
+        "components": [
+          "koeril"
+        ],
+        "displayForm": "koeri[l",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 24
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlAbl",
+        "morphExists": true,
+        "value": "koeradelt",
+        "valuePrese": "koeradelt",
+        "components": [
+          "koeradelt"
+        ],
+        "displayForm": "k`oera[delt",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 25
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlAbl",
+        "morphExists": true,
+        "value": "koerilt",
+        "valuePrese": "koerilt",
+        "components": [
+          "koerilt"
+        ],
+        "displayForm": "koeri[lt",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 25
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlTr",
+        "morphExists": true,
+        "value": "koeradeks",
+        "valuePrese": "koeradeks",
+        "components": [
+          "koeradeks"
+        ],
+        "displayForm": "k`oera[deks",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 26
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 3,
+        "morphCode": "PlTr",
+        "morphExists": true,
+        "value": "koeriks",
+        "valuePrese": "koeriks",
+        "components": [
+          "koeriks"
+        ],
+        "displayForm": "koeri[ks",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 26
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlTer",
+        "morphExists": true,
+        "value": "koeradeni",
+        "valuePrese": "koeradeni",
+        "components": [
+          "koeradeni"
+        ],
+        "displayForm": "k`oera[deni",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 27
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlEs",
+        "morphExists": true,
+        "value": "koeradena",
+        "valuePrese": "koeradena",
+        "components": [
+          "koeradena"
+        ],
+        "displayForm": "k`oera[dena",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 28
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlAb",
+        "morphExists": true,
+        "value": "koeradeta",
+        "valuePrese": "koeradeta",
+        "components": [
+          "koeradeta"
+        ],
+        "displayForm": "k`oera[deta",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 29
+      },
+      {
+        "mode": "FORM",
+        "morphGroup1": "mitmus",
+        "morphGroup2": null,
+        "morphGroup3": null,
+        "displayLevel": 2,
+        "morphCode": "PlKom",
+        "morphExists": true,
+        "value": "koeradega",
+        "valuePrese": "koeradega",
+        "components": [
+          "koeradega"
+        ],
+        "displayForm": "k`oera[dega",
+        "vocalForm": null,
+        "audioFile": null,
+        "orderBy": 30
+      }
+    ]
+  }
+]
