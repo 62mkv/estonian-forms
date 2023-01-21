@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
@@ -13,6 +14,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 @Configuration
 @ConditionalOnProperty("wikidata.site")
 @EnableConfigurationProperties(WikidataProperties.class)
+@ComponentScan(basePackages = {"ee.mkv.estonian.command.wiki", "ee.mkv.estonian.wikidata"})
 @Slf4j
 public class WikidataConfiguration {
 

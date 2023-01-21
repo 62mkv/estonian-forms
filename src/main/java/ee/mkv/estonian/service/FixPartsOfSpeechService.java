@@ -11,7 +11,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.annotation.PreDestroy;
 import java.util.*;
 
 @Component
@@ -38,11 +37,6 @@ public class FixPartsOfSpeechService {
         return new HashSet<>(Arrays.asList("SgN", "SgG", "SgP", "SgIll", "SgIn", "PlN", "PlG", "PlP", "PlIll", "PlIn", "Sup", "Inf", "IndPrSg1"));
     }
 
-    @PreDestroy
-    public void tearDown() {
-        System.out.println("Shutting Down...............the ");
-    }
-
     public void fixPartsOfSpeech() {
         TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
         for (EkilexWord ekilexWord : ekilexWordRepository.findAll()) {
@@ -57,7 +51,7 @@ public class FixPartsOfSpeechService {
                     processWord(ekilexWord);
                     transactionManager.commit(status);
                 } catch (ProcessingException e) {
-
+                    // just keep going
                 } catch (Exception e) {
                     log.error("Exception {}:{}", e.getClass().getSimpleName(), e.getMessage());
                     status.setRollbackOnly();
@@ -102,7 +96,6 @@ public class FixPartsOfSpeechService {
 
         // find all the tails of a "word" that is a base form of other lexeme
         List<Lexeme> matchingByTail = new ArrayList<>();
-        String wordBase = baseForm;
         lexemeRepository.findByLemmaRepresentationIn(tails)
                 .forEach(lexeme -> {
                     log.info("Found a lexeme for tail {} with part of speech {}", lexeme.getLemma().getRepresentation(), lexeme.getPartOfSpeech().getPartOfSpeech());
@@ -112,7 +105,7 @@ public class FixPartsOfSpeechService {
         Optional<Lexeme> bestMatching = matchingByTail
                 .stream()
                 .sorted(Comparator.comparing(lexeme -> lexeme.getLemma().getRepresentation().length()))
-                .filter(lexeme -> matchesByForms(word, lexeme, StringUtils.getHeadForTail(wordBase, lexeme.getLemma().getRepresentation())))
+                .filter(lexeme -> matchesByForms(word, lexeme, StringUtils.getHeadForTail(baseForm, lexeme.getLemma().getRepresentation())))
                 .findFirst();
 
         bestMatching.ifPresent(lexeme -> {
@@ -134,6 +127,7 @@ public class FixPartsOfSpeechService {
     }
 
     private void assignLexemeToWord(EkilexWord word, Lexeme lexeme) {
+        // actually this does not make any sense - it would just add a duplicated lexeme, so it's a no-op
     }
 
     private boolean matchesByForms(EkilexWord word, Lexeme lexeme, String prefix) {
