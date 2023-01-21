@@ -1,9 +1,9 @@
-package ee.mkv.estonian.command;
+package ee.mkv.estonian.command.wiki;
 
 
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.repository.LexemeRepository;
-import ee.mkv.estonian.service.WikiUploadService;
+import ee.mkv.estonian.wikidata.WikiUploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import picocli.CommandLine;

@@ -2,10 +2,7 @@ package ee.mkv.estonian.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,5 +30,17 @@ public class StringUtils {
         return form
                 .replaceAll("\\+", "")
                 .replaceAll("\\!", "");
+    }
+
+    public static Set<String> getTails(String word, int minimalLength) {
+        Set<String> tails = new HashSet<>();
+        for (int i = 1; i < word.length() - minimalLength + 1; i++) {
+            tails.add(word.substring(i));
+        }
+        return tails;
+    }
+
+    public static String getHeadForTail(String word, String tail) {
+        return word.substring(0, word.length() - tail.length());
     }
 }

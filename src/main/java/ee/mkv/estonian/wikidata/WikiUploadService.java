@@ -1,11 +1,9 @@
-package ee.mkv.estonian.service;
+package ee.mkv.estonian.wikidata;
 
 import ee.mkv.estonian.config.WikidataProperties;
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.domain.PartOfSpeech;
 import ee.mkv.estonian.repository.LexemeRepository;
-import ee.mkv.estonian.wikidata.WikidataReader;
-import ee.mkv.estonian.wikidata.WikidataUploader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;

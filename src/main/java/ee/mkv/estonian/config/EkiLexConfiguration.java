@@ -1,6 +1,7 @@
 package ee.mkv.estonian.config;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
+@ConditionalOnProperty("ekilex.token")
 @EnableConfigurationProperties(EkiLixProperties.class)
 public class EkiLexConfiguration {
 

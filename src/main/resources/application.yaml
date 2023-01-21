@@ -8,3 +8,4 @@ spring:
     changelog: db/changelog/master.xml
 ekilex:
   uri: https://ekilex.ee
+spring.jmx.enabled: true

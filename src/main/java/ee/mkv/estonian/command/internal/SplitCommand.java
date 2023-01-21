@@ -1,4 +1,4 @@
-package ee.mkv.estonian.command;
+package ee.mkv.estonian.command.internal;
 
 public class SplitCommand {
 
