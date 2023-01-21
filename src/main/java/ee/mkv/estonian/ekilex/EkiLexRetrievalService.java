@@ -18,6 +18,7 @@ import java.util.Set;
 @Service
 public class EkiLexRetrievalService {
 
+    private static final Long INITIAL_WORD_ID = 154_451L;
     private final EkiLexClient ekiLexClient;
 
     private final RepresentationsRepository representationsRepository;
@@ -37,6 +38,11 @@ public class EkiLexRetrievalService {
         this.paradigmRepository = paradigmRepository;
         this.ekilexFormRepository = ekilexFormRepository;
         this.formTypeRepository = formTypeRepository;
+    }
+
+    public EkilexWord retrieveByNextWordId(boolean forceOverwrite) {
+        Long lastRetrievedWordId = wordRepository.getLastRetrievedWordId().orElse(INITIAL_WORD_ID);
+        return retrieveById(lastRetrievedWordId, forceOverwrite);
     }
 
     public List<EkilexWord> retrieveByLemma(String lemma, boolean forceOverwrite) {

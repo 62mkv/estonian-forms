@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
@@ -45,7 +46,8 @@ public class LexemeFromEkiLexServiceTest {
     }
 
     @Test
-    public void testNounSingleParadigm() {
+    @Sql("classpath:sql/single-paradigm.sql")
+    public void testSingleParadigm() {
         List<Lexeme> lexemeSet = lexemeFromEkiLexService.buildLexemesFromEkiLexDetails("ema");
         assertThat(lexemeSet).size().isEqualTo(1);
         Lexeme lexeme = lexemeSet.toArray(new Lexeme[]{})[0];
@@ -54,12 +56,14 @@ public class LexemeFromEkiLexServiceTest {
     }
 
     @Test
-    public void testDoubleParadigm() {
+    @Sql("classpath:sql/multiple-paradigms.sql")
+    public void testMultipleParadigms() {
         List<Lexeme> lexemeSet = lexemeFromEkiLexService.buildLexemesFromEkiLexDetails("koer");
         assertThat(lexemeSet)
                 .hasSize(2)
                 .areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("noun")))
-                .areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("adjective")));
+                .areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("adjective")))
+                .allSatisfy(lexeme -> assertThat(lexeme.getForms()).hasSize(4));
 
         for (Lexeme lexeme : lexemeSet) {
             assertThat(lexeme.getForms()).size().isEqualTo(4);

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+
+    <changeSet id="9" author="62mkv">
+        <createTable tableName="EKILEX_WORDS">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="word_representation_id" type="int">
+                <constraints foreignKeyName="FK_EKILEX_WORD_TO_REPRESENTATION" referencedTableName="REPRESENTATIONS"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="EKILEX_LEXEMES">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="word_id" type="int">
+                <constraints foreignKeyName="FK_EKILEX_LEXEME_TO_WORD" referencedTableName="EKILEX_WORDS"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="ekilex_lexemes_pos">
+            <column name="ekilex_lexeme_id" type="int">
+                <constraints foreignKeyName="FK_ELP_TO_LEXEME" referencedTableName="EKILEX_LEXEMES"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="part_of_speech_id" type="int">
+                <constraints foreignKeyName="FK_ELP_TO_PART_OF_SPEECH" referencedTableName="PARTS_OF_SPEECH"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="EKILEX_PARADIGMS">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="word_id" type="int">
+                <constraints foreignKeyName="FK_EKILEX_PARADIGM_TO_WORD" referencedTableName="EKILEX_WORDS"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="inflection_type" type="varchar(10)"/>
+        </createTable>
+
+        <createTable tableName="EKILEX_FORMS">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="paradigm_id" type="int">
+                <constraints foreignKeyName="FK_EKILEX_FORM_TO_PARADIGM" referencedTableName="EKILEX_PARADIGMS"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="form_type_combination_id" type="int">
+                <constraints foreignKeyName="FK_EKILEX_FORM_TO_FTC" referencedTableName="FORM_TYPE_COMBINATIONS"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="word_representation_id" type="int">
+                <constraints foreignKeyName="FK_EKILEX_FORM_TO_REPRESENTATION" referencedTableName="REPRESENTATIONS"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

@@ -1,7 +1,7 @@
 spring:
   jpa:
     show-sql: true
-    hibernate.ddl-auto: update #create-drop
+    hibernate.ddl-auto: none #create-drop
     properties.hibernate.format_sql: true
 logging:
   level:

@@ -2,7 +2,6 @@ package ee.mkv.estonian.service;
 
 import com.github.jsonldjava.shaded.com.google.common.collect.Streams;
 import ee.mkv.estonian.domain.*;
-import ee.mkv.estonian.error.NonSingularValueException;
 import ee.mkv.estonian.error.WordNotFoundException;
 import ee.mkv.estonian.repository.EkilexLexemeRepository;
 import ee.mkv.estonian.repository.EkilexParadigmRepository;
@@ -28,13 +27,19 @@ public class LexemeFromEkiLexService {
         this.wordRepository = wordRepository;
     }
 
+    public List<Lexeme> buildLexemesFromEkiLexDetails(String lemma) {
+        return Streams.stream(wordRepository.findAllByBaseFormRepresentation(lemma))
+                .flatMap(word -> buildLexemesFromEkiLexWord(word.getId()).stream())
+                .collect(Collectors.toList());
+    }
+
     /**
      * This will return set of lexemes, built based on existing EkiLex paradigms and forms
      *
      * @param wordId EkiLex wordId
      * @return set of lexemes, built based on existing EkiLex paradigms and forms
      */
-    public List<Lexeme> buildLexemesFromEkiLexWord(Long wordId) {
+    private List<Lexeme> buildLexemesFromEkiLexWord(Long wordId) {
         List<Lexeme> result = new ArrayList<>();
 
         EkilexWord word = wordRepository.findById(wordId).orElseThrow(() -> new WordNotFoundException(wordId));
@@ -55,7 +60,8 @@ public class LexemeFromEkiLexService {
     }
 
     private Set<PartOfSpeech> getPartsOfSpeechForEkilexWordId(Long wordId) {
-        return Streams.stream(ekilexLexemeRepository.findAllByWordId(wordId))
+        final Iterable<EkilexLexeme> allByWordId = ekilexLexemeRepository.findAllByWordId(wordId);
+        return Streams.stream(allByWordId)
                 .flatMap(lexeme -> lexeme.getPos().stream())
                 .collect(Collectors.toSet());
     }
@@ -100,26 +106,6 @@ public class LexemeFromEkiLexService {
         }
 
         return result;
-    }
-
-    private <T> T getExactlyOne(Collection<T> items, String objectType, String property) {
-        T currentValue = null;
-        for (T item : items) {
-            if (currentValue == null) {
-                currentValue = item;
-            } else {
-                if (!currentValue.equals(item)) {
-                    throw new NonSingularValueException(objectType, property, item);
-                }
-            }
-        }
-        return currentValue;
-    }
-
-    public List<Lexeme> buildLexemesFromEkiLexDetails(String lemma) {
-        return Streams.stream(wordRepository.findAllByBaseFormRepresentation(lemma))
-                .flatMap(word -> buildLexemesFromEkiLexWord(word.getId()).stream())
-                .collect(Collectors.toList());
     }
 
     @Data
