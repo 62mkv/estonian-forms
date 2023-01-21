@@ -113,11 +113,11 @@ public class FileLoadService {
 
     public void createAndSaveForm(UUID articleGuid, String ekiPartOfSpeech, Integer declinationType, Integer optionsCount, Integer parallelFormsCount, String formCode, String formRepresentation, Integer stemLength) {
         Article article = articleRepository.findByUuid(articleGuid).get();
-        Form form = new Form();
-        form.setArticle(article);
+        ArticleForm articleForm = new ArticleForm();
+        articleForm.setArticle(article);
         boolean formFitsArticle = false;
         for (PartOfSpeech partOfSpeech : parseFormPartsOfSpeech(ekiPartOfSpeech)) {
-            form.getPartOfSpeech().add(partOfSpeech);
+            articleForm.getPartOfSpeech().add(partOfSpeech);
             if (article.getPartOfSpeech().contains(partOfSpeech)) {
                 formFitsArticle = true;
             }
@@ -129,15 +129,15 @@ public class FileLoadService {
         }
 
         FormTypeCombination combination = createAndSaveFormTypeCombination(formCode);
-        form.setFormTypeCombination(combination);
+        articleForm.setFormTypeCombination(combination);
 
         Representation representation = createAndSaveRepresentation(formRepresentation);
-        form.setRepresentation(representation);
+        articleForm.setRepresentation(representation);
 
-        form.setDeclinationType(declinationType);
-        form.setStemLength(stemLength);
+        articleForm.setDeclinationType(declinationType);
+        articleForm.setStemLength(stemLength);
         try {
-            formRepository.save(form);
+            formRepository.save(articleForm);
         } catch (Exception e) {
             log.error("Exception in creation of form {}:{}:{} {}", articleGuid, formCode, formRepresentation, e.getMessage());
         }
