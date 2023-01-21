@@ -29,9 +29,5 @@ public class Lexeme {
 
     @OneToMany(mappedBy = "lexeme")
     @EqualsAndHashCode.Exclude
-    Set<Article> articles = new HashSet<>();
-
-    @OneToMany(mappedBy = "lexeme")
-    @EqualsAndHashCode.Exclude
     Set<Form> forms = new HashSet<>();
 }

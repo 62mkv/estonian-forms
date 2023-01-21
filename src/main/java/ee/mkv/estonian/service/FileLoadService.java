@@ -117,7 +117,7 @@ public class FileLoadService {
         articleForm.setArticle(article);
         boolean formFitsArticle = false;
         for (PartOfSpeech partOfSpeech : parseFormPartsOfSpeech(ekiPartOfSpeech)) {
-            articleForm.getPartOfSpeech().add(partOfSpeech);
+            articleForm.getPartOfSpeechEntities().add(partOfSpeech);
             if (article.getPartOfSpeech().contains(partOfSpeech)) {
                 formFitsArticle = true;
             }
