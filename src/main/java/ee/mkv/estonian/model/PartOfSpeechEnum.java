@@ -6,28 +6,30 @@ import java.util.Optional;
 
 @Getter
 public enum PartOfSpeechEnum {
-    ADJECTIVE("Adjective", "AH"),
-    ADVERB("Adverb", "D"),
-    CONJUNCTION("Conjunction", "J"),
-    INTERJECTION("Interjection", "I"),
-    NOUN("Noun", "GS"),
-    NUMERAL("Numeral", "ON"),
-    POSTPOSITION("Postposition", "K"),
-    PREPOSITION("Preposition", "K"),
-    PRONOUN("Pronoun", "P"),
-    VERB("Verb", "XV");
+    ADJECTIVE("Adjective", "AH", "adj"), // adjektiiv, omadussõna
+    ADVERB("Adverb", "D", "adv"), // adverb, määrsõna
+    CONJUNCTION("Conjunction", "J", "konj"), // konjunktsioon, sidesõna
+    INTERJECTION("Interjection", "I", "interj"), // interjektsioon, hüüdsõna
+    NOUN("Noun", "GS", "s"), // substantiiv, nimisõna
+    NUMERAL("Numeral", "ON", "num"), // numeraal, arvsõna
+    POSTPOSITION("Postposition", "K", "postp"), // postpositsioon, tagasõna
+    PREPOSITION("Preposition", "K", "prep"), // prepositsioon, eessõna
+    PRONOUN("Pronoun", "P", "pron"), // pronoomen, asesõna
+    VERB("Verb", "XV", "v"); // verb, tegusõna
 
     private final String representation;
     private final String ekiCodes;
+    private final String ekilexCode;
 
-    PartOfSpeechEnum(String representation, String ekiCodes) {
+    PartOfSpeechEnum(String representation, String ekiCodes, String ekilexCode) {
         this.representation = representation;
         this.ekiCodes = ekiCodes;
+        this.ekilexCode = ekilexCode;
     }
 
-    public static Optional<PartOfSpeechEnum> fromEkiCode(char ekiCode) {
+    public static Optional<PartOfSpeechEnum> fromEkilexCode(String ekilexCode) {
         for (PartOfSpeechEnum value : PartOfSpeechEnum.values()) {
-            if (value.ekiCodes.contains(String.valueOf(ekiCode))) {
+            if (value.ekilexCode.equalsIgnoreCase(ekilexCode)) {
                 return Optional.of(value);
             }
         }
