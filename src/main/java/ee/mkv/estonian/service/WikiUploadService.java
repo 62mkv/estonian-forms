@@ -2,6 +2,7 @@ package ee.mkv.estonian.service;
 
 import ee.mkv.estonian.config.WikidataProperties;
 import ee.mkv.estonian.domain.Lexeme;
+import ee.mkv.estonian.domain.PartOfSpeech;
 import ee.mkv.estonian.repository.LexemeRepository;
 import ee.mkv.estonian.wikidata.WikidataReader;
 import ee.mkv.estonian.wikidata.WikidataUploader;
@@ -11,11 +12,23 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 @Slf4j
 public class WikiUploadService {
+
+    private static final Set<String> NAMES_AND_VERBS = initSet("Noun", "Verb", "Adjective");
+
+    private static Set<String> initSet(String... members) {
+        Set<String> result = new HashSet<>();
+        for (String member : members) {
+            result.add(member);
+        }
+        return result;
+    }
 
     private final WikidataReader wikidataReader;
     private final WikidataUploader wikidataUploader;
@@ -41,8 +54,10 @@ public class WikiUploadService {
 
     private void processLexeme(Lexeme lexeme) throws MediaWikiApiErrorException, IOException {
         if (lexeme.getForms().isEmpty()) {
-            log.warn("Not going to create lexemes without forms! {}", lexeme);
-            return;
+            if (mustHaveForms(lexeme.getPartOfSpeech())) {
+                log.warn("Not going to create lexemes without forms! {}", lexeme);
+                return;
+            }
         }
 
         final Optional<String> wikidataId = wikidataReader.checkLexeme(lexeme);
@@ -70,5 +85,9 @@ public class WikiUploadService {
         } else {
             log.info("WD Lexeme id is {}", newId);
         }
+    }
+
+    private boolean mustHaveForms(PartOfSpeech partOfSpeech) {
+        return NAMES_AND_VERBS.contains(partOfSpeech.getPartOfSpeech());
     }
 }
