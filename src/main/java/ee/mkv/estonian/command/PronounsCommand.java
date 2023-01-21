@@ -48,14 +48,14 @@ class PronounsCommand implements Runnable {
         for (String fingerprint : lexemeCandidateMap.keys()) {
             final Collection<Article> articles = lexemeCandidateMap.getArticles(fingerprint);
             if (articles.size() > 1) {
-                System.out.println(String.format("Fingerprint: %s; articles: %s",
+                System.out.printf("Fingerprint: %s; articles: %s%n",
                         fingerprint,
                         articles
                                 .stream()
                                 .map(Article::getId)
-                                .map(i -> i.toString())
+                                .map(Object::toString)
                                 .collect(Collectors.joining(","))
-                ));
+                );
             }
         }
         log.info("Finished processing command 'pronoun'");
