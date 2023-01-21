@@ -14,6 +14,7 @@ import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,17 +56,7 @@ public class WikidataUploader {
                 languageId,
                 Collections.singletonList(Datamodel.makeMonolingualTextValue(lexeme.getLemma().getRepresentation(), LANGUAGE_CODE)));
 
-        for (Form form : lexeme.getForms()) {
-            FormDocument formDocument = createFormDocument(lexemeDocument, form);
-            lexemeDocument = lexemeDocument.withForm(formDocument);
-        }
-
-        lexemeDocument = editor.createLexemeDocument(lexemeDocument,
-                String.format("Bot processing lexeme '%s'", lexeme.getLemma().getRepresentation()),
-                null
-        );
-
-        return lexemeDocument.getEntityId().getId();
+        return addFormsAndUpdate(lexeme, lexemeDocument);
     }
 
     /**
@@ -82,7 +73,17 @@ public class WikidataUploader {
 
         LexemeDocument lexemeDocument = (LexemeDocument) fetcher.getEntityDocument(id);
 
-        for (Form form : lexeme.getForms()) {
+        return addFormsAndUpdate(lexeme, lexemeDocument);
+    }
+
+    private String addFormsAndUpdate(Lexeme lexeme, LexemeDocument lexemeDocument) throws IOException, MediaWikiApiErrorException {
+        final List<Form> forms = lexeme
+                .getForms()
+                .stream()
+                .sorted(Comparator.comparing(form -> form.getFormTypeCombination().getId()))
+                .collect(Collectors.toList());
+
+        for (Form form : forms) {
             FormDocument formDocument = createFormDocument(lexemeDocument, form);
             lexemeDocument = lexemeDocument.withForm(formDocument);
         }
