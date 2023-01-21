@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+
+    <changeSet id="10" author="62mkv">
+        <createTable tableName="LEXEME_EKILEX_MAPPING">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="lexeme_id" type="int">
+                <constraints unique="true" uniqueConstraintName="UQ_MAPPING_PER_LEXEME"
+                             foreignKeyName="FK_MAPPING_TO_LEXEME" referencedTableName="LEXEMES"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="part_of_speech_id" type="int">
+                <constraints foreignKeyName="FK_MAPPING_TO_PART_OF_SPEECH" referencedTableName="PARTS_OF_SPEECH"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="ekilex_word_id" type="int">
+                <constraints foreignKeyName="FK_MAPPING_TO_EKILEX_WORD" referencedTableName="EKILEX_WORDS"
+                             referencedColumnNames="id"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
