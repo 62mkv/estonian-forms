@@ -1,2 +1,8 @@
 spring:
-  jpa.hibernate.ddl-auto: create-drop
+  jpa:
+    show-sql: true
+    hibernate.ddl-auto: update #create-drop
+    properties.hibernate.format_sql: true
+logging:
+  level:
+    org.hibernate.type: trace

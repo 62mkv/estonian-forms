@@ -56,9 +56,11 @@ public class LexemeFromEkiLexServiceTest {
     @Test
     public void testDoubleParadigm() {
         List<Lexeme> lexemeSet = lexemeFromEkiLexService.buildLexemesFromEkiLexDetails("koer");
-        assertThat(lexemeSet).size().isEqualTo(2);
-        assertThat(lexemeSet).areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("noun")));
-        assertThat(lexemeSet).areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("adjective")));
+        assertThat(lexemeSet)
+                .hasSize(2)
+                .areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("noun")))
+                .areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("adjective")));
+
         for (Lexeme lexeme : lexemeSet) {
             assertThat(lexeme.getForms()).size().isEqualTo(4);
             assertThat(lexeme.getForms()).areAtLeast(2, new Condition<>(getFormDeclinationTypePredicate("22,23"), " has all necessary declinations"));

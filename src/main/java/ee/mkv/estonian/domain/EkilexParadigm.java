@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,9 +22,8 @@ public class EkilexParadigm {
     EkilexWord word;
 
     private String inflectionType;
-    private Boolean secondary;
 
     @OneToMany(mappedBy = "ekilexParadigm")
     @EqualsAndHashCode.Exclude
-    private List<EkilexForm> forms;
+    private List<EkilexForm> forms = new ArrayList<>();
 }
