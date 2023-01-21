@@ -1,8 +1,11 @@
 package ee.mkv.estonian.service;
 
 import com.opencsv.CSVReader;
+import ee.mkv.estonian.domain.FormType;
 import ee.mkv.estonian.domain.Representation;
+import ee.mkv.estonian.repository.FormTypeRepository;
 import ee.mkv.estonian.repository.RepresentationsRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -10,10 +13,14 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static ee.mkv.estonian.utils.StringUtils.splitFormCode;
 
 @Service
+@Slf4j
 public class FileLoadService {
 
     private static final String WORD_FORMS = "fmsynth.csv";
@@ -21,25 +28,14 @@ public class FileLoadService {
     private static final String ARTICLES_PART_OF_SPEECH = "parts_of_speech.csv";
 
     private final RepresentationsRepository representationsRepository;
+    private final FormTypeRepository formTypeRepository;
 
-    public FileLoadService(RepresentationsRepository representationsRepository) {
+    public FileLoadService(RepresentationsRepository representationsRepository, FormTypeRepository formTypeRepository) {
         this.representationsRepository = representationsRepository;
+        this.formTypeRepository = formTypeRepository;
     }
 
-    public void loadFromPath(String path) throws IOException {
-        Path filePath = Paths.get(path, WORD_FORMS);
-        List<String[]> readList;
-        try (Reader reader = Files.newBufferedReader(filePath)) {
-            try (CSVReader csvReader = new CSVReader(reader)) {
-                readList = csvReader.readAll();
-            }
-        }
+    public void loadFilesFromPath(String dirPath) {
 
-        for (String[] record : readList) {
-            String representationForm = record[6];
-            Representation representation = new Representation(representationForm);
-            representationsRepository.save(representation);
-        }
     }
-
 }

@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:file:C:\Users\kiril\Documents\temp\db\forms
+    url:
     username: estonian
     password:
   liquibase:

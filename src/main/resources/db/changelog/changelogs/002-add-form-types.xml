@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="2" author="62mkv" runOnChange="true">
+
+        <loadUpdateData file="db/changelog/csv/parts_of_speech.csv" tableName="PARTS_OF_SPEECH" primaryKey="id">
+            <column name="eki_codes" type="string"/>
+            <column name="part_of_speech" type="string"/>
+            <column name="wikidata_code" type="string"/>
+        </loadUpdateData>
+
+        <loadUpdateData file="db/changelog/csv/form_types.csv" tableName="form_types" primaryKey="id">
+            <column name="eki_representation" type="string"/>
+            <column name="wikidata_code" type="string"/>
+        </loadUpdateData>
+    </changeSet>
+
+</databaseChangeLog>
