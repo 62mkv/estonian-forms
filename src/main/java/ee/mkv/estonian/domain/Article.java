@@ -7,7 +7,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Entity(name = "ARTICLES")
+@Entity
+@Table(name = "ARTICLES")
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +20,7 @@ public class Article {
     @JoinColumn(name = "word_representation_id")
     Representation baseForm;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "articles_parts_of_speech")
     Set<PartOfSpeech> partOfSpeech;
 

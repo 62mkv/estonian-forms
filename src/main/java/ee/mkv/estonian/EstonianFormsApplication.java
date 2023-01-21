@@ -8,8 +8,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication
+import java.util.Objects;
+
 @Slf4j
+@SpringBootApplication
 @EnableJpaRepositories(basePackages = "ee.mkv.estonian.repository")
 public class EstonianFormsApplication implements CommandLineRunner {
 
@@ -27,6 +29,13 @@ public class EstonianFormsApplication implements CommandLineRunner {
             log.info("args[{}]: {}", i, args[i]);
         }
 
-        service.loadFilesFromPath(args[0]);
+        if (args.length > 0) {
+            final String path = args[0];
+            if (Objects.nonNull(path)) {
+                service.loadFilesFromPath(path);
+            }
+        } else {
+            service.dummyInitialize();
+        }
     }
 }

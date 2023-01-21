@@ -2,21 +2,25 @@ package ee.mkv.estonian.domain;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
-@Entity(name = "PARTS_OF_SPEECH")
+@Entity
+@Table(name = "PARTS_OF_SPEECH")
 public class PartOfSpeech {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String ekiRepresentation;
+    /**
+     * Example: A,H, etc.
+     */
+    String ekiCodes;
 
-    String evsRepresentation;
+    /**
+     * Example: Numeral, Noun, etc
+     */
+    String partOfSpeech;
 
     String wikidataCode;
 }
