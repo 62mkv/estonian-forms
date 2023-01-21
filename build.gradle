@@ -22,10 +22,14 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation group: 'com.kakawait', name: 'picocli-spring-boot-starter', version: '0.2.0'
+
+    implementation group: 'org.eclipse.rdf4j', name: 'rdf4j-repository-sparql', version: '3.2.2'
+
     runtime 'io.github.willena:sqlite-jdbc:3.31.1'
     runtime 'com.github.gwenn:sqlite-dialect:0.1.0'
     implementation("org.liquibase:liquibase-core:3.10.2")
     implementation("com.opencsv:opencsv:4.1")
+
     testRuntime 'com.h2database:h2:1.4.200'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
