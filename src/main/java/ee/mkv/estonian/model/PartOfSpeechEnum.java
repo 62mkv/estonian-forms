@@ -33,7 +33,17 @@ public enum PartOfSpeechEnum {
                 return Optional.of(value);
             }
         }
-        return Optional.empty();
+
+        return fromHackedEkilexCode(ekilexCode);
+    }
+
+    private static Optional<PartOfSpeechEnum> fromHackedEkilexCode(String ekilexCode) {
+        switch (ekilexCode) {
+            case "prop":
+                return Optional.of(NOUN); // prooprium, pärisnimi
+            default:
+                return Optional.empty();
+        }
     }
 
     public static Optional<PartOfSpeechEnum> fromRepresentation(String name) {

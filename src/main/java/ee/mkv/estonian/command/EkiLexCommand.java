@@ -4,6 +4,7 @@ import ee.mkv.estonian.domain.EkilexWord;
 import ee.mkv.estonian.ekilex.EkiLexRetrievalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import picocli.CommandLine;
 
 @Component
@@ -23,7 +24,18 @@ public class EkiLexCommand implements Runnable {
 
     @Override
     public void run() {
-        EkilexWord ekilexWord = retrievalService.retrieveByNextWordId(false);
-        log.info("Retrieved word {}:{}", ekilexWord.getId(), ekilexWord.getBaseForm().getRepresentation());
+        long wordId = retrievalService.getLastPersistedWordId();
+        while (true) {
+            try {
+                EkilexWord ekilexWord = retrievalService.retrieveById(wordId, false);
+                log.info("Retrieved word {}:{}", ekilexWord.getId(), ekilexWord.getBaseForm().getRepresentation());
+                wordId++;
+            } catch (RestClientException webException) {
+                log.error("WebError: {}", webException.getMessage());
+            } catch (Exception e) {
+                log.error("Exception while retrieving word {}: ", wordId, e);
+                wordId++;
+            }
+        }
     }
 }

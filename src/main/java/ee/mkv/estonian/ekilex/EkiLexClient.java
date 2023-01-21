@@ -3,7 +3,6 @@ package ee.mkv.estonian.ekilex;
 import ee.mkv.estonian.ekilex.dto.DetailsDto;
 import ee.mkv.estonian.ekilex.dto.SearchResultDto;
 import ee.mkv.estonian.ekilex.dto.WordDto;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EkiLexClient {
 
-    private final static long REQUEST_INTERVAL = 60 * 1000L;
+    private final static long REQUEST_INTERVAL = 3 * 1000L;
 
     private final RestTemplate restTemplate;
     private Instant lastRequest = Instant.now();
@@ -40,12 +39,15 @@ public class EkiLexClient {
         return pause(() -> restTemplate.getForObject("/api/word/details/{id}/sss/", DetailsDto.class, id));
     }
 
-    @SneakyThrows
     private synchronized <T> T pause(Supplier<T> action) {
         final long spentAfterLastRequest = Duration.between(lastRequest, Instant.now()).toMillis();
         long needToWait = REQUEST_INTERVAL - spentAfterLastRequest;
         if (needToWait > 0) {
-            Thread.sleep(needToWait);
+            try {
+                Thread.sleep(needToWait);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         T result = action.get();
         lastRequest = Instant.now();
