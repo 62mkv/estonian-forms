@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+
+    <changeSet id="11-1" author="62mkv">
+        <createSequence sequenceName="hibernate_sequence" startValue="4000000"/>
+    </changeSet>
+
+    <changeSet id="11-2" author="62mkv">
+        <addNotNullConstraint tableName="ekilex_forms" columnName="paradigm_id"/>
+    </changeSet>
+
+    <changeSet id="11-3" author="62mkv">
+        <addUniqueConstraint tableName="ekilex_forms"
+                             columnNames="paradigm_id,form_type_combination_id,word_representation_id"/>
+    </changeSet>
+</databaseChangeLog>

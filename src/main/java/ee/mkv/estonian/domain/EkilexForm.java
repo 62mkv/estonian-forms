@@ -2,6 +2,7 @@ package ee.mkv.estonian.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -11,11 +12,12 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class EkilexForm {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
     @ManyToOne
     @JoinColumn(name = "paradigm_id")
+    @ToString.Exclude
     EkilexParadigm ekilexParadigm;
 
     @ManyToOne

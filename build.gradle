@@ -7,7 +7,7 @@ plugins {
 group 'org.example'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 repositories {
     mavenLocal()
@@ -32,6 +32,7 @@ dependencies {
 
     runtime 'io.github.willena:sqlite-jdbc:3.31.1'
     runtime 'com.github.gwenn:sqlite-dialect:0.1.0'
+    runtime 'org.postgresql:postgresql:42.5.1'
     implementation("org.liquibase:liquibase-core:3.10.2")
     implementation("com.opencsv:opencsv:4.1")
 

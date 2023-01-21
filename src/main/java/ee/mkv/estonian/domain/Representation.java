@@ -1,6 +1,5 @@
 package ee.mkv.estonian.domain;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,8 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Representation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
     private String representation;
-
 }
