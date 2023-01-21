@@ -28,10 +28,8 @@ public class EkilexParadigm {
     Lexeme lexeme;
 
     private Long wordId;
-    private String example;
-    private String inflectionTypeNr;
     private String inflectionType;
-    private boolean secondary;
+    private Boolean secondary;
 
     @OneToMany(mappedBy = "ekilexParadigm")
     private List<EkilexForm> forms;

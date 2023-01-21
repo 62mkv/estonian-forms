@@ -3,6 +3,7 @@ package ee.mkv.estonian.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -29,5 +30,6 @@ public class Lexeme {
 
     @OneToMany(mappedBy = "lexeme")
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     Set<Form> forms = new HashSet<>();
 }
