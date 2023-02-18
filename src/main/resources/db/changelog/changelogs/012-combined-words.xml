@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+
+    <changeSet id="12-1" author="62mkv">
+        <createTable tableName="COMPOUND_RULES">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="description" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="COMPOUND_WORDS">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="lexeme_id" type="bigint">
+                <constraints foreignKeyName="FK_COMPOUND_TO_LEXEME" referencedTableName="LEXEMES"
+                             referencedColumnNames="id" nullable="false"/>
+            </column>
+            <column name="rule_id" type="bigint">
+                <constraints foreignKeyName="FK_COMPOUND_TO_RULE" referencedTableName="COMPOUND_RULES"
+                             referencedColumnNames="id" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="12-2" author="62mkv">
+        <addPrimaryKey tableName="lexeme_forms" columnNames="id"/>
+        <createTable tableName="COMPOUND_WORD_COMPONENTS">
+
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="compound_word_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="FK_COMPOUND_COMPONENT_TO_COMPOUND"
+                             referencedTableName="COMPOUND_WORDS"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="component_index" type="int">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="component_starts_at" type="int"/>
+
+            <column name="form_id" type="bigint">
+                <constraints foreignKeyName="FK_COMPOUND_COMPONENT_TO_FORM" referencedTableName="lexeme_forms"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="12-3" author="62mkv">
+        <createTable tableName="compound_rule_groups">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="description" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addColumn tableName="COMPOUND_RULES">
+            <column name="group_id" type="int">
+                <constraints foreignKeyName="FK_CRULE_TO_CGROUP" referencedColumnNames="id"
+                             referencedTableName="compound_rule_groups" nullable="false"/>
+            </column>
+        </addColumn>
+
+        <createTable tableName="rejected_compound_candidates">
+            <column name="lexeme_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="FK_REJECTED_TO_LEXEME" referencedTableName="lexemes"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="rule_group_id" type="int">
+                <constraints nullable="false" foreignKeyName="FK_REJECTED_TO_RULE_GROUP"
+                             referencedTableName="compound_rule_groups" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="rejected_compound_candidates" columnNames="lexeme_id,rule_group_id"
+                             constraintName="UQ_REJECTED_LEXEME_RULE_GROUP"/>
+    </changeSet>
+
+    <changeSet id="12-data" author="62mkv" runOnChange="true">
+        <loadUpdateData tableName="compound_rule_groups" primaryKey="id"
+                        file="db/changelog/csv/compound_rule_groups.csv">
+            <column name="id" type="numeric"/>
+            <column name="description" type="string"/>
+        </loadUpdateData>
+
+        <loadUpdateData tableName="COMPOUND_RULES" primaryKey="id" file="db/changelog/csv/compound_rules.csv">
+            <column name="id" type="numeric"/>
+            <column name="description" type="string"/>
+            <column name="group_id" type="numeric"/>
+        </loadUpdateData>
+    </changeSet>
+</databaseChangeLog>

@@ -18,7 +18,7 @@ public interface EkilexParadigmRepository extends CrudRepository<EkilexParadigm,
             "select r.representation, ef.paradigm_id as id\n" +
             "from ekilex_forms ef  \n" +
             "join representations r on ef.word_representation_id = r.id\n" +
-            "where ef.form_type_combination_id  = 16 and r.representation <> '-'\n" +
+            "where ef.form_type_combination_id in (16,29) and r.representation <> '-'\n" +
             "),\n" +
             " declined as (\n" +
             "select r.representation, ef.paradigm_id as id\n" +
@@ -36,12 +36,9 @@ public interface EkilexParadigmRepository extends CrudRepository<EkilexParadigm,
             "where base.id not in (25944, 34496, 50720, 113435, 80638, 80879, 95249)\n" +
             "and base.representation||'ks' <> declined.representation\n" +
             "and not exists (select 1 from base b2 where b2.representation||'ks' = declined.representation and b2.id = base.id)\n" +
-            "), rootplural as (\n" +
-            "select ef.paradigm_id  as id from ekilex_forms ef where ef.form_type_combination_id = 29\n" +
             ")\n" +
             "select ep.*, d.inflected from discrepancies d\n" +
             "join ekilex_paradigms ep on d.id = ep.id\n" +
-            "where not exists (select 1 from rootplural rp where ep.id = rp.id)\n" +
             "limit 100", nativeQuery = true)
     Streamable<DiscrepancyProjection> findNextCandidatesForRootPlural();
 }

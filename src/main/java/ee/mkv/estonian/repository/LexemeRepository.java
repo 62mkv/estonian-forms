@@ -3,6 +3,7 @@ package ee.mkv.estonian.repository;
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.domain.PartOfSpeech;
 import ee.mkv.estonian.domain.Representation;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +16,11 @@ public interface LexemeRepository extends CrudRepository<Lexeme, Long> {
 
     List<Lexeme> findByLemma(Representation lemma);
 
-    Iterable<? extends Lexeme> findAllByWikidataIdNull();
+    Iterable<Lexeme> findAllByWikidataIdNull();
 
-    Iterable<? extends Lexeme> findByLemmaRepresentationIn(Collection<String> lemmas);
+    Iterable<Lexeme> findByLemmaRepresentationIn(Collection<String> lemmas);
+
+    @Query(nativeQuery = true, value = "SELECT l.* from lexemes " +
+            "JOIN representation r on r.id = l.")
+    Iterable<Lexeme> findNextUnsplitCandidates();
 }
