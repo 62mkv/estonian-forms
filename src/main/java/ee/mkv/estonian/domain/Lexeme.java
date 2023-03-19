@@ -1,15 +1,16 @@
 package ee.mkv.estonian.domain;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "LEXEMES")
 @NoArgsConstructor
@@ -32,4 +33,17 @@ public class Lexeme {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     Set<Form> forms = new HashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Lexeme lexeme = (Lexeme) o;
+        return id != null && Objects.equals(id, lexeme.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

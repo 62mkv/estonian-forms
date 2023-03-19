@@ -85,6 +85,12 @@
                              constraintName="UQ_REJECTED_LEXEME_RULE_GROUP"/>
     </changeSet>
 
+    <changeSet id="12-4" author="62mkv">
+        <addColumn tableName="COMPOUND_WORDS">
+            <column name="rejected" type="boolean" defaultValueBoolean="false"></column>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="12-data" author="62mkv" runOnChange="true">
         <loadUpdateData tableName="compound_rule_groups" primaryKey="id"
                         file="db/changelog/csv/compound_rule_groups.csv">

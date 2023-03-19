@@ -29,4 +29,16 @@ public class Form {
     FormTypeCombination formTypeCombination;
 
     String declinationTypes;
+
+    @Override
+    public String toString() {
+        return "Form{" +
+                "id=" + id +
+                ", wikidataId='" + wikidataId + '\'' +
+                ", representation=" + representation +
+                ", lexeme=" + lexeme +
+                ", formTypeCombination=" + formTypeCombination +
+                ", declinationTypes='" + declinationTypes + '\'' +
+                '}';
+    }
 }

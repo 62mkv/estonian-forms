@@ -5,6 +5,7 @@ import ee.mkv.estonian.domain.PartOfSpeech;
 import ee.mkv.estonian.domain.Representation;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -20,7 +21,16 @@ public interface LexemeRepository extends CrudRepository<Lexeme, Long> {
 
     Iterable<Lexeme> findByLemmaRepresentationIn(Collection<String> lemmas);
 
-    @Query(nativeQuery = true, value = "SELECT l.* from lexemes " +
-            "JOIN representation r on r.id = l.")
-    Iterable<Lexeme> findNextUnsplitCandidates();
+    @Query(nativeQuery = true,
+            value = "select *\n" +
+                    "from lexemes l\n" +
+                    "join representations r on r.id  = l.representation_id \n" +
+                    "where part_of_speech_id in (1,5) \n" +
+                    "and not r.representation like '% %' \n" +
+                    "and not exists(select 1 from compound_words cw where cw.lexeme_id = l.id)\n" +
+                    "and not exists(select 1 from rejected_compound_candidates rcc where rcc.lexeme_id = l.id and rcc.rule_group_id = :rule_group_id)\n" +
+                    "and length(representation) > 8\n" +
+                    "order by length(r.representation) desc\n" +
+                    "limit 10\n")
+    Iterable<Lexeme> findNextUnsplitCandidates(@Param("rule_group_id") int ruleGroupId);
 }
