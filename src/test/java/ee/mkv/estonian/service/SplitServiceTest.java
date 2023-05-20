@@ -1,6 +1,7 @@
 package ee.mkv.estonian.service;
 
 
+import ee.mkv.estonian.model.SplitCandidate;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,8 +12,8 @@ class SplitServiceTest {
 
     private final SplitService subject = new SplitService();
 
-    private static SplitService.SplitCandidate sc(String lemm, int startsAt) {
-        return new SplitService.SplitCandidate(lemm, startsAt);
+    private static SplitCandidate sc(String lemm, int startsAt) {
+        return new SplitCandidate(lemm, startsAt);
     }
 
     @Test

@@ -70,4 +70,11 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="9-1" author="62mkv">
+        <addColumn tableName="ekilex_paradigms">
+            <column name="ekilex_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

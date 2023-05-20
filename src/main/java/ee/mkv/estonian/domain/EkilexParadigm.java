@@ -14,8 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 public class EkilexParadigm {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
+
+    Long ekilexId;
 
     @ManyToOne
     @JoinColumn(name = "word_id")

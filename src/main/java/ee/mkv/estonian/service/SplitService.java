@@ -1,7 +1,7 @@
 package ee.mkv.estonian.service;
 
 
-import lombok.Value;
+import ee.mkv.estonian.model.SplitCandidate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -55,9 +55,4 @@ public class SplitService {
         return result;
     }
 
-    @Value
-    public static class SplitCandidate {
-        private String component;
-        private int startsAt;
-    }
 }

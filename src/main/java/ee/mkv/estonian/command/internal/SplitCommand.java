@@ -3,11 +3,11 @@ package ee.mkv.estonian.command.internal;
 import com.kakawait.spring.boot.picocli.autoconfigure.ExitStatus;
 import com.kakawait.spring.boot.picocli.autoconfigure.HelpAwarePicocliCommand;
 import ee.mkv.estonian.domain.*;
+import ee.mkv.estonian.model.SplitCandidate;
 import ee.mkv.estonian.repository.CompoundWordRepository;
 import ee.mkv.estonian.repository.FormRepository;
 import ee.mkv.estonian.repository.LexemeRepository;
 import ee.mkv.estonian.service.SplitService;
-import ee.mkv.estonian.service.SplitService.SplitCandidate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -26,56 +26,10 @@ public class SplitCommand extends HelpAwarePicocliCommand {
     private final FormRepository formRepository;
     private final CompoundWordRepository compoundWordRepository;
 
-    @Override
-    public ExitStatus call() throws Exception {
-        boolean foundNewCompounds = true;
-        while (foundNewCompounds) {
-            foundNewCompounds = false;
-            Map<Lexeme, List<List<SplitCandidate>>> candidatesMap = new HashMap<>();
-            for (Lexeme lexeme : lexemeRepository.findNextUnsplitCandidates(1)) {
-                candidatesMap.put(lexeme, produceCandidates(lexeme));
-            }
-
-            var distinctComponentCandidates = candidatesMap.values().stream()
-                    .flatMap(List::stream)
-                    .flatMap(List::stream)
-                    .collect(Collectors.toList());
-            log.info("Added {}", distinctComponentCandidates);
-            log.info("Overall {} candidates found", distinctComponentCandidates.size());
-
-            var candidateRepresentations = distinctComponentCandidates
-                    .stream()
-                    .map(SplitCandidate::getComponent)
-                    .collect(Collectors.toSet());
-            List<Form> candidateForms = formRepository.findWhereRepresentationIn(candidateRepresentations);
-            log.info("Found [{}] candidate forms", candidateForms);
-
-            Map<String, List<Form>> candidateToFormMapping = buildMapOfFormCandidates(candidateForms);
-
-            for (Lexeme lexeme : candidatesMap.keySet()) {
-                var splitCandidates = candidatesMap.get(lexeme);
-                for (List<SplitCandidate> candidateList : splitCandidates) {
-                    var goodCandidateCount = candidateList.stream()
-                            .map(SplitCandidate::getComponent)
-                            .filter(candidateToFormMapping::containsKey)
-                            .count();
-                    if (goodCandidateCount == candidateList.size()) {
-                        log.info("All components found for lexeme {} and components {}", lexeme.getLemma().getRepresentation(), candidateList);
-                        var compoundWords = determineMatchGroup(lexeme, candidateList, candidateToFormMapping);
-                        log.info("CompoundWords: {} for lexeme {} and candidates {}", compoundWords, lexeme, candidateList);
-                        compoundWordRepository.saveAll(compoundWords);
-                        compoundWordRepository.flush();
-                        foundNewCompounds = true;
-                    }
-                }
-
-            }
-
-            if (!foundNewCompounds) {
-                log.warn("Not found any components for these lexemes: {}", candidatesMap.keySet());
-            }
+    private static void logCandidatesMap(Map<Lexeme, List<List<SplitCandidate>>> candidatesMap) {
+        for (Map.Entry<Lexeme, List<List<SplitCandidate>>> entry : candidatesMap.entrySet()) {
+            log.info("Lexeme found: {}", entry.getKey());
         }
-        return ExitStatus.OK;
     }
 
     private List<CompoundWord> determineMatchGroup(Lexeme lexeme, List<SplitCandidate> candidates, Map<String, List<Form>> candidateToFormMapping) {
@@ -117,7 +71,6 @@ public class SplitCommand extends HelpAwarePicocliCommand {
         result.setComponentStartsAt(component.getStartsAt());
         return result;
     }
-
 
     private CompoundWord buildCompoundForm(Lexeme lexeme, List<CompoundWordComponent> components, CompoundRule compoundRule) {
         var result = new CompoundWord();
@@ -166,6 +119,69 @@ public class SplitCommand extends HelpAwarePicocliCommand {
             return splitService.splitByHyphen(lemma);
         }
         return splitService.splitNoHyphen(lemma);
+    }
+
+    private static void logCandidateForms(List<Form> candidateForms) {
+        log.info("Found {} following candidate forms:", candidateForms.size());
+        for (Form form : candidateForms) {
+            log.info("{} {} {} {}", form.getId(), form.getLexeme().getId(), form.getRepresentation().getRepresentation(), form.getFormTypeCombination().getEkiRepresentation());
+        }
+    }
+
+    @Override
+    public ExitStatus call() throws Exception {
+        boolean foundNewCompounds = true;
+        while (foundNewCompounds) {
+            foundNewCompounds = false;
+            Map<Lexeme, List<List<SplitCandidate>>> candidatesMap = new HashMap<>();
+            for (Lexeme lexeme : lexemeRepository.findNextUnsplitCandidates(1, 1)) {
+                candidatesMap.put(lexeme, produceCandidates(lexeme));
+            }
+
+            logCandidatesMap(candidatesMap);
+
+            var componentCandidates = candidatesMap.values().stream()
+                    .flatMap(List::stream)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+            log.info("Added {}", componentCandidates);
+            log.info("Overall {} candidates found", componentCandidates.size());
+
+            var candidateRepresentations = componentCandidates
+                    .stream()
+                    .map(SplitCandidate::getComponent)
+                    .collect(Collectors.toSet());
+            List<Form> candidateForms = formRepository.findWhereRepresentationIn(candidateRepresentations);
+            logCandidateForms(candidateForms);
+
+            Map<String, List<Form>> candidateToFormMapping = buildMapOfFormCandidates(candidateForms);
+
+            for (Lexeme lexeme : candidatesMap.keySet()) {
+                var splitCandidates = candidatesMap.get(lexeme);
+                for (List<SplitCandidate> candidateList : splitCandidates) {
+                    var goodCandidateCount = candidateList.stream()
+                            .map(SplitCandidate::getComponent)
+                            .filter(candidateToFormMapping::containsKey)
+                            .count();
+                    if (goodCandidateCount == candidateList.size()) {
+                        log.info("All components found for lexeme {} and components {}", lexeme.getLemma().getRepresentation(), candidateList);
+                        var compoundWords = determineMatchGroup(lexeme, candidateList, candidateToFormMapping);
+                        log.info("CompoundWords: {} for lexeme {} and candidates {}", compoundWords, lexeme, candidateList);
+                        if (!compoundWords.isEmpty()) {
+                            compoundWordRepository.saveAll(compoundWords);
+                            compoundWordRepository.flush();
+                            foundNewCompounds = true;
+                        }
+                    }
+                }
+
+            }
+
+            if (!foundNewCompounds) {
+                log.warn("Not found any components for these lexemes: {}", candidatesMap.keySet());
+            }
+        }
+        return ExitStatus.OK;
     }
 
 }
