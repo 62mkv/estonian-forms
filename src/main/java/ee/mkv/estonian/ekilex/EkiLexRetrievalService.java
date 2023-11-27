@@ -59,6 +59,7 @@ public class EkiLexRetrievalService {
 
         if (wordRepository.existsById(wordId)) {
             if (!forceOverwrite) {
+                log.warn("EkilexWord with id {} already exists", wordId);
                 return wordRepository.findById(wordId).get();
             } else {
                 throw new NotImplementedException("Force overwrite for existing EkiLex words not implemented yet!");

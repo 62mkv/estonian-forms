@@ -56,6 +56,9 @@ public class LexemeFromEkiLexService {
             result.add(lexemeFromParadigms(paradigmsForWord, word, partOfSpeech));
         }
 
+        if (result.isEmpty()) {
+            log.warn("Could not build lexeme from EkiLex word {}", wordId);
+        }
         return result;
     }
 

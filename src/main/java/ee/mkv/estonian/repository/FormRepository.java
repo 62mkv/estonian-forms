@@ -13,7 +13,6 @@ import java.util.List;
 public interface FormRepository extends CrudRepository<Form, Long> {
     @Query("from Form f " +
             "where f.representation.representation in (:candidates) " +
-            "and f.lexeme.partOfSpeech in (1, 5) " +
-            "and f.formTypeCombination in (1, 2)")
+            "and f.lexeme.partOfSpeech in (1, 5) ")
     List<Form> findWhereRepresentationIn(@Param("candidates") Collection<String> candidates);
 }

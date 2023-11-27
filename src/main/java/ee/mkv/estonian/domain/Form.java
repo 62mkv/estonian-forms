@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Form {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
     String wikidataId;

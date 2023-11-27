@@ -26,6 +26,19 @@ public class SplitCommand extends HelpAwarePicocliCommand {
     private final FormRepository formRepository;
     private final CompoundWordRepository compoundWordRepository;
 
+    private static final Set<String> SUITABLE_COMPOUND_FORMS = new HashSet<>(5);
+
+    {
+        {
+            SUITABLE_COMPOUND_FORMS.add("SgG");
+            SUITABLE_COMPOUND_FORMS.add("SgN");
+            SUITABLE_COMPOUND_FORMS.add("PlG");
+            SUITABLE_COMPOUND_FORMS.add("PlN");
+            SUITABLE_COMPOUND_FORMS.add("RSgG");
+            SUITABLE_COMPOUND_FORMS.add("RPlG");
+        }
+    }
+
     private static void logCandidatesMap(Map<Lexeme, List<List<SplitCandidate>>> candidatesMap) {
         for (Map.Entry<Lexeme, List<List<SplitCandidate>>> entry : candidatesMap.entrySet()) {
             log.info("Lexeme found: {}", entry.getKey());
@@ -88,10 +101,12 @@ public class SplitCommand extends HelpAwarePicocliCommand {
             case "SgN":
                 return Optional.of(CompoundRule.COMPOUND_OF_TWO_FIRST_SINGLE_NOMINATIVE);
             case "SgG":
+            case "RSgG":
                 return Optional.of(CompoundRule.COMPOUND_OF_TWO_FIRST_SINGLE_GENITIVE);
             case "PlN":
                 return Optional.of(CompoundRule.COMPOUND_OF_TWO_FIRST_PLURAL_NOMINATIVE);
             case "PlG":
+            case "RPlG":
                 return Optional.of(CompoundRule.COMPOUND_OF_TWO_FIRST_PLURAL_GENITIVE);
             default:
                 return Optional.empty();
@@ -152,6 +167,14 @@ public class SplitCommand extends HelpAwarePicocliCommand {
                     .map(SplitCandidate::getComponent)
                     .collect(Collectors.toSet());
             List<Form> candidateForms = formRepository.findWhereRepresentationIn(candidateRepresentations);
+
+            logCandidateForms(candidateForms);
+
+            candidateForms = candidateForms.stream()
+                    .filter(this::isSuitableForm)
+                    .collect(Collectors.toList());
+
+            log.info("Filtered candidate forms");
             logCandidateForms(candidateForms);
 
             Map<String, List<Form>> candidateToFormMapping = buildMapOfFormCandidates(candidateForms);
@@ -182,6 +205,10 @@ public class SplitCommand extends HelpAwarePicocliCommand {
             }
         }
         return ExitStatus.OK;
+    }
+
+    private boolean isSuitableForm(Form form) {
+        return SUITABLE_COMPOUND_FORMS.contains(form.getFormTypeCombination().getEkiRepresentation());
     }
 
 }

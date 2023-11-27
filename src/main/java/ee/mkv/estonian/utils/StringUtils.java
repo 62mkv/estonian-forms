@@ -1,5 +1,6 @@
 package ee.mkv.estonian.utils;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -7,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
+@UtilityClass
 public class StringUtils {
     private static final Pattern pattern = Pattern.compile("((\\p{Upper}[\\p{Lower}]*)|(\\d)|(_))");
 
@@ -42,5 +44,9 @@ public class StringUtils {
 
     public static String getHeadForTail(String word, String tail) {
         return word.substring(0, word.length() - tail.length());
+    }
+
+    public static boolean isEmpty(String word) {
+        return word == null || word.isEmpty();
     }
 }

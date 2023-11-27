@@ -2,9 +2,10 @@ package ee.mkv.estonian.command.internal;
 
 import ee.mkv.estonian.service.FixPartsOfSpeechService;
 import org.springframework.stereotype.Component;
+import picocli.CommandLine;
 
 @Component
-//@CommandLine.Command(name = "fix-pos")
+@CommandLine.Command(name = "fix-pos")
 public class FixPartsOfSpeechCommand implements Runnable {
 
     private final FixPartsOfSpeechService fixPartsOfSpeechService;

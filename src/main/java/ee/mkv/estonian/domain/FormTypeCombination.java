@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class FormTypeCombination {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
     String ekiRepresentation;

@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class ArticleForm {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
     @ManyToOne

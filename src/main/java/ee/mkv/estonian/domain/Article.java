@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Article {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
     UUID uuid;

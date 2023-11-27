@@ -48,12 +48,15 @@ public class EkiLexCommand implements Runnable {
     }
 
     private void processWord() {
+        log.info("Processing word {}", word);
         List<EkilexWord> words = IterableUtils.iterableToList(ekilexWordRepository.findAllByBaseFormRepresentation(word));
         if (!words.isEmpty()) {
             for (EkilexWord ekilexWord : words) {
+                log.info("Retrieve by id {}", ekilexWord.getId());
                 retrievalService.retrieveById(ekilexWord.getId(), force);
             }
         } else {
+            log.info("Retrieve by lemma {}", word);
             retrievalService.retrieveByLemma(word, force);
         }
     }

@@ -10,7 +10,7 @@ import java.util.Set;
 @Table(name = "EKILEX_LEXEMES")
 public class EkilexLexeme {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
     @ManyToOne

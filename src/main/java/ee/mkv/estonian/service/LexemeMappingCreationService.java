@@ -5,7 +5,10 @@ import ee.mkv.estonian.domain.LexemeToEkiLexMapping;
 import ee.mkv.estonian.repository.EkilexWordRepository;
 import ee.mkv.estonian.repository.LexemeToEkilexMappingRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -22,17 +25,41 @@ public class LexemeMappingCreationService {
         this.fromEkiLexService = fromEkiLexService;
     }
 
+    public void createMissingMapping(Long wordId) {
+        createMappingForWord(wordId);
+    }
+
+    public void createMissingMapping(String word) {
+        List<EkilexWord> candidateWords = Lists.newArrayList(wordRepository.findAllByBaseFormRepresentation(word).iterator());
+        if (candidateWords.size() > 1) {
+            log.warn("More than 1 candidate form found, please provide an id: {}", candidateWords);
+            return;
+        }
+
+        if (candidateWords.isEmpty()) {
+            log.error("No EkilexWord found for '{}'", word);
+            return;
+        }
+
+        createMissingMapping(candidateWords.get(0).getId());
+    }
+
     public void createMissingMappings() {
         for (EkilexWord word : wordRepository.findAll()) {
-            final Long wordId = word.getId();
-            if (mappingRepository.existsByEkilexWordId(wordId)) {
-                log.debug("Skipping word {}, mapping for it exists already", wordId);
-            } else {
-                log.info("Creating mappings for word id: {}", wordId);
-                for (LexemeToEkiLexMapping mapping : fromEkiLexService.buildLexemesFromEkiLexWord(wordId)) {
-                    persistingService.save(mapping);
-                    log.info("Persisted mapping for word id: {}, mapping: {}", wordId, mapping);
-                }
+            log.info("Checking EkiLex word id {} ({})", word.getId(), word.getBaseForm().getRepresentation());
+            createMappingForWord(word.getId());
+        }
+    }
+
+    private void createMappingForWord(Long id) {
+        final Long wordId = id;
+        if (mappingRepository.existsByEkilexWordId(wordId)) {
+            log.info("Skipping word {}, mapping for it exists already", wordId);
+        } else {
+            log.info("Creating mappings for word id: {}", wordId);
+            for (LexemeToEkiLexMapping mapping : fromEkiLexService.buildLexemesFromEkiLexWord(wordId)) {
+                persistingService.save(mapping);
+                log.info("Persisted mapping for word id: {}, mapping: {}", wordId, mapping);
             }
         }
     }

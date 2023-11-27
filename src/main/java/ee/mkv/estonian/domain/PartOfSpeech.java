@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "PARTS_OF_SPEECH")
 public class PartOfSpeech {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
     /**
