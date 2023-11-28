@@ -1,12 +1,14 @@
 package ee.mkv.estonian.service;
 
 import ee.mkv.estonian.domain.EkilexWord;
+import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.domain.LexemeToEkiLexMapping;
 import ee.mkv.estonian.repository.EkilexWordRepository;
 import ee.mkv.estonian.repository.LexemeToEkilexMappingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,10 +27,12 @@ public class LexemeMappingCreationService {
         this.fromEkiLexService = fromEkiLexService;
     }
 
+    @Transactional
     public void createMissingMapping(Long wordId) {
         createMappingForWord(wordId);
     }
 
+    @Transactional
     public void createMissingMapping(String word) {
         List<EkilexWord> candidateWords = Lists.newArrayList(wordRepository.findAllByBaseFormRepresentation(word).iterator());
         if (candidateWords.size() > 1) {
@@ -51,10 +55,14 @@ public class LexemeMappingCreationService {
         }
     }
 
-    private void createMappingForWord(Long id) {
-        final Long wordId = id;
+    private void createMappingForWord(Long wordId) {
         if (mappingRepository.existsByEkilexWordId(wordId)) {
-            log.info("Skipping word {}, mapping for it exists already", wordId);
+            log.info("Mapping for word {} exists already", wordId);
+            for (LexemeToEkiLexMapping mapping : mappingRepository.findByEkilexWordId(wordId)) {
+                Lexeme newLexeme = fromEkiLexService.recoverLexemeFormsFromEkilexForms(mapping.getLexeme(), mapping.getEkilexWord());
+                persistingService.save(newLexeme);
+                log.info("Saved lexeme {}", newLexeme);
+            }
         } else {
             log.info("Creating mappings for word id: {}", wordId);
             for (LexemeToEkiLexMapping mapping : fromEkiLexService.buildLexemesFromEkiLexWord(wordId)) {

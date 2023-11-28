@@ -7,32 +7,28 @@ import ee.mkv.estonian.repository.EkilexLexemeRepository;
 import ee.mkv.estonian.repository.EkilexParadigmRepository;
 import ee.mkv.estonian.repository.EkilexWordRepository;
 import ee.mkv.estonian.repository.LexemeToEkilexMappingRepository;
+import ee.mkv.estonian.utils.IterableUtils;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class LexemeFromEkiLexService {
 
-    private final EkilexWordRepository wordRepository;
-    private final EkilexParadigmRepository paradigmRepository;
+    private final EkilexWordRepository ekilexWordRepository;
+    private final EkilexParadigmRepository ekilexParadigmRepository;
     private final EkilexLexemeRepository ekilexLexemeRepository;
     private final LexemeToEkilexMappingRepository mappingRepository;
 
-    public LexemeFromEkiLexService(EkilexParadigmRepository paradigmRepository, EkilexLexemeRepository ekilexLexemeRepository, EkilexWordRepository wordRepository, LexemeToEkilexMappingRepository mappingRepository) {
-        this.paradigmRepository = paradigmRepository;
-        this.ekilexLexemeRepository = ekilexLexemeRepository;
-        this.wordRepository = wordRepository;
-        this.mappingRepository = mappingRepository;
-    }
-
     public List<LexemeToEkiLexMapping> buildLexemesFromEkiLexDetails(String lemma) {
-        return Streams.stream(wordRepository.findAllByBaseFormRepresentation(lemma))
+        return Streams.stream(ekilexWordRepository.findAllByBaseFormRepresentation(lemma))
                 .flatMap(word -> buildLexemesFromEkiLexWord(word.getId()).stream())
                 .collect(Collectors.toList());
     }
@@ -47,7 +43,7 @@ public class LexemeFromEkiLexService {
     public List<LexemeToEkiLexMapping> buildLexemesFromEkiLexWord(Long wordId) {
         List<LexemeToEkiLexMapping> result = new ArrayList<>();
 
-        EkilexWord word = wordRepository.findById(wordId).orElseThrow(() -> new WordNotFoundException(wordId));
+        EkilexWord word = ekilexWordRepository.findById(wordId).orElseThrow(() -> new WordNotFoundException(wordId));
         Set<PartOfSpeech> distinctPosForWord = getPartsOfSpeechForEkilexWordId(wordId);
 
         List<EkilexParadigm> paradigmsForWord = getParadigmsForWordId(wordId);
@@ -63,7 +59,7 @@ public class LexemeFromEkiLexService {
     }
 
     private List<EkilexParadigm> getParadigmsForWordId(Long wordId) {
-        return Streams.stream(paradigmRepository.findAllByWordId(wordId))
+        return Streams.stream(ekilexParadigmRepository.findAllByWordId(wordId))
                 .collect(Collectors.toList());
     }
 
@@ -126,6 +122,18 @@ public class LexemeFromEkiLexService {
         }
 
         return result;
+    }
+
+    @Transactional
+    public Lexeme recoverLexemeFormsFromEkilexForms(Lexeme lexeme, EkilexWord ekilexWord) {
+        if (!lexeme.getForms().isEmpty()) {
+            log.error("Lexeme {} already has forms", lexeme);
+            throw new RuntimeException("Lexeme already has forms");
+        }
+
+        List<EkilexParadigm> paradigms = IterableUtils.iterableToList(ekilexParadigmRepository.findAllByWordId(ekilexWord.getId()));
+        lexeme.setForms(buildFormsFromParadigms(paradigms, lexeme));
+        return lexeme;
     }
 
     @Data

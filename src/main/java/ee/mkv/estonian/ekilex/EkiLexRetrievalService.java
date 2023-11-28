@@ -4,10 +4,10 @@ import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.ekilex.dto.*;
 import ee.mkv.estonian.error.FormTypeCombinationNotFound;
 import ee.mkv.estonian.error.LanguageNotSupportedException;
-import ee.mkv.estonian.error.NotImplementedException;
 import ee.mkv.estonian.error.PartOfSpeechNotFoundException;
 import ee.mkv.estonian.model.PartOfSpeechEnum;
 import ee.mkv.estonian.repository.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,59 +16,62 @@ import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class EkiLexRetrievalService {
 
     public static final Long INITIAL_WORD_ID = 154_451L;
     private final EkiLexClient ekiLexClient;
 
     private final RepresentationsRepository representationsRepository;
-    private final EkilexWordRepository wordRepository;
-    private final EkilexLexemeRepository lexemeRepository;
+    private final EkilexWordRepository ekilexWordRepository;
+    private final EkilexLexemeRepository ekilexLexemeRepository;
     private final PartOfSpeechRepository partOfSpeechRepository;
-    private final EkilexParadigmRepository paradigmRepository;
+    private final EkilexParadigmRepository ekilexParadigmRepository;
     private final EkilexFormRepository ekilexFormRepository;
     private final FormTypeCombinationRepository formTypeRepository;
 
-    public EkiLexRetrievalService(EkiLexClient ekiLexClient, RepresentationsRepository representationsRepository, EkilexWordRepository wordRepository, EkilexLexemeRepository lexemeRepository, PartOfSpeechRepository partOfSpeechRepository, EkilexParadigmRepository paradigmRepository, EkilexFormRepository ekilexFormRepository, FormTypeCombinationRepository formTypeRepository) {
-        this.ekiLexClient = ekiLexClient;
-        this.representationsRepository = representationsRepository;
-        this.wordRepository = wordRepository;
-        this.lexemeRepository = lexemeRepository;
-        this.partOfSpeechRepository = partOfSpeechRepository;
-        this.paradigmRepository = paradigmRepository;
-        this.ekilexFormRepository = ekilexFormRepository;
-        this.formTypeRepository = formTypeRepository;
-    }
-
     public long getLastPersistedWordId() {
-        return wordRepository.getLastRetrievedWordId().orElse(INITIAL_WORD_ID);
+        return ekilexWordRepository.getLastRetrievedWordId().orElse(INITIAL_WORD_ID);
     }
 
     @Transactional
-    public List<EkilexWord> retrieveByLemma(String lemma, boolean forceOverwrite) {
+    public List<EkilexWord> retrieveByLemma(String lemma, boolean existingWord) {
         List<EkilexWord> result = new ArrayList<>();
         for (Long wordId : ekiLexClient.findWords(lemma)) {
-            result.add(retrieveById(wordId, forceOverwrite));
+            result.add(retrieveById(wordId, existingWord));
         }
 
         return result;
     }
 
     @Transactional
-    public EkilexWord retrieveById(Long wordId, boolean forceOverwrite) {
+    public EkilexWord retrieveById(Long wordId, boolean existingWord) {
 
-        if (wordRepository.existsById(wordId)) {
-            if (!forceOverwrite) {
+        if (ekilexWordRepository.existsById(wordId)) {
+            if (!existingWord) {
                 log.warn("EkilexWord with id {} already exists", wordId);
-                return wordRepository.findById(wordId).get();
+                return ekilexWordRepository.findById(wordId).get();
             } else {
-                throw new NotImplementedException("Force overwrite for existing EkiLex words not implemented yet!");
+                return retrieveFromEkilex(wordId, true);
             }
         }
 
+        return retrieveFromEkilex(wordId, false);
+    }
+
+    private EkilexWord retrieveFromEkilex(Long wordId, boolean existing) {
         DetailsDto detailsDto = ekiLexClient.getDetails(wordId);
 
-        EkilexWord word = getEkilexWord(detailsDto.getWord());
+        EkilexWord word = existing
+                ? updateEkilexWord(wordId)
+                : insertEkilexWord(detailsDto.getWord());
+
+        if (existing) {
+            // we must make sure there's no pre-existing records, to avoid overwriting those
+            if (ekilexParadigmRepository.existsByWordId(wordId)) {
+                throw new RuntimeException("Paradigm exists for word " + word);
+            }
+        }
 
         List<EkilexLexeme> myLexemes = new ArrayList<>();
         for (DetailsLexemeDto lexemeDto : detailsDto.getLexemes()) {
@@ -87,14 +90,19 @@ public class EkiLexRetrievalService {
         return word;
     }
 
-    private EkilexWord getEkilexWord(WordDto wordDto) {
+    private EkilexWord updateEkilexWord(Long wordId) {
+        return ekilexWordRepository.findById(wordId)
+                .orElseThrow(() -> new RuntimeException("This should not happen here"));
+    }
+
+    private EkilexWord insertEkilexWord(WordDto wordDto) {
         if (!wordDto.getLang().equalsIgnoreCase("est")) {
             throw new LanguageNotSupportedException(wordDto.getLang());
         }
         EkilexWord word = new EkilexWord();
         word.setId(wordDto.getWordId());
         word.setBaseForm(getRepresentation(wordDto.getWordValue()));
-        wordRepository.save(word);
+        ekilexWordRepository.save(word);
         return word;
     }
 
@@ -102,7 +110,7 @@ public class EkiLexRetrievalService {
         EkilexParadigm paradigm = new EkilexParadigm();
         paradigm.setWord(word);
         paradigm.setInflectionType(paradigmDto.getInflectionTypeNr());
-        final EkilexParadigm ekilexParadigm = paradigmRepository.save(paradigm);
+        final EkilexParadigm ekilexParadigm = ekilexParadigmRepository.save(paradigm);
         for (FormDto formDto : paradigmDto.getForms()) {
             try {
                 saveEkiLexForm(paradigm, formDto);
@@ -132,7 +140,7 @@ public class EkiLexRetrievalService {
         EkilexLexeme lexeme = new EkilexLexeme();
         lexeme.setWord(word);
         lexeme.setPos(getPos(lexemeDto.getPos()));
-        return lexemeRepository.save(lexeme);
+        return ekilexLexemeRepository.save(lexeme);
     }
 
     private Set<PartOfSpeech> getPos(List<DetailsClassifierDto> posList) {

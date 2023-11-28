@@ -17,4 +17,6 @@ public interface LexemeToEkilexMappingRepository extends CrudRepository<LexemeTo
     Optional<EkilexWord> findByLexemeAndPartOfSpeech(Lexeme lexeme, PartOfSpeech partOfSpeech);
 
     boolean existsByEkilexWordId(Long wordId);
+
+    Iterable<LexemeToEkiLexMapping> findByEkilexWordId(Long wordId);
 }
