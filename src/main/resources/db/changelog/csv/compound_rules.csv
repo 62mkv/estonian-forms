@@ -4,3 +4,4 @@ id,description                                          ,group_id
 3 ,"Compound of two words, first part plural nominative",1
 4 ,"Compound of two words, first part plural genitive"  ,1
 5 ,"Compound of two words, separated with hyphen"       ,1
+6 ,"Compound of several components"                     ,1

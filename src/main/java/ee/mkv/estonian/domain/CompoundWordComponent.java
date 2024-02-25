@@ -25,8 +25,14 @@ public class CompoundWordComponent {
     @ToString.Exclude
     CompoundWord compoundWord;
 
+    /**
+     * The index of the component in the compound word
+     */
     int componentIndex;
 
+    /**
+     * The index of the character in the compound word where the component starts
+     */
     int componentStartsAt;
 
     @ManyToOne

@@ -1,4 +1,4 @@
-package ee.mkv.estonian.service;
+package ee.mkv.estonian.split;
 
 
 import ee.mkv.estonian.model.SplitCandidate;
@@ -11,6 +11,7 @@ import java.util.List;
 
 @Component
 @Slf4j
+@Deprecated
 public class SplitService {
     private static final int MIN_FIRST_COMPONENT = 4;
     private static final int MIN_LAST_COMPONENT = 4;

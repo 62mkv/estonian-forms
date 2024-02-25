@@ -45,17 +45,19 @@ public class EkiLexRetrievalService {
     }
 
     @Transactional
-    public EkilexWord retrieveById(Long wordId, boolean existingWord) {
+    public EkilexWord retrieveById(Long wordId, boolean force) {
 
         if (ekilexWordRepository.existsById(wordId)) {
-            if (!existingWord) {
+            if (!force) {
                 log.warn("EkilexWord with id {} already exists", wordId);
                 return ekilexWordRepository.findById(wordId).get();
             } else {
+                log.info("Force retrieval for word {}", wordId);
                 return retrieveFromEkilex(wordId, true);
             }
         }
 
+        log.info("Word not found, retrieving from Ekilex: {}", wordId);
         return retrieveFromEkilex(wordId, false);
     }
 
@@ -66,11 +68,9 @@ public class EkiLexRetrievalService {
                 ? updateEkilexWord(wordId)
                 : insertEkilexWord(detailsDto.getWord());
 
-        if (existing) {
+        if (existing && ekilexParadigmRepository.existsByWordId(wordId)) {
             // we must make sure there's no pre-existing records, to avoid overwriting those
-            if (ekilexParadigmRepository.existsByWordId(wordId)) {
-                throw new RuntimeException("Paradigm exists for word " + word);
-            }
+            throw new RuntimeException("Paradigm exists for word " + word);
         }
 
         List<EkilexLexeme> myLexemes = new ArrayList<>();

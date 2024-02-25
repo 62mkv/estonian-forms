@@ -1,4 +1,4 @@
-package ee.mkv.estonian.service;
+package ee.mkv.estonian.split;
 
 
 import ee.mkv.estonian.model.SplitCandidate;

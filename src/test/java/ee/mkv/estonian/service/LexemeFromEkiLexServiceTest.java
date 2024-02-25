@@ -36,7 +36,7 @@ public class LexemeFromEkiLexServiceTest {
     private EkilexLexemeRepository ekilexLexemeRepository;
 
     @Autowired
-    private EkilexWordRepository wordRepository;
+    private EkilexWordRepository ekilexWordRepository;
 
     @Autowired
     private LexemeToEkilexMappingRepository mappingRepository;
@@ -52,7 +52,7 @@ public class LexemeFromEkiLexServiceTest {
 
     @Before
     public void setUp() {
-        this.lexemeFromEkiLexService = new LexemeFromEkiLexService(ekilexParadigmRepository, ekilexLexemeRepository, wordRepository, mappingRepository);
+        this.lexemeFromEkiLexService = new LexemeFromEkiLexService(ekilexWordRepository, ekilexParadigmRepository, ekilexLexemeRepository, mappingRepository);
         this.lexemePersistingService = new LexemePersistingService(lexemeRepository, formRepository, mappingRepository);
     }
 
