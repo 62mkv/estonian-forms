@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,7 +19,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class FindFormsForFullNameService {
 
-    private static final Set<String> SUITABLE_FTC_FOR_NON_LAST_COMPONENTS = Set.of("SgN", "SgG", "PlN", "PlG", "pf");
+    private static final Set<String> SUITABLE_FTC_FOR_NON_LAST_COMPONENTS = Set.of("SgN", "SgG", "PlN", "PlG", "pf", "RSgG");
     private final FormRepository formRepository;
     private final WordSplitService wordSplitService;
 
@@ -78,7 +79,27 @@ public class FindFormsForFullNameService {
                 return translateResults(splitting, componentListMap);
             } else {
                 log.info("Found multiple splittings with forms for all components: {}", splittingWithAllMatches);
-                return Collections.emptyList();
+
+                AtomicInteger key = new AtomicInteger(0);
+                Map<Integer, Splitting> splittingsByIndex = splittingWithAllMatches.entrySet().stream()
+                        .collect(Collectors.toMap(
+                                entry -> key.incrementAndGet(),
+                                Map.Entry::getKey
+                        ));
+
+                for (Integer k : splittingsByIndex.keySet()) {
+                    log.info("Splitting {}: {}", k, format(splittingsByIndex.get(k)));
+                }
+
+                // wait for user input
+                Scanner scanner = new Scanner(System.in);
+                log.info("Please select splitting index: ");
+                int selectedSplittingIndex = scanner.nextInt();
+                log.info("You selected: {} {}", selectedSplittingIndex, format(splittingsByIndex.get(selectedSplittingIndex)));
+                scanner.close();
+                var selectedSplitting = splittingsByIndex.get(selectedSplittingIndex);
+
+                return translateResults(selectedSplitting, splittingWithAllMatches.get(selectedSplitting));
             }
 
         }
@@ -99,6 +120,10 @@ public class FindFormsForFullNameService {
             }
         }
         return Collections.emptyList();
+    }
+
+    private String format(Splitting splitting) {
+        return splitting.getComponents().stream().map(WordComponent::getComponent).collect(Collectors.joining(":"));
     }
 
     private List<CompoundWordComponent> combineComponents(List<CompoundWordComponent> componentsForLeftover, WordComponent lastComponent, List<Form> formsForFinalComponent) {

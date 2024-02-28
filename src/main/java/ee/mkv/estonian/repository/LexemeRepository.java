@@ -30,7 +30,7 @@ public interface LexemeRepository extends CrudRepository<Lexeme, Long> {
                     "and not exists(select 1 from compound_words cw where cw.lexeme_id = l.id)\n" +
                     "and not exists(select 1 from rejected_compound_candidates rcc where rcc.lexeme_id = l.id and rcc.rule_group_id = :rule_group_id)\n" +
                     "and length(representation) > 8\n" +
-                    "order by length(r.representation) desc\n" +
+                    "order by length(r.representation) desc, l.id\n" +
                     "limit :limit\n")
     Iterable<Lexeme> findNextUnsplitCandidates(@Param("rule_group_id") int ruleGroupId, int limit);
 }

@@ -63,7 +63,7 @@ public class EkiLexRetrievalService {
 
     private EkilexWord retrieveFromEkilex(Long wordId, boolean existing) {
         DetailsDto detailsDto = ekiLexClient.getDetails(wordId);
-
+        log.debug("Details for word {}: {}", wordId, detailsDto);
         EkilexWord word = existing
                 ? updateEkilexWord(wordId)
                 : insertEkilexWord(detailsDto.getWord());

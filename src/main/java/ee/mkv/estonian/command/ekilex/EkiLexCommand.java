@@ -66,7 +66,7 @@ public class EkiLexCommand implements Runnable {
         for (String id : ids) {
             try {
                 long wordId = Long.parseLong(id);
-                EkilexWord ekilexWord = retrievalService.retrieveById(wordId, false);
+                EkilexWord ekilexWord = retrievalService.retrieveById(wordId, force);
                 log.info("Retrieved word {}:{}", ekilexWord.getId(), ekilexWord.getBaseForm().getRepresentation());
             } catch (RestClientException webException) {
                 log.error("WebError: {}", webException.getMessage());
@@ -80,7 +80,7 @@ public class EkiLexCommand implements Runnable {
         long wordId = retrievalService.getLastPersistedWordId();
         while (true) {
             try {
-                EkilexWord ekilexWord = retrievalService.retrieveById(wordId, false);
+                EkilexWord ekilexWord = retrievalService.retrieveById(wordId, force);
                 log.info("Retrieved word {}:{}", ekilexWord.getId(), ekilexWord.getBaseForm().getRepresentation());
                 wordId++;
             } catch (RestClientException webException) {

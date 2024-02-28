@@ -42,6 +42,17 @@ class WordSplitServiceTest {
         );
     }
 
+    @Test
+    void testHyphenSplitting() {
+        assertThat(subject.findAllSplittings("123-456-789")).containsExactlyInAnyOrder(
+                new Splitting(List.of(
+                        new WordComponent(0, 0, "123"),
+                        new WordComponent(4, 1, "456"),
+                        new WordComponent(8, 2, "789")
+                ))
+        );
+    }
+
     private Splitting lonelySplitting(String source) {
         return new Splitting(List.of(new WordComponent(0, 0, source)));
     }

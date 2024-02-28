@@ -3,10 +3,7 @@ package ee.mkv.estonian.service;
 import com.github.jsonldjava.shaded.com.google.common.collect.Streams;
 import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.error.WordNotFoundException;
-import ee.mkv.estonian.repository.EkilexLexemeRepository;
-import ee.mkv.estonian.repository.EkilexParadigmRepository;
-import ee.mkv.estonian.repository.EkilexWordRepository;
-import ee.mkv.estonian.repository.LexemeToEkilexMappingRepository;
+import ee.mkv.estonian.repository.*;
 import ee.mkv.estonian.utils.IterableUtils;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +23,9 @@ public class LexemeFromEkiLexService {
     private final EkilexParadigmRepository ekilexParadigmRepository;
     private final EkilexLexemeRepository ekilexLexemeRepository;
     private final LexemeToEkilexMappingRepository mappingRepository;
+    private final FormTypeCombinationRepository formTypeCombinationRepository;
 
+    @Transactional
     public List<LexemeToEkiLexMapping> buildLexemesFromEkiLexDetails(String lemma) {
         return Streams.stream(ekilexWordRepository.findAllByBaseFormRepresentation(lemma))
                 .flatMap(word -> buildLexemesFromEkiLexWord(word.getId()).stream())
@@ -107,18 +106,33 @@ public class LexemeFromEkiLexService {
         }
 
         Set<Form> result = new HashSet<>();
-        for (Map.Entry<MyFormForLexeme, Set<String>> entry : inflectionTypesPerForm.entrySet()) {
-            String inflectionTypes = entry.getValue().stream().sorted().collect(Collectors.joining(","));
-            MyFormForLexeme formForLexeme = entry.getKey();
 
-            Form form = new Form();
-            form.setDeclinationTypes(inflectionTypes);
-            form.setLexeme(lexeme);
-            form.setRepresentation(formForLexeme.getRepresentation());
-            form.setFormTypeCombination(formForLexeme.getFormTypeCombination());
-            lexeme.getForms().add(form);
+        if (inflectionTypesPerForm.isEmpty()) {
+            if (lexeme.getPartOfSpeech().getEkiCodes().equals("pf")) {
+                Form form = new Form();
+                form.setLexeme(lexeme);
+                form.setRepresentation(lexeme.getLemma());
+                form.setFormTypeCombination(formTypeCombinationRepository.findByEkiRepresentation("pf").orElseThrow());
+                lexeme.getForms().add(form);
 
-            result.add(form);
+                result.add(form);
+            }
+            log.warn("No forms found for lexeme {}", lexeme);
+        } else {
+
+            for (Map.Entry<MyFormForLexeme, Set<String>> entry : inflectionTypesPerForm.entrySet()) {
+                String inflectionTypes = entry.getValue().stream().sorted().collect(Collectors.joining(","));
+                MyFormForLexeme formForLexeme = entry.getKey();
+
+                Form form = new Form();
+                form.setDeclinationTypes(inflectionTypes);
+                form.setLexeme(lexeme);
+                form.setRepresentation(formForLexeme.getRepresentation());
+                form.setFormTypeCombination(formForLexeme.getFormTypeCombination());
+                lexeme.getForms().add(form);
+
+                result.add(form);
+            }
         }
 
         return result;

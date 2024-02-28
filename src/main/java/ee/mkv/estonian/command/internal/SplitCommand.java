@@ -30,11 +30,13 @@ public class SplitCommand extends HelpAwarePicocliCommand {
     public ExitStatus call() throws Exception {
 
         AtomicBoolean foundNewCompounds = new AtomicBoolean(true);
+        Lexeme lastLexeme = null;
         while (foundNewCompounds.get()) {
             foundNewCompounds.set(false);
             TransactionStatus transactionStatus = transactionManager.getTransaction(TransactionDefinition.withDefaults());
             try {
                 for (Lexeme lexeme : lexemeRepository.findNextUnsplitCandidates(1, 1)) {
+                    lastLexeme = lexeme;
                     log.info("Examining lexeme {}", lexeme);
                     findFormsForFullNameService.findFormsForSplittings(lexeme).ifPresent(compoundWord -> {
                         log.info("CompoundWord built for lexeme {}: {}", lexeme, compoundWord);
@@ -50,6 +52,7 @@ public class SplitCommand extends HelpAwarePicocliCommand {
             }
         }
 
+        log.info("Last lexeme: {}", lastLexeme);
         return ExitStatus.OK;
     }
 
