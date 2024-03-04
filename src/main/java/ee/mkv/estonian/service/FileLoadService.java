@@ -22,13 +22,13 @@ public class FileLoadService {
     private static final String DECLINATION_TYPES = "declination_types.csv";
 
     private final FormTypeCombinationRepository formTypeCombinationRepository;
-    private final RepresentationsRepository representationsRepository;
+    private final RepresentationRepository representationsRepository;
     private final FormTypeRepository formTypeRepository;
     private final ArticleRepository articleRepository;
     private final ArticleFormRepository articleFormRepository;
     private final PartOfSpeechRepository partOfSpeechRepository;
 
-    public FileLoadService(RepresentationsRepository representationsRepository, FormTypeRepository formTypeRepository, ArticleRepository articleRepository, ArticleFormRepository articleFormRepository, PartOfSpeechRepository partOfSpeechRepository, FormTypeCombinationRepository formTypeCombinationRepository) {
+    public FileLoadService(RepresentationRepository representationsRepository, FormTypeRepository formTypeRepository, ArticleRepository articleRepository, ArticleFormRepository articleFormRepository, PartOfSpeechRepository partOfSpeechRepository, FormTypeCombinationRepository formTypeCombinationRepository) {
         this.representationsRepository = representationsRepository;
         this.formTypeRepository = formTypeRepository;
         this.articleRepository = articleRepository;

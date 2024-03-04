@@ -22,7 +22,7 @@ public class EkiLexRetrievalService {
     public static final Long INITIAL_WORD_ID = 154_451L;
     private final EkiLexClient ekiLexClient;
 
-    private final RepresentationsRepository representationsRepository;
+    private final RepresentationRepository representationsRepository;
     private final EkilexWordRepository ekilexWordRepository;
     private final EkilexLexemeRepository ekilexLexemeRepository;
     private final PartOfSpeechRepository partOfSpeechRepository;

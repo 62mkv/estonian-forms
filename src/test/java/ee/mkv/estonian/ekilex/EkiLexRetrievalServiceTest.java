@@ -36,7 +36,7 @@ public class EkiLexRetrievalServiceTest {
     private EkiLexRetrievalService sut;
 
     @Autowired
-    private RepresentationsRepository representationsRepository;
+    private RepresentationRepository representationsRepository;
 
     @Autowired
     private EkilexWordRepository wordRepository;

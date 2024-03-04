@@ -41,4 +41,13 @@ public enum FormTypeCombinationEnum {
     private final String ekiRepresentation;
     private final GrammaticNumber grammaticNumber;
     private final GrammaticCase grammaticCase;
+
+    public static FormTypeCombinationEnum fromEkiRepresentation(String representation) {
+        for (FormTypeCombinationEnum value : values()) {
+            if (value.getEkiRepresentation().equals(representation)) {
+                return value;
+            }
+        }
+        throw new IllegalArgumentException("No such representation: " + representation);
+    }
 }

@@ -2,34 +2,35 @@ package ee.mkv.estonian.command.internal;
 
 import com.kakawait.spring.boot.picocli.autoconfigure.ExitStatus;
 import com.kakawait.spring.boot.picocli.autoconfigure.HelpAwarePicocliCommand;
-import ee.mkv.estonian.service.paradigm.ManualParadigmRestoreService;
+import ee.mkv.estonian.service.lexeme.LexemeFormRestorer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import picocli.CommandLine;
 
 @Component
-@CommandLine.Command(name = "manual-restore-paradigm")
+@CommandLine.Command(name = "add-reduced-form")
 @RequiredArgsConstructor
 @Slf4j
-public class ManualRestoreParadigmCommand extends HelpAwarePicocliCommand {
+public class AddReducedFormCommand extends HelpAwarePicocliCommand {
 
-    private final ManualParadigmRestoreService paradigmRestoreService;
-
+    private final LexemeFormRestorer lexemeFormRestorer;
     @CommandLine.Option(names = "-w")
     private String wordToRestore;
 
     @Override
-    public ExitStatus call() throws Exception {
-        assert wordToRestore != null;
-
+    public ExitStatus call() {
+        if (wordToRestore == null) {
+            log.error("Word to restore is not provided");
+            return ExitStatus.TERMINATION;
+        }
+        log.info("Running add-reduced-form command for word {}", wordToRestore);
         try {
-            paradigmRestoreService.restoreParadigm(this.wordToRestore);
-            return ExitStatus.OK;
+            lexemeFormRestorer.restoreLexemeForms(wordToRestore);
         } catch (Exception e) {
             log.error("Error while restoring paradigm for word {}", wordToRestore, e);
             return ExitStatus.TERMINATION;
         }
+        return ExitStatus.OK;
     }
-
 }

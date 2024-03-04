@@ -46,6 +46,15 @@ public enum PartOfSpeechEnum {
         }
     }
 
+    public static Optional<PartOfSpeechEnum> fromEkiCodes(String ekiCode) {
+        for (PartOfSpeechEnum value : PartOfSpeechEnum.values()) {
+            if (value.ekiCodes.equalsIgnoreCase(ekiCode)) {
+                return Optional.of(value);
+            }
+        }
+        return Optional.empty();
+    }
+
     public static Optional<PartOfSpeechEnum> fromRepresentation(String name) {
         for (PartOfSpeechEnum value : PartOfSpeechEnum.values()) {
             if (value.representation.equalsIgnoreCase(name)) {

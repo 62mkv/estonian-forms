@@ -4,7 +4,7 @@ import ee.mkv.estonian.domain.Form;
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.repository.LexemeRepository;
 import ee.mkv.estonian.repository.PartOfSpeechRepository;
-import ee.mkv.estonian.repository.RepresentationsRepository;
+import ee.mkv.estonian.repository.RepresentationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 public class LexemeDbService {
     private final LexemeRepository lexemeRepository;
     private final PartOfSpeechRepository partOfSpeechRepository;
-    private final RepresentationsRepository representationsRepository;
+    private final RepresentationRepository representationsRepository;
 
-    public LexemeDbService(LexemeRepository lexemeRepository, PartOfSpeechRepository partOfSpeechRepository, RepresentationsRepository representationsRepository) {
+    public LexemeDbService(LexemeRepository lexemeRepository, PartOfSpeechRepository partOfSpeechRepository, RepresentationRepository representationsRepository) {
         this.lexemeRepository = lexemeRepository;
         this.partOfSpeechRepository = partOfSpeechRepository;
         this.representationsRepository = representationsRepository;

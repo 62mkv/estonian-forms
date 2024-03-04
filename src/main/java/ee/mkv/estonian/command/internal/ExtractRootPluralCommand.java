@@ -10,7 +10,7 @@ import ee.mkv.estonian.model.DiscrepancyProjection;
 import ee.mkv.estonian.repository.EkilexFormRepository;
 import ee.mkv.estonian.repository.EkilexParadigmRepository;
 import ee.mkv.estonian.repository.FormTypeCombinationRepository;
-import ee.mkv.estonian.repository.RepresentationsRepository;
+import ee.mkv.estonian.repository.RepresentationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class ExtractRootPluralCommand extends HelpAwarePicocliCommand {
 
     private final EkilexParadigmRepository ekilexParadigmRepository;
-    private final RepresentationsRepository representationRepository;
+    private final RepresentationRepository representationRepository;
     private final EkilexFormRepository ekilexFormRepository;
     private final FormTypeCombinationRepository formTypeCombinationRepository;
     private FormTypeCombination formTypeCombination;
