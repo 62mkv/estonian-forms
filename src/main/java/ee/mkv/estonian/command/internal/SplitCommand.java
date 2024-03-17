@@ -5,6 +5,7 @@ import com.kakawait.spring.boot.picocli.autoconfigure.HelpAwarePicocliCommand;
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.repository.CompoundWordRepository;
 import ee.mkv.estonian.repository.LexemeRepository;
+import ee.mkv.estonian.split.CommandCoordinator;
 import ee.mkv.estonian.split.FindFormsForFullNameService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,17 +26,30 @@ public class SplitCommand extends HelpAwarePicocliCommand {
     private final CompoundWordRepository compoundWordRepository;
     private final FindFormsForFullNameService findFormsForFullNameService;
     private final PlatformTransactionManager transactionManager;
+    private final CommandCoordinator commandCoordinator;
 
     @Override
     public ExitStatus call() throws Exception {
 
+        boolean continueProcessing;
+        do {
+            final Lexeme lastLexeme = getLexeme();
+
+            log.info("Last lexeme: {}", lastLexeme);
+            continueProcessing = commandCoordinator.runCommand(lastLexeme);
+        } while (continueProcessing);
+
+        return ExitStatus.OK;
+    }
+
+    private Lexeme getLexeme() {
         AtomicBoolean foundNewCompounds = new AtomicBoolean(true);
         Lexeme lastLexeme = null;
         while (foundNewCompounds.get()) {
             foundNewCompounds.set(false);
             TransactionStatus transactionStatus = transactionManager.getTransaction(TransactionDefinition.withDefaults());
             try {
-                for (Lexeme lexeme : lexemeRepository.findNextUnsplitCandidates(1, 1)) {
+                for (Lexeme lexeme : lexemeRepository.findNextUnsplitCandidates(1)) {
                     lastLexeme = lexeme;
                     log.info("Examining lexeme {}", lexeme);
                     findFormsForFullNameService.findFormsForSplittings(lexeme).ifPresent(compoundWord -> {
@@ -51,9 +65,7 @@ public class SplitCommand extends HelpAwarePicocliCommand {
                 transactionManager.rollback(transactionStatus);
             }
         }
-
-        log.info("Last lexeme: {}", lastLexeme);
-        return ExitStatus.OK;
+        return lastLexeme;
     }
 
 

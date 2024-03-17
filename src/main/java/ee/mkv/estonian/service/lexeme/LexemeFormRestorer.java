@@ -4,8 +4,8 @@ import ee.mkv.estonian.domain.Form;
 import ee.mkv.estonian.domain.FormTypeCombination;
 import ee.mkv.estonian.domain.PartOfSpeech;
 import ee.mkv.estonian.domain.Representation;
+import ee.mkv.estonian.model.EkiPartOfSpeech;
 import ee.mkv.estonian.model.FormTypeCombinationEnum;
-import ee.mkv.estonian.model.PartOfSpeechEnum;
 import ee.mkv.estonian.repository.*;
 import ee.mkv.estonian.service.paradigm.ParadigmRestorer;
 import ee.mkv.estonian.utils.IterableUtils;
@@ -44,7 +44,7 @@ public class LexemeFormRestorer implements InitializingBean {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No lexeme found for word " + word));
 
-        var pos = PartOfSpeechEnum.fromEkiCodes(lexeme.getPartOfSpeech().getEkiCodes())
+        var pos = EkiPartOfSpeech.fromEkiCodes(lexeme.getPartOfSpeech().getEkiCodes())
                 .orElseThrow(() -> new IllegalStateException("No POS found for word " + lexeme.getLemma()));
 
         ParadigmRestorer paradigmRestorer = paradigmRestorers.stream()

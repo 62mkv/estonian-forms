@@ -4,8 +4,8 @@ import ee.mkv.estonian.domain.EkilexForm;
 import ee.mkv.estonian.domain.EkilexParadigm;
 import ee.mkv.estonian.domain.FormTypeCombination;
 import ee.mkv.estonian.domain.Representation;
+import ee.mkv.estonian.model.EkiPartOfSpeech;
 import ee.mkv.estonian.model.FormTypeCombinationEnum;
-import ee.mkv.estonian.model.PartOfSpeechEnum;
 import ee.mkv.estonian.repository.*;
 import ee.mkv.estonian.utils.IterableUtils;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class ManualParadigmRestoreService {
     public void restoreParadigm(String word) {
         log.info("Restoring paradigm for a word: {}", word);
         var paradigmRestorerOptional = paradigmRestorers.stream()
-                .filter(r -> r.isMyParadigm(word, PartOfSpeechEnum.NOUN))
+                .filter(r -> r.isMyParadigm(word, EkiPartOfSpeech.NOUN))
                 .findFirst();
 
         if (paradigmRestorerOptional.isEmpty()) {

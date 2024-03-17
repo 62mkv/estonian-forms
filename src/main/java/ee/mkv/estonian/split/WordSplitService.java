@@ -62,7 +62,7 @@ public class WordSplitService {
             candidates.add(new WordComponent(lastIndex, componentIndex, word.substring(lastIndex)));
         }
 
-        return Set.of(new Splitting(candidates));
+        return Set.of(Splitting.hyphenated(candidates));
     }
 
 }

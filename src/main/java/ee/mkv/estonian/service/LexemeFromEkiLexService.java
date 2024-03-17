@@ -3,6 +3,7 @@ package ee.mkv.estonian.service;
 import com.github.jsonldjava.shaded.com.google.common.collect.Streams;
 import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.error.WordNotFoundException;
+import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.repository.*;
 import ee.mkv.estonian.utils.IterableUtils;
 import lombok.Data;
@@ -52,7 +53,7 @@ public class LexemeFromEkiLexService {
         }
 
         if (result.isEmpty()) {
-            log.warn("Could not build lexeme from EkiLex word {}", wordId);
+            log.warn("Could not build lexeme from EkiLex word {}, possibly no parts of speech were found", wordId);
         }
         return result;
     }
@@ -108,11 +109,11 @@ public class LexemeFromEkiLexService {
         Set<Form> result = new HashSet<>();
 
         if (inflectionTypesPerForm.isEmpty()) {
-            if (lexeme.getPartOfSpeech().getEkiCodes().equals("pf")) {
+            if (InternalPartOfSpeech.fromEkiCodes(lexeme.getPartOfSpeech().getEkiCodes()) == InternalPartOfSpeech.PREFIX) {
                 Form form = new Form();
                 form.setLexeme(lexeme);
                 form.setRepresentation(lexeme.getLemma());
-                form.setFormTypeCombination(formTypeCombinationRepository.findByEkiRepresentation("pf").orElseThrow());
+                form.setFormTypeCombination(formTypeCombinationRepository.findByEkiRepresentation(Constants.IMMUTABLE_FORM).orElseThrow());
                 lexeme.getForms().add(form);
 
                 result.add(form);

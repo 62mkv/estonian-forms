@@ -4,6 +4,7 @@ import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.repository.FormRepository;
 import ee.mkv.estonian.split.domain.Splitting;
 import ee.mkv.estonian.split.domain.WordComponent;
+import ee.mkv.estonian.utils.IterableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,8 @@ import java.util.stream.Stream;
 @Slf4j
 public class FindFormsForFullNameService {
 
-    private static final Set<String> SUITABLE_FTC_FOR_NON_LAST_COMPONENTS = Set.of("SgN", "SgG", "PlN", "PlG", "pf", "RSgG");
+    private static final Set<String> SUITABLE_FTC_FOR_NON_LAST_COMPONENTS = Set.of("SgN", "SgG", "PlN", "PlG",
+            Constants.IMMUTABLE_FORM, "RSgG");
     private final FormRepository formRepository;
     private final WordSplitService wordSplitService;
 
@@ -39,6 +41,14 @@ public class FindFormsForFullNameService {
         return Optional.of(compoundWord);
     }
 
+    private static CompoundWordComponent buildCompoundWordComponent(int index, WordComponent component, List<Form> forms) {
+        var finalComponent = new CompoundWordComponent();
+        finalComponent.setForm(IterableUtils.getFirstValueOrFail(forms));
+        finalComponent.setComponentIndex(index);
+        finalComponent.setComponentStartsAt(component.getStartIndex());
+        return finalComponent;
+    }
+
     private List<CompoundWordComponent> internalFindForms(String word, boolean isFullName) {
         var splittings = wordSplitService.findAllSplittings(word);
         var representationCandidates = splittings.stream()
@@ -46,17 +56,90 @@ public class FindFormsForFullNameService {
                 .distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
 
+        log.info("Searching for forms for representation candidates: {}", representationCandidates);
+
         var forms = formRepository.findWhereRepresentationIn(representationCandidates);
 
         log.info("Found forms: {}", forms);
 
+        if (splittings.size() == 1 && splittings.stream().allMatch(Splitting::isHyphenated)) {
+            var splitting = splittings.stream().findFirst().get();
+            if (hasMatchesForAllComponents(splitting, forms)) {
+                return leftoverStrategy(word, isFullName, splittings, forms);
+            }
+            var formsForSplitting = findFormsForSplitting(splitting, forms);
+            if (hasMatchesForAllButFinalComponent(splitting, formsForSplitting)) {
+                final WordComponent lastComponent = splitting.findLastComponent();
+                var componentsForRightLeftover = internalFindForms(lastComponent.getComponent(), true);
+                if (!componentsForRightLeftover.isEmpty()) {
+                    return combineComponentsWhenLeftoverIsToTheRight(splitting, formsForSplitting, componentsForRightLeftover);
+                }
+            }
+            return Collections.emptyList();
+        }
+
+        return leftoverStrategy(word, isFullName, splittings, forms);
+    }
+
+    private boolean hasMatchesForAllComponents(Splitting splitting, List<Form> forms) {
+        final Map<WordComponent, List<Form>> formsForSplitting = findFormsForSplitting(splitting, forms);
+        return hasMatchesForAllButFinalComponent(splitting, formsForSplitting)
+                && hasMatchesForFinalComponent(splitting, formsForSplitting);
+    }
+
+    private List<CompoundWordComponent> combineComponentsWhenLeftoverIsToTheRight(
+            Splitting splitting,
+            Map<WordComponent, List<Form>> formsForSplitting,
+            List<CompoundWordComponent> componentsForRightLeftover) {
+        log.info("Found forms for splitting: {}", formsForSplitting);
+        log.info("Found components for right leftover: {}", componentsForRightLeftover);
+        var result = new ArrayList<CompoundWordComponent>();
+        var lastComponentWithForms = formsForSplitting.entrySet()
+                .stream()
+                .sorted(Comparator.comparing(entry -> entry.getKey().getPosition()))
+                .filter(entry -> !entry.getValue().isEmpty())
+                .reduce((first, second) -> second)
+                .map(Map.Entry::getKey)
+                .get();
+
+        var firstComponentOfLeftover = splitting.nextComponent(lastComponentWithForms);
+        result.addAll(translateResults(splitting.upTo(lastComponentWithForms), formsForSplitting));
+        result.addAll(patchRightLeftover(componentsForRightLeftover, firstComponentOfLeftover));
+
+        final List<CompoundWordComponent> sortedByComponent = result.stream().sorted(Comparator.comparing(CompoundWordComponent::getComponentIndex)).collect(Collectors.toList());
+        for (CompoundWordComponent component : sortedByComponent) {
+            log.info("Component: {}", component);
+        }
+
+        return result;
+    }
+
+    private List<CompoundWordComponent> patchRightLeftover(List<CompoundWordComponent> componentsForRightLeftover,
+                                                           WordComponent firstComponentOfLeftover) {
+        return componentsForRightLeftover
+                .stream()
+                .map(component -> {
+                    var newComponent = new CompoundWordComponent();
+                    newComponent.setComponentIndex(firstComponentOfLeftover.getPosition() + component.getComponentIndex());
+                    newComponent.setComponentStartsAt(firstComponentOfLeftover.getStartIndex() + component.getComponentStartsAt());
+                    newComponent.setForm(component.getForm());
+                    return newComponent;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private String format(Splitting splitting) {
+        return splitting.getComponents().stream().map(WordComponent::getComponent).collect(Collectors.joining(":"));
+    }
+
+    private List<CompoundWordComponent> leftoverStrategy(String word, boolean isFullName, Set<Splitting> splittings, List<Form> forms) {
         var mapOfSplittingsToForms = splittings.stream()
                 .collect(Collectors.toMap(
                         splitting -> splitting,
                         splitting -> findFormsForSplitting(splitting, forms)
                 ))
                 .entrySet().stream()
-                .filter(this::hasMatchesForFinalComponent)
+                .filter(entry1 -> hasMatchesForFinalComponent(entry1.getKey(), entry1.getValue()))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue
@@ -116,27 +199,21 @@ public class FindFormsForFullNameService {
             var formsForLeftover = internalFindForms(leftover, false);
             log.info("Forms for leftover: {}", formsForLeftover);
             if (!formsForLeftover.isEmpty()) {
-                return combineComponents(formsForLeftover, lastComponent, formsForFinalComponent);
+                return combineComponentsWhenLeftoverIsToTheLeft(formsForLeftover, lastComponent, formsForFinalComponent);
             }
         }
+
         return Collections.emptyList();
     }
 
-    private String format(Splitting splitting) {
-        return splitting.getComponents().stream().map(WordComponent::getComponent).collect(Collectors.joining(":"));
-    }
-
-    private List<CompoundWordComponent> combineComponents(List<CompoundWordComponent> componentsForLeftover, WordComponent lastComponent, List<Form> formsForFinalComponent) {
+    private List<CompoundWordComponent> combineComponentsWhenLeftoverIsToTheLeft(List<CompoundWordComponent> componentsForLeftover, WordComponent lastComponent, List<Form> formsForFinalComponent) {
         var result = new ArrayList<>(componentsForLeftover);
         var lastLeftoverComponentIndex = componentsForLeftover
                 .stream()
                 .map(CompoundWordComponent::getComponentIndex)
                 .max(Comparator.comparing(Integer::intValue))
                 .get();
-        var finalComponent = new CompoundWordComponent();
-        finalComponent.setForm(formsForFinalComponent.get(0));
-        finalComponent.setComponentIndex(lastLeftoverComponentIndex + 1);
-        finalComponent.setComponentStartsAt(lastComponent.getStartIndex());
+        final var finalComponent = buildCompoundWordComponent(lastLeftoverComponentIndex + 1, lastComponent, formsForFinalComponent);
         result.add(finalComponent);
         return result;
     }
@@ -167,10 +244,7 @@ public class FindFormsForFullNameService {
             if (forms.isEmpty()) {
                 return Collections.emptyList(); // this should not happen though
             }
-            var compoundWordComponent = new CompoundWordComponent();
-            compoundWordComponent.setForm(forms.get(0)); // because we've already filtered suitable forms, we know it's safe to pick any
-            compoundWordComponent.setComponentIndex(component.getPosition());
-            compoundWordComponent.setComponentStartsAt(component.getStartIndex());
+            final var compoundWordComponent = buildCompoundWordComponent(component.getPosition(), component, forms);
             result.add(compoundWordComponent);
         }
 
@@ -189,11 +263,16 @@ public class FindFormsForFullNameService {
         return SUITABLE_FTC_FOR_NON_LAST_COMPONENTS.contains(form.getFormTypeCombination().getEkiRepresentation());
     }
 
-    private boolean hasMatchesForFinalComponent(Map.Entry<Splitting, Map<WordComponent, List<Form>>> entry) {
-        var componentFormsMap = entry.getValue();
-        var lastComponent = entry.getKey().findLastComponent();
+    private boolean hasMatchesForFinalComponent(Splitting splitting, Map<WordComponent, List<Form>> componentListMap) {
+        var lastComponent = splitting.findLastComponent();
 
-        return !componentFormsMap.get(lastComponent).isEmpty();
+        return !componentListMap.get(lastComponent).isEmpty();
+    }
+
+    private boolean hasMatchesForAllButFinalComponent(Splitting splitting, Map<WordComponent, List<Form>> componentListMap) {
+        return splitting.getComponents().stream()
+                .filter(component -> !component.equals(splitting.findLastComponent()))
+                .noneMatch(component -> componentListMap.get(component).isEmpty());
     }
 
     private int orderByLongestFinalComponent(Map.Entry<Splitting, Map<WordComponent, List<Form>>> entry,

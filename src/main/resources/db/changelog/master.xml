@@ -14,6 +14,7 @@
     <include file="changelogs/010-add-ekilex-to-lexeme-mapping.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/011-sequences.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/012-combined-words.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/013-loan-words.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
 

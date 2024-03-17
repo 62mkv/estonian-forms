@@ -1,7 +1,7 @@
 package ee.mkv.estonian.service.paradigm;
 
+import ee.mkv.estonian.model.EkiPartOfSpeech;
 import ee.mkv.estonian.model.FormTypeCombinationEnum;
-import ee.mkv.estonian.model.PartOfSpeechEnum;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import java.util.function.BiConsumer;
 
 @Component
 public class MineParadigmRestorer implements ParadigmRestorer {
-    private static final Set<PartOfSpeechEnum> NAMES = Set.of(PartOfSpeechEnum.NOUN, PartOfSpeechEnum.ADJECTIVE);
+    private static final Set<EkiPartOfSpeech> NAMES = Set.of(EkiPartOfSpeech.NOUN, EkiPartOfSpeech.ADJECTIVE);
 
     @Override
     public Map<FormTypeCombinationEnum, List<String>> restoreParadigm(String baseForm) {
@@ -61,7 +61,7 @@ public class MineParadigmRestorer implements ParadigmRestorer {
     }
 
     @Override
-    public boolean isMyParadigm(String baseForm, PartOfSpeechEnum partOfSpeech) {
+    public boolean isMyParadigm(String baseForm, EkiPartOfSpeech partOfSpeech) {
         return NAMES.contains(partOfSpeech) && baseForm.endsWith("mine");
     }
 

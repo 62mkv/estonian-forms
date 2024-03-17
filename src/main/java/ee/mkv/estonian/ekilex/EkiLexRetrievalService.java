@@ -5,7 +5,7 @@ import ee.mkv.estonian.ekilex.dto.*;
 import ee.mkv.estonian.error.FormTypeCombinationNotFound;
 import ee.mkv.estonian.error.LanguageNotSupportedException;
 import ee.mkv.estonian.error.PartOfSpeechNotFoundException;
-import ee.mkv.estonian.model.PartOfSpeechEnum;
+import ee.mkv.estonian.model.EkiPartOfSpeech;
 import ee.mkv.estonian.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,6 +82,11 @@ public class EkiLexRetrievalService {
             }
         }
 
+        if (myLexemes.isEmpty()) {
+            log.warn("No lexemes found for word {}", wordId);
+            throw new RuntimeException("Won't save EkilexWord without lexemes");
+        }
+
         List<EkilexParadigm> myParadigms = new ArrayList<>();
         for (DetailsParadigmDto paradigmDto : detailsDto.getParadigms()) {
             myParadigms.add(saveEkiLexParadigm(word, paradigmDto));
@@ -102,8 +107,7 @@ public class EkiLexRetrievalService {
         EkilexWord word = new EkilexWord();
         word.setId(wordDto.getWordId());
         word.setBaseForm(getRepresentation(wordDto.getWordValue()));
-        ekilexWordRepository.save(word);
-        return word;
+        return ekilexWordRepository.save(word);
     }
 
     private EkilexParadigm saveEkiLexParadigm(EkilexWord word, DetailsParadigmDto paradigmDto) {
@@ -139,7 +143,15 @@ public class EkiLexRetrievalService {
     private EkilexLexeme saveEkiLexLexeme(EkilexWord word, DetailsLexemeDto lexemeDto) {
         EkilexLexeme lexeme = new EkilexLexeme();
         lexeme.setWord(word);
-        lexeme.setPos(getPos(lexemeDto.getPos()));
+        var partOfSpeeches = getPos(lexemeDto.getPos());
+        if (partOfSpeeches.isEmpty()) {
+            log.info("Please choose one of the following parts of speech:");
+            var chosenPos = showMenu();
+            var pos = partOfSpeechRepository.findByPartOfSpeech(chosenPos.getRepresentation())
+                    .orElseThrow(() -> new PartOfSpeechNotFoundException(chosenPos.getRepresentation()));
+            partOfSpeeches.add(pos);
+        }
+        lexeme.setPos(partOfSpeeches);
         return ekilexLexemeRepository.save(lexeme);
     }
 
@@ -149,7 +161,7 @@ public class EkiLexRetrievalService {
         for (DetailsClassifierDto classifierDto : posList) {
             if (classifierDto.getName().equalsIgnoreCase("POS")) {
 
-                PartOfSpeechEnum posEnum = PartOfSpeechEnum.fromEkilexCode(classifierDto.getCode())
+                EkiPartOfSpeech posEnum = EkiPartOfSpeech.fromEkilexCode(classifierDto.getCode())
                         .orElseThrow(() -> new PartOfSpeechNotFoundException(classifierDto.getCode()));
 
                 PartOfSpeech pos = partOfSpeechRepository.findByPartOfSpeech(posEnum.getRepresentation())
@@ -169,4 +181,24 @@ public class EkiLexRetrievalService {
                     return representationsRepository.save(representation);
                 });
     }
+
+    private EkiPartOfSpeech showMenu() {
+        for (EkiPartOfSpeech option : EkiPartOfSpeech.values()) {
+            log.info("{}: {}", option.ordinal() + 1, option.name());
+        }
+        Scanner in = new Scanner(System.in);
+        int input = -1;
+        boolean validInput = false;
+        do {
+            try {
+                input = in.nextInt();
+                validInput = true;
+            } catch (NoSuchElementException e) {
+                log.error("Invalid input", e);
+            }
+        } while (!validInput);
+        return EkiPartOfSpeech.from(input);
+    }
+
+
 }

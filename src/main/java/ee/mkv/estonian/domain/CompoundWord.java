@@ -23,6 +23,9 @@ public class CompoundWord {
     @Column(name = "rule_id")
     int compoundRule;
 
+    @Column(name = "rejected")
+    boolean rejected;
+
     @OneToMany(mappedBy = "compoundWord", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     List<CompoundWordComponent> components;
 
