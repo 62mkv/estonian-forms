@@ -61,13 +61,21 @@ public class CommandCoordinator {
                 case RETRIEVE_FROM_EKILEX:
                     log.info("Retrieving from ekilex");
                     String ekilex = readWordFromUserInput();
-                    ekiLexRetrievalService.retrieveByLemma(ekilex, true);
-                    lexemeMappingCreationService.createMissingMapping(ekilex);
+                    try {
+                        ekiLexRetrievalService.retrieveByLemma(ekilex, true);
+                        lexemeMappingCreationService.createMissingMapping(ekilex);
+                    } catch (Exception e) {
+                        log.error("Error retrieving from EkiLex", e);
+                    }
                     return true;
                 case LEXEME_FROM_EKILEX:
                     log.info("Lexeme from ekilex");
                     String ekilexLexeme = readWordFromUserInput();
-                    lexemeMappingCreationService.createMissingMapping(ekilexLexeme);
+                    try {
+                        lexemeMappingCreationService.createMissingMapping(ekilexLexeme);
+                    } catch (Exception e) {
+                        log.error("Error converting from EkiLex", e);
+                    }
                     return true;
                 case REJECT_LEXEME_AS_LOANWORD:
                     log.info("Rejecting lexeme");

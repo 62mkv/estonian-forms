@@ -84,7 +84,7 @@ public class EkiLexRetrievalService {
 
         if (myLexemes.isEmpty()) {
             log.warn("No lexemes found for word {}", wordId);
-            throw new RuntimeException("Won't save EkilexWord without lexemes");
+            myLexemes.add(generateLexemeWithUserChoice(word));
         }
 
         List<EkilexParadigm> myParadigms = new ArrayList<>();
@@ -151,6 +151,19 @@ public class EkiLexRetrievalService {
                     .orElseThrow(() -> new PartOfSpeechNotFoundException(chosenPos.getRepresentation()));
             partOfSpeeches.add(pos);
         }
+        lexeme.setPos(partOfSpeeches);
+        return ekilexLexemeRepository.save(lexeme);
+    }
+
+    private EkilexLexeme generateLexemeWithUserChoice(EkilexWord word) {
+        EkilexLexeme lexeme = new EkilexLexeme();
+        lexeme.setWord(word);
+        var partOfSpeeches = new HashSet<PartOfSpeech>();
+        log.info("Please choose one of the following parts of speech:");
+        var chosenPos = showMenu();
+        var pos = partOfSpeechRepository.findByPartOfSpeech(chosenPos.getRepresentation())
+                .orElseThrow(() -> new PartOfSpeechNotFoundException(chosenPos.getRepresentation()));
+        partOfSpeeches.add(pos);
         lexeme.setPos(partOfSpeeches);
         return ekilexLexemeRepository.save(lexeme);
     }
