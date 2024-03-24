@@ -43,4 +43,8 @@ public enum InternalPartOfSpeech {
 
         return null;
     }
+
+    public boolean isName() {
+        return this == NOUN || this == ADJECTIVE;
+    }
 }

@@ -1,12 +1,13 @@
-package ee.mkv.estonian.command.internal;
+package ee.mkv.estonian.command.split;
 
 import com.kakawait.spring.boot.picocli.autoconfigure.ExitStatus;
 import com.kakawait.spring.boot.picocli.autoconfigure.HelpAwarePicocliCommand;
+import ee.mkv.estonian.domain.CompoundWord;
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.repository.CompoundWordRepository;
 import ee.mkv.estonian.repository.LexemeRepository;
 import ee.mkv.estonian.split.CommandCoordinator;
-import ee.mkv.estonian.split.FindFormsForFullNameService;
+import ee.mkv.estonian.split.LexemeSplitter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,9 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import picocli.CommandLine;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
@@ -24,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SplitCommand extends HelpAwarePicocliCommand {
     private final LexemeRepository lexemeRepository;
     private final CompoundWordRepository compoundWordRepository;
-    private final FindFormsForFullNameService findFormsForFullNameService;
+    private final Collection<LexemeSplitter> lexemeSplitters;
     private final PlatformTransactionManager transactionManager;
     private final CommandCoordinator commandCoordinator;
 
@@ -52,7 +56,7 @@ public class SplitCommand extends HelpAwarePicocliCommand {
                 for (Lexeme lexeme : lexemeRepository.findNextUnsplitCandidates(1)) {
                     lastLexeme = lexeme;
                     log.info("Examining lexeme {}", lexeme);
-                    findFormsForFullNameService.findFormsForSplittings(lexeme).ifPresent(compoundWord -> {
+                    tryFindCompoundWord(lexeme).ifPresent(compoundWord -> {
                         log.info("CompoundWord built for lexeme {}: {}", lexeme, compoundWord);
                         compoundWordRepository.save(compoundWord);
                         compoundWordRepository.flush();
@@ -66,6 +70,15 @@ public class SplitCommand extends HelpAwarePicocliCommand {
             }
         }
         return lastLexeme;
+    }
+
+    private Optional<CompoundWord> tryFindCompoundWord(Lexeme lexeme) {
+        return lexemeSplitters.stream()
+                .sorted(Comparator.comparing(LexemeSplitter::getPriority))
+                .map(lexemeSplitter -> lexemeSplitter.trySplitLexeme(lexeme))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
     }
 
 

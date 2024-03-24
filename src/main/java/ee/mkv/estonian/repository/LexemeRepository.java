@@ -14,6 +14,8 @@ import java.util.List;
 public interface LexemeRepository extends CrudRepository<Lexeme, Long> {
     List<Lexeme> findByLemmaAndPartOfSpeech(Representation lemma, PartOfSpeech partOfSpeech);
 
+    List<Lexeme> findAllByPartOfSpeech(PartOfSpeech partOfSpeech);
+
     List<Lexeme> findByLemma(Representation lemma);
 
     Iterable<Lexeme> findAllByWikidataIdNull();

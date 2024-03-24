@@ -1,6 +1,7 @@
 package ee.mkv.estonian.split;
 
 import ee.mkv.estonian.domain.*;
+import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.repository.FormRepository;
 import ee.mkv.estonian.split.domain.Splitting;
 import ee.mkv.estonian.split.domain.WordComponent;
@@ -18,14 +19,25 @@ import java.util.stream.Stream;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class FindFormsForFullNameService {
+public class CompoundNameSplitter implements LexemeSplitter {
 
-    private static final Set<String> SUITABLE_FTC_FOR_NON_LAST_COMPONENTS = Set.of("SgN", "SgG", "PlN", "PlG",
-            Constants.IMMUTABLE_FORM, "RSgG");
+    private static final Set<InternalPartOfSpeech> SUITABLE_PART_OF_SPEECH_FOR_NON_LAST_COMPONENTS = Set.of(
+            InternalPartOfSpeech.ADJECTIVE,
+            InternalPartOfSpeech.NOUN,
+            InternalPartOfSpeech.PRONOUN,
+            InternalPartOfSpeech.PREFIX,
+            InternalPartOfSpeech.ADVERB
+    );
+
     private final FormRepository formRepository;
     private final WordSplitService wordSplitService;
 
-    public Optional<CompoundWord> findFormsForSplittings(Lexeme lexeme) {
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
         var word = lexeme.getLemma().getRepresentation();
         var components = internalFindForms(word, true);
         if (components.isEmpty()) {
@@ -237,6 +249,12 @@ public class FindFormsForFullNameService {
         return result;
     }
 
+    private boolean canBeNonLastComponentOfName(Form form) {
+        var partOfSpeech = InternalPartOfSpeech.fromEkiCodes(form.getLexeme().getPartOfSpeech().getEkiCodes());
+
+        return SplitUtils.canBeNonLastComponentOfName(form) && SUITABLE_PART_OF_SPEECH_FOR_NON_LAST_COMPONENTS.contains(partOfSpeech);
+    }
+
     private List<CompoundWordComponent> translateResults(Splitting splitting, Map<WordComponent, List<Form>> componentListMap) {
         var result = new ArrayList<CompoundWordComponent>();
         for (WordComponent component : splitting.getComponents()) {
@@ -257,10 +275,6 @@ public class FindFormsForFullNameService {
                 .map(FormType::getEkiRepresentation)
                 .collect(Collectors.toSet())
                 .contains("N");
-    }
-
-    private boolean canBeNonLastComponentOfName(Form form) {
-        return SUITABLE_FTC_FOR_NON_LAST_COMPONENTS.contains(form.getFormTypeCombination().getEkiRepresentation());
     }
 
     private boolean hasMatchesForFinalComponent(Splitting splitting, Map<WordComponent, List<Form>> componentListMap) {

@@ -4,6 +4,7 @@ import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.ekilex.EkiLexRetrievalService;
 import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.service.LexemeMappingCreationService;
+import ee.mkv.estonian.service.VerbRootRestoreService;
 import ee.mkv.estonian.service.lexeme.ImmutableLexemeAdderService;
 import ee.mkv.estonian.service.lexeme.LexemeInitializer;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class CommandCoordinator {
     private final EkiLexRetrievalService ekiLexRetrievalService;
     private final LexemeMappingCreationService lexemeMappingCreationService;
     private final LexemeRejectionService lexemeRejectionService;
+    private final VerbRootRestoreService verbRootRestoreService;
 
     /**
      * Will run user commands until user chooses to leave
@@ -77,6 +79,11 @@ public class CommandCoordinator {
                         log.error("Error converting from EkiLex", e);
                     }
                     return true;
+                case ADD_ROOT_FOR_VERB:
+                    log.info("Adding root for verb");
+                    String verbRoot = readWordFromUserInput();
+                    verbRootRestoreService.restoreVerbRoots(verbRoot);
+                    return true;
                 case REJECT_LEXEME_AS_LOANWORD:
                     log.info("Rejecting lexeme");
                     lexemeRejectionService.rejectLexemeAsLoanWord(lastLexeme);
@@ -128,6 +135,7 @@ public class CommandCoordinator {
         ADD_RESTORABLE_NOUN,
         ADD_RESTORABLE_ADJECTIVE,
         REJECT_LEXEME_AS_LOANWORD,
+        ADD_ROOT_FOR_VERB,
         BREAK;
 
         public static Option from(int i) {
