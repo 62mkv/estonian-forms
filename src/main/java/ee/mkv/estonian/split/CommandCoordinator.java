@@ -121,6 +121,7 @@ public class CommandCoordinator {
                 validInput = true;
             } catch (NoSuchElementException e) {
                 log.error("Invalid input", e);
+                in = new Scanner(System.in);
             }
         } while (!validInput);
         return Option.from(input);

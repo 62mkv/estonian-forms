@@ -15,7 +15,8 @@ public enum EkiPartOfSpeech {
     POSTPOSITION("Postposition", "K", "postp"), // postpositsioon, tagasõna
     PREPOSITION("Preposition", "K", "prep"), // prepositsioon, eessõna
     PRONOUN("Pronoun", "P", "pron"), // pronoomen, asesõna
-    VERB("Verb", "XV", "v"); // verb, tegusõna
+    VERB("Verb", "XV", "v"),
+    PREFIX("Prefix", "pf", "pf"); // verb, tegusõna
 
     private final String representation;
     private final String ekiCodes;

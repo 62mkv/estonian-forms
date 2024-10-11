@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import picocli.CommandLine;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -22,8 +23,8 @@ public class EkiLexCommand implements Runnable {
     @CommandLine.Option(names = {"-i", "--id-list"})
     private String idList;
 
-    @CommandLine.Option(names = {"-w", "--word"})
-    private String word;
+    @CommandLine.Option(names = {"-w", "--word"}, split = ",")
+    private List<String> words = new ArrayList<>();
 
     @CommandLine.Option(names = {"-f", "--force"})
     private boolean force;
@@ -37,17 +38,23 @@ public class EkiLexCommand implements Runnable {
     @Override
     public void run() {
         if (StringUtils.isBlank(idList)) {
-            if (StringUtils.isBlank(word)) {
+            if (words.isEmpty()) {
                 importStartingFromLastestImported();
             } else {
-                processWord();
+                processWords();
             }
         } else {
             processIds();
         }
     }
 
-    private void processWord() {
+    private void processWords() {
+        for (String word : words) {
+            processWord(word);
+        }
+    }
+
+    private void processWord(String word) {
         log.info("Processing word {}", word);
         List<EkilexWord> words = IterableUtils.iterableToList(ekilexWordRepository.findAllByBaseFormRepresentation(word));
         if (!words.isEmpty()) {
