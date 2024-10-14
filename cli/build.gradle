@@ -1,0 +1,12 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+    id 'application'
+}
+
+mainClassName = 'ee.mkv.estonian.CliApplication'
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation project(':core')
+}

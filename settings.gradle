@@ -1,2 +1,5 @@
 rootProject.name = 'estonian-forms'
 
+include 'core'
+include 'cli'
+include 'jfx'
