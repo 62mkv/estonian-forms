@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.3.0.RELEASE'
+    id 'org.springframework.boot' version '3.2.8'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
 }
@@ -17,13 +17,13 @@ dependencies {
     implementation group: 'org.wikidata.wdtk', name: 'wdtk-datamodel', version: '0.11.1-mkv'
     implementation group: 'org.wikidata.wdtk', name: 'wdtk-wikibaseapi', version: '0.11.1-mkv'
 
-    runtime 'io.github.willena:sqlite-jdbc:3.31.1'
-    runtime 'com.github.gwenn:sqlite-dialect:0.1.0'
-    runtime 'org.postgresql:postgresql:42.5.1'
+    runtimeOnly 'io.github.willena:sqlite-jdbc:3.31.1'
+    runtimeOnly 'com.github.gwenn:sqlite-dialect:0.1.0'
+    runtimeOnly 'org.postgresql:postgresql:42.5.1'
     implementation("org.liquibase:liquibase-core:3.10.2")
     implementation("com.opencsv:opencsv:4.1")
 
-    testRuntime 'com.h2database:h2:1.4.200'
+    testRuntimeOnly 'com.h2database:h2:1.4.200'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

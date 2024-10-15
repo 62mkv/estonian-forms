@@ -7,11 +7,11 @@ plugins {
 mainClassName = 'ee.mkv.estonian.JfxApplication'
 
 dependencies {
-    implementation 'org.openjfx:javafx-controls:17.0.1'
-    implementation 'org.openjfx:javafx-fxml:17.0.1'
+    implementation 'org.openjfx:javafx-controls:21.0.1'
+    implementation 'org.openjfx:javafx-fxml:21.0.1'
 }
 
 javafx {
-    version = '17'
+    version = '21'
     modules = ['javafx.controls', 'javafx.fxml']
 }
