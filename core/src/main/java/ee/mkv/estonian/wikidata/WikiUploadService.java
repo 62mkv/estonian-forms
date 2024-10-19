@@ -4,11 +4,11 @@ import ee.mkv.estonian.config.WikidataProperties;
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.domain.PartOfSpeech;
 import ee.mkv.estonian.repository.LexemeRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;

@@ -1,30 +1,23 @@
-package ee.mkv.estonian.command.wiki;
-
+package ee.mkv.estonian.service;
 
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.repository.LexemeRepository;
 import ee.mkv.estonian.wikidata.WikiUploadService;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import picocli.CommandLine;
 
 @Component
-@CommandLine.Command(name = "wikidata")
-@Slf4j
-public class WikiCommand implements Runnable {
-
+@RequiredArgsConstructor
+@ConditionalOnProperty("wikidata.site")
+public class WikiService {
     private final WikiUploadService wikiUploadService;
     private final LexemeRepository lexemeRepository;
 
-    public WikiCommand(WikiUploadService wikiUploadService, LexemeRepository lexemeRepository) {
-        this.wikiUploadService = wikiUploadService;
-        this.lexemeRepository = lexemeRepository;
-    }
-
-    @Override
-    public void run() {
+    public void runWikiUpload() {
         for (Lexeme lexeme : lexemeRepository.findAllByWikidataIdNull()) {
             wikiUploadService.uploadLexeme(lexeme);
         }
     }
+
 }

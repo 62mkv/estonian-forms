@@ -6,10 +6,9 @@ import ee.mkv.estonian.domain.LexemeToEkiLexMapping;
 import ee.mkv.estonian.repository.FormRepository;
 import ee.mkv.estonian.repository.LexemeRepository;
 import ee.mkv.estonian.repository.LexemeToEkilexMappingRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 
 @Service
 @Slf4j

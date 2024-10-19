@@ -1,7 +1,5 @@
-package ee.mkv.estonian.command.internal;
+package ee.mkv.estonian.service;
 
-import com.kakawait.spring.boot.picocli.autoconfigure.ExitStatus;
-import com.kakawait.spring.boot.picocli.autoconfigure.HelpAwarePicocliCommand;
 import ee.mkv.estonian.domain.EkilexForm;
 import ee.mkv.estonian.domain.EkilexParadigm;
 import ee.mkv.estonian.domain.FormTypeCombination;
@@ -14,7 +12,6 @@ import ee.mkv.estonian.repository.RepresentationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import picocli.CommandLine;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,10 +20,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-@CommandLine.Command(name = "extract-rpl")
 @RequiredArgsConstructor
 @Slf4j
-public class ExtractRootPluralCommand extends HelpAwarePicocliCommand {
+public class ExtractRootPluralService {
 
     private final EkilexParadigmRepository ekilexParadigmRepository;
     private final RepresentationRepository representationRepository;
@@ -34,8 +30,7 @@ public class ExtractRootPluralCommand extends HelpAwarePicocliCommand {
     private final FormTypeCombinationRepository formTypeCombinationRepository;
     private FormTypeCombination formTypeCombination;
 
-    @Override
-    public ExitStatus call() throws Exception {
+    public void extractRootPlural() {
         this.formTypeCombination = formTypeCombinationRepository.findByEkiRepresentation("Rpl").orElseThrow();
 
         while (true) {
@@ -51,7 +46,7 @@ public class ExtractRootPluralCommand extends HelpAwarePicocliCommand {
             }
 
             List<Long> ids = nextCandidatesForRootPlural.stream().map(DiscrepancyProjection::getId).collect(Collectors.toList());
-            var paradigms = ids.stream().collect(Collectors.toSet());
+            var paradigms = new HashSet<>(ids);
 
             if (paradigms.size() < ids.size()) {
                 var map = ids.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
@@ -69,8 +64,6 @@ public class ExtractRootPluralCommand extends HelpAwarePicocliCommand {
                 log.info("Added new RPl form: paradigm {}, representation {}", newForm.getEkilexParadigm().getId(), newForm.getRepresentation().getRepresentation());
             }
         }
-
-        return ExitStatus.OK;
     }
 
     private EkilexForm newRootPluralForm(Long paradigmId, Representation representation) {
@@ -96,4 +89,5 @@ public class ExtractRootPluralCommand extends HelpAwarePicocliCommand {
         int len = inflected.length();
         return inflected.substring(0, len - 2);
     }
+
 }

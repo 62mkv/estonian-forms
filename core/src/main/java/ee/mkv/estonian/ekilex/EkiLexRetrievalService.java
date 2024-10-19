@@ -7,11 +7,11 @@ import ee.mkv.estonian.error.LanguageNotSupportedException;
 import ee.mkv.estonian.error.PartOfSpeechNotFoundException;
 import ee.mkv.estonian.model.EkiPartOfSpeech;
 import ee.mkv.estonian.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 @Service

@@ -5,13 +5,12 @@ import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.repository.LexemeRepository;
 import ee.mkv.estonian.repository.PartOfSpeechRepository;
 import ee.mkv.estonian.repository.RepresentationRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -19,6 +18,7 @@ public class LexemeDbService {
     private final LexemeRepository lexemeRepository;
     private final PartOfSpeechRepository partOfSpeechRepository;
     private final RepresentationRepository representationsRepository;
+    private boolean recursive;
 
     public LexemeDbService(LexemeRepository lexemeRepository, PartOfSpeechRepository partOfSpeechRepository, RepresentationRepository representationsRepository) {
         this.lexemeRepository = lexemeRepository;
@@ -36,10 +36,11 @@ public class LexemeDbService {
                             .forEach(form -> form.getFormTypeCombination().getFormTypes().forEach(formType -> form.getFormTypeCombination().getFormTypes()));
                     return lexeme;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<Lexeme> getLexemes(String lemma, String partOfSpeech, boolean recursive) {
+        this.recursive = recursive;
         // try to find a lexeme in Db for our parameters
         final List<Lexeme> lexemeList = partOfSpeechRepository
                 .findByPartOfSpeech(partOfSpeech)

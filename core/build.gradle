@@ -5,20 +5,15 @@ plugins {
 }
 
 dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework:spring-web'
-    implementation group: 'com.kakawait', name: 'picocli-spring-boot-starter', version: '0.2.0'
 
     implementation group: 'org.eclipse.rdf4j', name: 'rdf4j-repository-sparql', version: '3.2.2'
     implementation group: 'org.wikidata.wdtk', name: 'wdtk-datamodel', version: '0.11.1-mkv'
     implementation group: 'org.wikidata.wdtk', name: 'wdtk-wikibaseapi', version: '0.11.1-mkv'
 
-    runtimeOnly 'io.github.willena:sqlite-jdbc:3.31.1'
-    runtimeOnly 'com.github.gwenn:sqlite-dialect:0.1.0'
     runtimeOnly 'org.postgresql:postgresql:42.5.1'
     implementation("org.liquibase:liquibase-core:3.10.2")
     implementation("com.opencsv:opencsv:4.1")

@@ -1,18 +1,15 @@
 package ee.mkv.estonian;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-@ComponentScan(basePackages = {"ee.mkv.estonian.config"})
-@EnableAutoConfiguration
-@EnableJpaRepositories(basePackages = "ee.mkv.estonian.repository")
+@ComponentScan(basePackages = {"ee.mkv.estonian.config", "com.kakawait.spring.boot.picocli.autoconfigure"})
 @SpringBootApplication
-public class CliApplication {
+public class EstonianFormsApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(EstonianFormsApplication.class, args);
         System.exit(0);
     }
 

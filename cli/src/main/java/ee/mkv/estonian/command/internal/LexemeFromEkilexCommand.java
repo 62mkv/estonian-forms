@@ -13,13 +13,11 @@ import java.util.List;
 @Slf4j
 public class LexemeFromEkilexCommand implements Runnable {
 
+    private final LexemeMappingCreationService creationService;
     @CommandLine.Option(names = "-i", description = "db id of an ekilex word")
     private Long wordId;
-
     @CommandLine.Option(names = "-w", description = "ekilex word to convert to lexeme (base representation)", split = ",")
     private List<String> words = new ArrayList<>();
-
-    private final LexemeMappingCreationService creationService;
 
     public LexemeFromEkilexCommand(LexemeMappingCreationService creationService) {
         this.creationService = creationService;

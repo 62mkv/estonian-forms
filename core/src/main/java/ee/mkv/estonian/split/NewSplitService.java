@@ -1,20 +1,15 @@
-package ee.mkv.estonian.command.split;
+package ee.mkv.estonian.split;
 
-import com.kakawait.spring.boot.picocli.autoconfigure.ExitStatus;
-import com.kakawait.spring.boot.picocli.autoconfigure.HelpAwarePicocliCommand;
 import ee.mkv.estonian.domain.CompoundWord;
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.repository.CompoundWordRepository;
 import ee.mkv.estonian.repository.LexemeRepository;
-import ee.mkv.estonian.split.CommandCoordinator;
-import ee.mkv.estonian.split.LexemeSplitter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import picocli.CommandLine;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -22,19 +17,17 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
-@CommandLine.Command(name = "split-words")
 @RequiredArgsConstructor
 @Slf4j
-public class SplitCommand extends HelpAwarePicocliCommand {
+public class NewSplitService {
+
     private final LexemeRepository lexemeRepository;
     private final CompoundWordRepository compoundWordRepository;
     private final Collection<LexemeSplitter> lexemeSplitters;
     private final PlatformTransactionManager transactionManager;
     private final CommandCoordinator commandCoordinator;
 
-    @Override
-    public ExitStatus call() throws Exception {
-
+    public void runSplitService() {
         boolean continueProcessing;
         do {
             final Lexeme lastLexeme = getLexeme();
@@ -42,8 +35,6 @@ public class SplitCommand extends HelpAwarePicocliCommand {
             log.info("Last lexeme: {}", lastLexeme);
             continueProcessing = commandCoordinator.runCommand(lastLexeme);
         } while (continueProcessing);
-
-        return ExitStatus.OK;
     }
 
     private Lexeme getLexeme() {

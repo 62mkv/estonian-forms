@@ -8,11 +8,26 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 21
 
 subprojects {
+
+    apply plugin: 'java'
+
     repositories {
         mavenLocal()
         mavenCentral()
         maven {
             url 'https://repo.spring.io/release'
         }
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.34'
+        annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs += [
+                '--add-exports', 'jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
+                '--add-exports', 'jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED'
+        ]
     }
 }

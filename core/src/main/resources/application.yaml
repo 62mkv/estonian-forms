@@ -9,3 +9,5 @@ spring:
 ekilex:
   uri: https://ekilex.ee
 spring.jmx.enabled: true
+logging.level:
+  picocli: DEBUG

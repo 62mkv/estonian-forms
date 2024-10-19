@@ -1,8 +1,8 @@
 package ee.mkv.estonian.domain;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.util.Set;
 
 @Data
@@ -11,6 +11,7 @@ import java.util.Set;
 public class EkilexLexeme {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "ekilex_lexeme_id_seq", sequenceName = "hibernate_sequence4", allocationSize = 1)
     Long id;
 
     @ManyToOne

@@ -1,10 +1,10 @@
 package ee.mkv.estonian.domain;
 
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Table(name = "COMPOUND_WORDS")

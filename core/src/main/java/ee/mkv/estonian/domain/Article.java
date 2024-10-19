@@ -1,9 +1,9 @@
 package ee.mkv.estonian.domain;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;

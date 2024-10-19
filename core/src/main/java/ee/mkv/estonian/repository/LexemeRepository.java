@@ -23,15 +23,17 @@ public interface LexemeRepository extends CrudRepository<Lexeme, Long> {
     Iterable<Lexeme> findByLemmaRepresentationIn(Collection<String> lemmas);
 
     @Query(nativeQuery = true,
-            value = "select *\n" +
-                    "from lexemes l\n" +
-                    "join representations r on r.id  = l.representation_id \n" +
-                    "where part_of_speech_id in (1,5) \n" +
-                    "and not r.representation like '% %' \n" +
-                    "and not exists(select 1 from compound_words cw where cw.lexeme_id = l.id)\n" +
-                    "and not exists(select 1 from loan_words lw where lw.lexeme_id = l.id)\n" +
-                    "and length(representation) > 8\n" +
-                    "order by length(r.representation) desc, l.id\n" +
-                    "limit :limit\n")
+            value = """
+                    select l.*
+                    from lexemes l
+                    join representations r on r.id  = l.representation_id\s
+                    where part_of_speech_id in (1,5)\s
+                    and not r.representation like '% %'\s
+                    and not exists(select 1 from compound_words cw where cw.lexeme_id = l.id)
+                    and not exists(select 1 from loan_words lw where lw.lexeme_id = l.id)
+                    and length(representation) > 8
+                    order by length(r.representation) desc, l.id
+                    limit :limit
+                    """)
     Iterable<Lexeme> findNextUnsplitCandidates(int limit);
 }

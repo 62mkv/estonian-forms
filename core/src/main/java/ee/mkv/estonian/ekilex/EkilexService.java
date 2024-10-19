@@ -1,60 +1,43 @@
-package ee.mkv.estonian.command.ekilex;
+package ee.mkv.estonian.ekilex;
 
 import ee.mkv.estonian.domain.EkilexWord;
-import ee.mkv.estonian.ekilex.EkiLexRetrievalService;
 import ee.mkv.estonian.repository.EkilexWordRepository;
 import ee.mkv.estonian.utils.IterableUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
-import picocli.CommandLine;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@CommandLine.Command(name = "ekilex")
+@RequiredArgsConstructor
 @Slf4j
-public class EkiLexCommand implements Runnable {
+public class EkilexService {
+
     private final EkilexWordRepository ekilexWordRepository;
     private final EkiLexRetrievalService retrievalService;
 
-    @CommandLine.Option(names = {"-i", "--id-list"})
-    private String idList;
-
-    @CommandLine.Option(names = {"-w", "--word"}, split = ",")
-    private List<String> words = new ArrayList<>();
-
-    @CommandLine.Option(names = {"-f", "--force"})
-    private boolean force;
-
-    public EkiLexCommand(EkiLexRetrievalService retrievalService,
-                         EkilexWordRepository ekilexWordRepository) {
-        this.retrievalService = retrievalService;
-        this.ekilexWordRepository = ekilexWordRepository;
-    }
-
-    @Override
-    public void run() {
+    public void runEkilex(String idList, List<String> words, boolean force) {
         if (StringUtils.isBlank(idList)) {
             if (words.isEmpty()) {
-                importStartingFromLastestImported();
+                importStartingFromLastestImported(force);
             } else {
-                processWords();
+                processWords(words, force);
             }
         } else {
-            processIds();
+            processIds(idList, force);
         }
     }
 
-    private void processWords() {
-        for (String word : words) {
-            processWord(word);
+    private void processWords(List<String> words1, boolean force) {
+        for (String word : words1) {
+            processWord(word, force);
         }
     }
 
-    private void processWord(String word) {
+    private void processWord(String word, boolean force) {
         log.info("Processing word {}", word);
         List<EkilexWord> words = IterableUtils.iterableToList(ekilexWordRepository.findAllByBaseFormRepresentation(word));
         if (!words.isEmpty()) {
@@ -68,7 +51,7 @@ public class EkiLexCommand implements Runnable {
         }
     }
 
-    private void processIds() {
+    private void processIds(String idList, boolean force) {
         String[] ids = idList.split(",");
         for (String id : ids) {
             try {
@@ -83,7 +66,7 @@ public class EkiLexCommand implements Runnable {
         }
     }
 
-    private void importStartingFromLastestImported() {
+    private void importStartingFromLastestImported(boolean force) {
         long wordId = retrievalService.getLastPersistedWordId();
         while (true) {
             try {
@@ -98,4 +81,5 @@ public class EkiLexCommand implements Runnable {
             }
         }
     }
+
 }
