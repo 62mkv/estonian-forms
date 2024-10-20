@@ -16,7 +16,8 @@ import java.util.Set;
 @NoArgsConstructor
 public class Lexeme {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LEXEMES_SEQ")
+    @SequenceGenerator(name = "LEXEMES_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     String wikidataId;

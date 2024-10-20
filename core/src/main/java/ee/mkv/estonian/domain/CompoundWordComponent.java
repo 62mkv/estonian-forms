@@ -17,7 +17,8 @@ import java.util.Objects;
 @Entity
 public class CompoundWordComponent {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "COMPOUND_WORD_COMPONENTS_SEQ")
+    @SequenceGenerator(name = "COMPOUND_WORD_COMPONENTS_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     @ManyToOne

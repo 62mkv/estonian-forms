@@ -14,7 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 public class EkilexParadigm {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EKILEX_PARADIGMS_SEQ")
+    @SequenceGenerator(name = "EKILEX_PARADIGMS_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     Long ekilexId;

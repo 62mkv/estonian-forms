@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Representation {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "REPRESENTATIONS_SEQ")
+    @SequenceGenerator(name = "REPRESENTATIONS_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     private Long id;
     private String representation;
 }

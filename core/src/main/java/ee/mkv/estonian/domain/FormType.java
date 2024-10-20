@@ -8,7 +8,8 @@ import lombok.Data;
 @Table(name = "form_types")
 public class FormType {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FORM_TYPES_SEQ")
+    @SequenceGenerator(name = "FORM_TYPES_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     String ekiRepresentation;

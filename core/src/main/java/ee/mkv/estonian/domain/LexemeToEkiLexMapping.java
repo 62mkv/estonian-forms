@@ -9,7 +9,8 @@ import lombok.Data;
 public class LexemeToEkiLexMapping {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LEXEME_TO_EKILEX_MAPPINGS_SEQ")
+    @SequenceGenerator(name = "LEXEME_TO_EKILEX_MAPPINGS_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     private Long id;
 
     @OneToOne

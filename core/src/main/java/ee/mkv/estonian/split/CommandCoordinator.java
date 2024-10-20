@@ -4,6 +4,7 @@ import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.ekilex.EkiLexRetrievalService;
 import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.service.LexemeMappingCreationService;
+import ee.mkv.estonian.service.UserInputProvider;
 import ee.mkv.estonian.service.VerbRootRestoreService;
 import ee.mkv.estonian.service.lexeme.ImmutableLexemeAdderService;
 import ee.mkv.estonian.service.lexeme.LexemeInitializer;
@@ -11,8 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -25,6 +25,7 @@ public class CommandCoordinator {
     private final LexemeMappingCreationService lexemeMappingCreationService;
     private final LexemeRejectionService lexemeRejectionService;
     private final VerbRootRestoreService verbRootRestoreService;
+    private final UserInputProvider userInputProvider;
 
     /**
      * Will run user commands until user chooses to leave
@@ -94,15 +95,16 @@ public class CommandCoordinator {
         }
     }
 
+    // produce array based on Option.values()
+    private static String[] getOptions() {
+        return Arrays.stream(Option.values())
+                .map(Enum::name)
+                .toArray(String[]::new);
+    }
+
     private String readWordFromUserInput() {
         log.info("Enter word: ");
-        Scanner in = new Scanner(System.in);
-        var s = in.nextLine();
-        if (s.isEmpty()) {
-            log.error("Empty input");
-            throw new IllegalArgumentException("Empty input");
-        }
-        return s;
+        return userInputProvider.getFreeFormInput();
     }
 
     private Option showMenu() {
@@ -112,18 +114,8 @@ public class CommandCoordinator {
         for (Option option : Option.values()) {
             log.info("{}: {}", option.ordinal() + 1, option.name());
         }
-        Scanner in = new Scanner(System.in);
-        int input = -1;
-        boolean validInput = false;
-        do {
-            try {
-                input = in.nextInt();
-                validInput = true;
-            } catch (NoSuchElementException e) {
-                log.error("Invalid input", e);
-                in = new Scanner(System.in);
-            }
-        } while (!validInput);
+        var options = getOptions();
+        int input = userInputProvider.getUserChoice(options);
         return Option.from(input);
     }
 

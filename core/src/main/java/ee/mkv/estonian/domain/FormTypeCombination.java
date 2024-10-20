@@ -18,7 +18,8 @@ import java.util.Set;
 @NoArgsConstructor
 public class FormTypeCombination {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FORM_TYPE_COMBINATIONS_SEQ")
+    @SequenceGenerator(name = "FORM_TYPE_COMBINATIONS_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     String ekiRepresentation;

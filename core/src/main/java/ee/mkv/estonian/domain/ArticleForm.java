@@ -14,7 +14,8 @@ import java.util.Set;
 @NoArgsConstructor
 public class ArticleForm {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ARTICLE_FORMS_SEQ")
+    @SequenceGenerator(name = "ARTICLE_FORMS_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     @ManyToOne

@@ -12,7 +12,8 @@ import java.util.List;
 @Entity
 public class CompoundWord {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "COMPOUND_WORDS_SEQ")
+    @SequenceGenerator(name = "COMPOUND_WORDS_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     @ManyToOne

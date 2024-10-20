@@ -8,7 +8,8 @@ import lombok.Data;
 @Data
 public class LoanWord {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LOAN_WORDS_SEQ")
+    @SequenceGenerator(name = "LOAN_WORDS_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     private Long id;
 
     @ManyToOne

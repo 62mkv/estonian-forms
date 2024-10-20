@@ -10,8 +10,8 @@ import java.util.Set;
 @Table(name = "EKILEX_LEXEMES")
 public class EkilexLexeme {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "ekilex_lexeme_id_seq", sequenceName = "hibernate_sequence4", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ekilex_lexeme_id_seq")
+    @SequenceGenerator(name = "ekilex_lexeme_id_seq", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     @ManyToOne

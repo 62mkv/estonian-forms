@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Form {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LEXEME_FORMS_SEQ")
+    @SequenceGenerator(name = "LEXEME_FORMS_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     String wikidataId;

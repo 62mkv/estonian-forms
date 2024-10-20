@@ -72,7 +72,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
 
         var forms = formRepository.findWhereRepresentationIn(representationCandidates);
 
-        log.info("Found forms: {}", forms);
+        log.info("Found forms: {}", logsRepresentationFor(forms));
 
         if (splittings.size() == 1 && splittings.stream().allMatch(Splitting::isHyphenated)) {
             var splitting = splittings.stream().findFirst().get();
@@ -103,7 +103,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
             Splitting splitting,
             Map<WordComponent, List<Form>> formsForSplitting,
             List<CompoundWordComponent> componentsForRightLeftover) {
-        log.info("Found forms for splitting: {}", formsForSplitting);
+        log.info("Found forms for splitting: {}", logsRepresentationFor(formsForSplitting));
         log.info("Found components for right leftover: {}", componentsForRightLeftover);
         var result = new ArrayList<CompoundWordComponent>();
         var lastComponentWithForms = formsForSplitting.entrySet()
@@ -118,12 +118,48 @@ public class CompoundNameSplitter implements LexemeSplitter {
         result.addAll(translateResults(splitting.upTo(lastComponentWithForms), formsForSplitting));
         result.addAll(patchRightLeftover(componentsForRightLeftover, firstComponentOfLeftover));
 
-        final List<CompoundWordComponent> sortedByComponent = result.stream().sorted(Comparator.comparing(CompoundWordComponent::getComponentIndex)).collect(Collectors.toList());
+        final List<CompoundWordComponent> sortedByComponent = result.stream()
+                .sorted(Comparator.comparing(CompoundWordComponent::getComponentIndex))
+                .toList();
         for (CompoundWordComponent component : sortedByComponent) {
             log.info("Component: {}", component);
         }
 
         return result;
+    }
+
+    private String logsRepresentationFor(Map<WordComponent, List<Form>> formsForSplitting) {
+        return formsForSplitting.entrySet()
+                .stream()
+                .reduce(new StringBuilder(), (builder, entry) -> {
+                    builder.append(logsRepresentationFor(entry.getKey()))
+                            .append(":")
+                            .append(logsRepresentationFor(entry.getValue()))
+                            .append("\\n");
+                    return builder;
+                }, StringBuilder::append)
+                .toString();
+    }
+
+    private String logsRepresentationFor(List<Form> forms) {
+        return forms.stream()
+                .reduce(new StringBuilder(), (builder, form) -> {
+                    builder.append(logsRepresentationFor(form))
+                            .append(";");
+                    return builder;
+                }, StringBuilder::append)
+                .toString();
+    }
+
+    private String logsRepresentationFor(Form form) {
+        return String.format("form{%s:%s:%s}",
+                form.getRepresentation().getRepresentation(),
+                form.getLexeme().getPartOfSpeech().getPartOfSpeech(),
+                form.getFormTypeCombination().getEkiRepresentation());
+    }
+
+    private String logsRepresentationFor(WordComponent wordComponent) {
+        return String.format("wordComponent{%d/%d/%s}", wordComponent.getPosition(), wordComponent.getStartIndex(), wordComponent.getComponent());
     }
 
     private List<CompoundWordComponent> patchRightLeftover(List<CompoundWordComponent> componentsForRightLeftover,
@@ -137,11 +173,13 @@ public class CompoundNameSplitter implements LexemeSplitter {
                     newComponent.setForm(component.getForm());
                     return newComponent;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private String format(Splitting splitting) {
-        return splitting.getComponents().stream().map(WordComponent::getComponent).collect(Collectors.joining(":"));
+        return splitting.getComponents().stream()
+                .map(WordComponent::getComponent)
+                .collect(Collectors.joining(":"));
     }
 
     private List<CompoundWordComponent> leftoverStrategy(String word, boolean isFullName, Set<Splitting> splittings, List<Form> forms) {
@@ -199,9 +237,10 @@ public class CompoundNameSplitter implements LexemeSplitter {
 
         }
 
-        log.info("Found forms for splittings: {}", filteredMapOfSplittingsToForms);
+        log.info("Found forms for splittings: {}", logsRepresentationForSplittings(filteredMapOfSplittingsToForms));
 
-        var entries = filteredMapOfSplittingsToForms.entrySet().stream().sorted(this::orderByLongestFinalComponent).collect(Collectors.toList());
+        var entries = filteredMapOfSplittingsToForms.entrySet().stream().sorted(this::orderByLongestFinalComponent)
+                .toList();
         for (var entry : entries) {
             var splitting = entry.getKey();
             var lastComponent = splitting.findLastComponent();
@@ -216,6 +255,19 @@ public class CompoundNameSplitter implements LexemeSplitter {
         }
 
         return Collections.emptyList();
+    }
+
+    private String logsRepresentationForSplittings(Map<Splitting, Map<WordComponent, List<Form>>> filteredMapOfSplittingsToForms) {
+        return filteredMapOfSplittingsToForms.entrySet()
+                .stream()
+                .reduce(new StringBuilder(), (builder, entry) -> {
+                    builder.append(format(entry.getKey()))
+                            .append(":")
+                            .append(logsRepresentationFor(entry.getValue()))
+                            .append(";");
+                    return builder;
+                }, StringBuilder::append)
+                .toString();
     }
 
     private List<CompoundWordComponent> combineComponentsWhenLeftoverIsToTheLeft(List<CompoundWordComponent> componentsForLeftover, WordComponent lastComponent, List<Form> formsForFinalComponent) {
@@ -241,7 +293,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
 
             final List<Form> filteredForms = foundForms.stream()
                     .filter(filterCondition)
-                    .collect(Collectors.toList());
+                    .toList();
             if (!filteredForms.isEmpty()) {
                 result.put(component, filteredForms);
             }
@@ -322,7 +374,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
     private List<Form> findFormsForComponent(WordComponent component, List<Form> forms) {
         return forms.stream()
                 .filter(form -> form.getRepresentation().getRepresentation().equals(component.getComponent()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private Stream<String> splittingToStrings(Splitting splitting) {

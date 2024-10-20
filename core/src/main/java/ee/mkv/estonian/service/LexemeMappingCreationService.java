@@ -5,6 +5,7 @@ import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.domain.LexemeToEkiLexMapping;
 import ee.mkv.estonian.repository.EkilexWordRepository;
 import ee.mkv.estonian.repository.LexemeToEkilexMappingRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
@@ -13,19 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class LexemeMappingCreationService {
     private final LexemeToEkilexMappingRepository mappingRepository;
     private final EkilexWordRepository wordRepository;
     private final LexemePersistingService persistingService;
     private final LexemeFromEkiLexService fromEkiLexService;
-
-    public LexemeMappingCreationService(LexemeToEkilexMappingRepository mappingRepository, EkilexWordRepository wordRepository, LexemePersistingService persistingService, LexemeFromEkiLexService fromEkiLexService) {
-        this.mappingRepository = mappingRepository;
-        this.wordRepository = wordRepository;
-        this.persistingService = persistingService;
-        this.fromEkiLexService = fromEkiLexService;
-    }
+    private final UserInputProvider userInputProvider;
 
     @Transactional
     public void createMissingMapping(Long wordId) {
@@ -37,7 +33,18 @@ public class LexemeMappingCreationService {
         List<EkilexWord> candidateWords = Lists.newArrayList(wordRepository.findAllByBaseFormRepresentation(word).iterator());
         if (candidateWords.size() > 1) {
             log.warn("More than 1 candidate form found, please provide an id: {}", candidateWords);
-            return;
+            String[] options = new String[candidateWords.size()];
+            for (EkilexWord candidate : candidateWords) {
+                final int index = candidateWords.indexOf(candidate);
+                options[index] = candidate.getId().toString();
+                log.info("{}: {}", index, candidate);
+            }
+            int choice = userInputProvider.getUserChoice(options);
+            log.info("Chosen option was {}", choice);
+
+            final long wordId = Long.parseLong(options[choice]);
+            log.info("Word id is {}", wordId);
+            createMissingMapping(wordId);
         }
 
         if (candidateWords.isEmpty()) {

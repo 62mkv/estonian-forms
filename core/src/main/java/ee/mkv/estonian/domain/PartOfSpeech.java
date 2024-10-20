@@ -8,7 +8,8 @@ import lombok.Data;
 @Table(name = "PARTS_OF_SPEECH")
 public class PartOfSpeech {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PART_OF_SPEECH_SEQ")
+    @SequenceGenerator(name = "PART_OF_SPEECH_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     /**

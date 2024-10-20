@@ -30,7 +30,7 @@ public class LexemeFromEkiLexService {
     public List<LexemeToEkiLexMapping> buildLexemesFromEkiLexDetails(String lemma) {
         return Streams.stream(ekilexWordRepository.findAllByBaseFormRepresentation(lemma))
                 .flatMap(word -> buildLexemesFromEkiLexWord(word.getId()).stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -60,7 +60,7 @@ public class LexemeFromEkiLexService {
 
     private List<EkilexParadigm> getParadigmsForWordId(Long wordId) {
         return Streams.stream(ekilexParadigmRepository.findAllByWordId(wordId))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private Set<PartOfSpeech> getPartsOfSpeechForEkilexWordId(Long wordId) {
@@ -142,7 +142,7 @@ public class LexemeFromEkiLexService {
     @Transactional
     public Lexeme recoverLexemeFormsFromEkilexForms(Lexeme lexeme, EkilexWord ekilexWord) {
         if (!lexeme.getForms().isEmpty()) {
-            log.error("Lexeme {} already has forms", lexeme);
+            log.error("Lexeme {} already has {} forms", lexeme, lexeme.getForms().size());
             throw new RuntimeException("Lexeme already has forms");
         }
 

@@ -11,7 +11,8 @@ import lombok.ToString;
 @NoArgsConstructor
 public class EkilexForm {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EKILEX_FORMS_SEQ")
+    @SequenceGenerator(name = "EKILEX_FORMS_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     @ManyToOne

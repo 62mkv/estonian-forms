@@ -14,7 +14,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Article {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ARTICLES_SEQ")
+    @SequenceGenerator(name = "ARTICLES_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)
     Long id;
 
     UUID uuid;
