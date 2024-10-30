@@ -1,41 +1,41 @@
 package ee.mkv.estonian.utils;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Set;
 
 import static ee.mkv.estonian.utils.StringUtils.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
-import static org.junit.Assert.assertThat;
 
-public class StringUtilsTest {
+class StringUtilsTest {
 
     @Test
-    public void splitFormCodeTest1() {
+    void splitFormCodeTest1() {
         String s = "PtsPrPs_";
         Collection<String> result = splitFormCode(s);
         assertThat(result, hasItems("Pts", "Pr", "Ps", "_"));
     }
 
     @Test
-    public void splitFormCodeTest2() {
+    void splitFormCodeTest2() {
         String s = "IndPrSg1";
         Collection<String> result = splitFormCode(s);
         assertThat(result, hasItems("Ind", "Pr", "Sg", "1"));
     }
 
     @Test
-    public void splitFormCodeTest3() {
+    void splitFormCodeTest3() {
         String s = "ID";
         Collection<String> result = splitFormCode(s);
         assertThat(result, hasItems("ID"));
     }
 
     @Test
-    public void adaptBaseFormTestReplace() {
+    void adaptBaseFormTestReplace() {
         String result = adaptBaseForm("aja+loolis-geograafilistele");
         assertThat(result, equalTo("ajaloolis-geograafilistele"));
 
@@ -44,7 +44,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testTails() {
+    void testTails() {
         Set<String> actual = StringUtils.getTails("word", 1);
         assertThat(actual, Matchers.containsInAnyOrder("ord", "rd", "d"));
         assertThat(actual, Matchers.hasSize(3));
@@ -62,7 +62,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testHeads() {
+    void testHeads() {
         assertThat(getHeadForTail("word", "ord"), Matchers.is("w"));
         assertThat(getHeadForTail("agrotoostkoondis", "koondis"), Matchers.is("agrotoost"));
     }

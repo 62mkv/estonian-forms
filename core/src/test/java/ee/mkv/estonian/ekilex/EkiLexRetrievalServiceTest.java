@@ -7,15 +7,13 @@ import ee.mkv.estonian.domain.PartOfSpeech;
 import ee.mkv.estonian.ekilex.dto.*;
 import ee.mkv.estonian.repository.*;
 import org.assertj.core.api.Condition;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,10 +23,9 @@ import static org.mockito.BDDMockito.given;
 
 @ActiveProfiles("h2test")
 @DataJpaTest
-@RunWith(SpringJUnit4ClassRunner.class)
-public class EkiLexRetrievalServiceTest {
+class EkiLexRetrievalServiceTest {
 
-    private final String[] FORM_TYPE_CODES = new String[]{"SgN", "SgG", "SgP", "SgIll"};
+    private final String[] formTypeCodes = new String[]{"SgN", "SgG", "SgP", "SgIll"};
 
     @MockBean
     private EkiLexClient ekiLexClient;
@@ -56,14 +53,14 @@ public class EkiLexRetrievalServiceTest {
     @Autowired
     private FormTypeCombinationRepository formTypeRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         sut = new EkiLexRetrievalService(ekiLexClient, representationsRepository, wordRepository, lexemeRepository, partOfSpeechRepository, paradigmRepository, ekilexFormRepository, formTypeRepository);
     }
 
     @Test
     @Sql("classpath:sql/retrieval-koer.sql")
-    public void testKoer() {
+    void testKoer() {
         final long wordId = 1L;
         given(this.ekiLexClient.findWords("koer")).willReturn(Collections.singleton(wordId));
         given(this.ekiLexClient.getDetails(wordId)).willReturn(getKoerDetailsDto());
@@ -91,14 +88,6 @@ public class EkiLexRetrievalServiceTest {
                 .contains(posName);
     }
 
-    private <T> Collection<T> fromIterable(Iterable<T> iterable) {
-        List<T> collection = new ArrayList<>();
-        for (T item : iterable) {
-            collection.add(item);
-        }
-        return collection;
-    }
-
     private DetailsDto getKoerDetailsDto() {
         Map<String, String> paradigm1 = getParadigmAsMap("koer", "koera", "koerat");
         Map<String, String> paradigm2 = getParadigmAsMap("koer", "koeru", "koerut");
@@ -116,8 +105,8 @@ public class EkiLexRetrievalServiceTest {
 
         int i = 0;
         for (String value : values) {
-            if (i < FORM_TYPE_CODES.length) {
-                result.put(FORM_TYPE_CODES[i], value);
+            if (i < formTypeCodes.length) {
+                result.put(formTypeCodes[i], value);
                 i++;
             }
         }
@@ -130,9 +119,10 @@ public class EkiLexRetrievalServiceTest {
                                      List<String> partsOfSpeech,
                                      List<Map<String, String>> paradigms) {
         DetailsDto detailsDto = new DetailsDto();
-        detailsDto.setWord(getWordDto(wordId, lemma));
+        WordDto wordDto = getWordDto(wordId, lemma);
+        wordDto.setParadigms(getParadigmDtoList(paradigms));
+        detailsDto.setWord(wordDto);
         detailsDto.setLexemes(getLexemeDtoList(wordId, partsOfSpeech));
-        detailsDto.setParadigms(getParadigmDtoList(paradigms));
         return detailsDto;
     }
 
@@ -159,7 +149,7 @@ public class EkiLexRetrievalServiceTest {
                     formDto.setValue(entry.getValue());
                     return formDto;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<DetailsLexemeDto> getLexemeDtoList(Long wordId, List<String> partsOfSpeech) {

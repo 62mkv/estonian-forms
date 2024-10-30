@@ -32,9 +32,13 @@ public class CompoundNameSplitter implements LexemeSplitter {
     private final FormRepository formRepository;
     private final WordSplitService wordSplitService;
 
-    @Override
-    public int getPriority() {
-        return 0;
+    private static CompoundWordComponent buildCompoundWordComponent(int index, WordComponent component, List<Form> forms) {
+        log.info("Building compound word component for component{}: {} with forms: {}", index, component, forms);
+        var finalComponent = new CompoundWordComponent();
+        finalComponent.setForm(IterableUtils.getFirstValueOrFail(forms));
+        finalComponent.setComponentIndex(index);
+        finalComponent.setComponentStartsAt(component.getStartIndex());
+        return finalComponent;
     }
 
     public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
@@ -53,12 +57,9 @@ public class CompoundNameSplitter implements LexemeSplitter {
         return Optional.of(compoundWord);
     }
 
-    private static CompoundWordComponent buildCompoundWordComponent(int index, WordComponent component, List<Form> forms) {
-        var finalComponent = new CompoundWordComponent();
-        finalComponent.setForm(IterableUtils.getFirstValueOrFail(forms));
-        finalComponent.setComponentIndex(index);
-        finalComponent.setComponentStartsAt(component.getStartIndex());
-        return finalComponent;
+    @Override
+    public int getPriority() {
+        return 2;
     }
 
     private List<CompoundWordComponent> internalFindForms(String word, boolean isFullName) {
@@ -245,6 +246,8 @@ public class CompoundNameSplitter implements LexemeSplitter {
             var splitting = entry.getKey();
             var lastComponent = splitting.findLastComponent();
             var formsForFinalComponent = entry.getValue().get(lastComponent);
+            log.info("Splitting: {}", splitting);
+            log.info("Forms for splitting: {}", entry.getValue());
             var leftover = word.substring(0, lastComponent.getStartIndex());
             log.info("Leftover: {}", leftover);
             var formsForLeftover = internalFindForms(leftover, false);

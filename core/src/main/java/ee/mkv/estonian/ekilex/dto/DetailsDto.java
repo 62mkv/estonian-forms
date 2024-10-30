@@ -9,6 +9,5 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DetailsDto {
     private WordDto word;
-    private List<DetailsParadigmDto> paradigms;
     private List<DetailsLexemeDto> lexemes;
 }

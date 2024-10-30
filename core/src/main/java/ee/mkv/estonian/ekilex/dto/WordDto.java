@@ -3,6 +3,8 @@ package ee.mkv.estonian.ekilex.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WordDto {
@@ -11,6 +13,8 @@ public class WordDto {
     private String lang;
     private String wordClass;
     private Integer homonymNr;
+    private List<DetailsParadigmDto> paradigms;
+
 
 /*
             "wordId": 261443,

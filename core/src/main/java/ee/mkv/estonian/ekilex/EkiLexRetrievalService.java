@@ -88,7 +88,7 @@ public class EkiLexRetrievalService {
         }
 
         List<EkilexParadigm> myParadigms = new ArrayList<>();
-        for (DetailsParadigmDto paradigmDto : detailsDto.getParadigms()) {
+        for (DetailsParadigmDto paradigmDto : detailsDto.getWord().getParadigms()) {
             myParadigms.add(saveEkiLexParadigm(word, paradigmDto));
         }
 

@@ -5,26 +5,22 @@ import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.domain.LexemeToEkiLexMapping;
 import ee.mkv.estonian.repository.*;
 import org.assertj.core.api.Condition;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("h2test")
 @DataJpaTest
-@RunWith(SpringJUnit4ClassRunner.class)
-public class LexemeFromEkiLexServiceTest {
+class LexemeFromEkiLexServiceTest {
 
     @Autowired
     private EkilexParadigmRepository ekilexParadigmRepository;
@@ -53,7 +49,7 @@ public class LexemeFromEkiLexServiceTest {
     private LexemeFromEkiLexService lexemeFromEkiLexService;
     private LexemePersistingService lexemePersistingService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.lexemeFromEkiLexService = new LexemeFromEkiLexService(ekilexWordRepository, ekilexParadigmRepository, ekilexLexemeRepository, mappingRepository, formTypeCombinationRepository);
         this.lexemePersistingService = new LexemePersistingService(lexemeRepository, formRepository, mappingRepository);
@@ -61,7 +57,7 @@ public class LexemeFromEkiLexServiceTest {
 
     @Test
     @Sql("classpath:sql/single-paradigm.sql")
-    public void testSingleParadigm() {
+    void testSingleParadigm() {
         final List<LexemeToEkiLexMapping> lexemeToEkiLexMappings = lexemeFromEkiLexService.buildLexemesFromEkiLexDetails("ema");
 
         assertThat(lexemeToEkiLexMappings)
@@ -75,7 +71,7 @@ public class LexemeFromEkiLexServiceTest {
         List<Lexeme> lexemeSet = lexemeToEkiLexMappings
                 .stream()
                 .map(LexemeToEkiLexMapping::getLexeme)
-                .collect(Collectors.toList());
+                .toList();
         assertThat(lexemeSet).size().isEqualTo(1);
         Lexeme lexeme = lexemeSet.stream().findFirst().get();
         assertThat(lexeme.getForms()).size().isEqualTo(3);
@@ -84,11 +80,11 @@ public class LexemeFromEkiLexServiceTest {
 
     @Test
     @Sql("classpath:sql/multiple-paradigms.sql")
-    public void testMultipleParadigms() {
+    void testMultipleParadigms() {
         List<Lexeme> lexemeSet = lexemeFromEkiLexService.buildLexemesFromEkiLexDetails("koer")
                 .stream()
                 .map(LexemeToEkiLexMapping::getLexeme)
-                .collect(Collectors.toList());
+                .toList();
         assertThat(lexemeSet)
                 .hasSize(2)
                 .areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("noun")))
@@ -105,7 +101,7 @@ public class LexemeFromEkiLexServiceTest {
 
     @Test
     @Sql("classpath:sql/single-paradigm.sql")
-    public void testSingleParadigmWithSaving() {
+    void testSingleParadigmWithSaving() {
         assertThat(mappingRepository.findAll()).isEmpty();
         assertThat(formRepository.findAll()).isEmpty();
         assertThat(lexemeRepository.findAll()).isEmpty();

@@ -4,6 +4,7 @@ import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.repository.FormRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,10 +14,26 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class DerivedNameFromVerbSplitter implements LexemeSplitter {
 
     public static final String SUFFIX = "mine";
     private final FormRepository formRepository;
+
+    @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
+    public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
+        log.info("Trying to split lexeme {} with {}", lexeme, this.getClass().getSimpleName());
+        if (isName(lexeme) && endsOnSupportedSuffix(lexeme)) {
+            log.info("isName and ends on my suffix {}", lexeme);
+            return buildCompoundWord(lexeme, SUFFIX);
+        }
+        return Optional.empty();
+    }
 
     private static CompoundWord getCompoundWord(Lexeme lexeme, Form form) {
         var result = new CompoundWord();
@@ -31,24 +48,12 @@ public class DerivedNameFromVerbSplitter implements LexemeSplitter {
         return result;
     }
 
-    @Override
-    public int getPriority() {
-        return 2;
-    }
-
-    @Override
-    public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
-        if (isName(lexeme) && endsOnSupportedSuffix(lexeme)) {
-            return buildCompoundWord(lexeme, SUFFIX);
-        }
-        return Optional.empty();
-    }
-
     private Optional<CompoundWord> buildCompoundWord(Lexeme lexeme, String suffix) {
         String representation = lexeme.getLemma().getRepresentation();
         String base = representation.substring(0, representation.length() - suffix.length());
-
-        return formRepository.findWhereRepresentationIn(Set.of(base))
+        List<Form> forms = formRepository.findWhereRepresentationIn(Set.of(base));
+        log.info("Looking for forms for base {}, found {}", base, forms);
+        return forms
                 .stream()
                 .filter(form -> form.getFormTypeCombination().getEkiRepresentation().equals(Constants.VERB_SUPINE_ROOT))
                 .findFirst()
