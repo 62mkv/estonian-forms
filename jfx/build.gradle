@@ -1,14 +1,18 @@
 plugins {
+    id 'org.springframework.boot' version '3.2.8'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'application'
     id 'java'
     id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
-mainClassName = 'ee.mkv.estonian.JfxApplication'
+mainClassName = 'ee.mkv.estonian.JavaFxSpringBootApplication'
 
 dependencies {
     implementation 'org.openjfx:javafx-controls:21.0.1'
     implementation 'org.openjfx:javafx-fxml:21.0.1'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation project(':core')
 }
 
 javafx {

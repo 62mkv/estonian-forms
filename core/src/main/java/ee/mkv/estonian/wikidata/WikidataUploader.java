@@ -5,6 +5,7 @@ import ee.mkv.estonian.domain.Form;
 import ee.mkv.estonian.domain.FormType;
 import ee.mkv.estonian.domain.Lexeme;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.interfaces.*;
@@ -16,9 +17,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
+@ConditionalOnProperty("wikidata.site")
 public class WikidataUploader {
 
     private static final String LANGUAGE_CODE = "et";
@@ -92,7 +93,7 @@ public class WikidataUploader {
                 .stream()
                 .filter(form -> !"Rpl".equalsIgnoreCase(form.getFormTypeCombination().getEkiRepresentation()))
                 .sorted(Comparator.comparing(form -> form.getFormTypeCombination().getId()))
-                .collect(Collectors.toList());
+                .toList();
 
         for (Form form : forms) {
             FormDocument formDocument = createFormDocument(lexemeDocument, form);
@@ -112,7 +113,8 @@ public class WikidataUploader {
                 .map(this::applyTestification)
                 .distinct()
                 .map(this::createItemId)
-                .collect(Collectors.toList());
+                .toList();
+
         final List<MonolingualTextValue> representations = Collections.singletonList(
                 Datamodel.makeMonolingualTextValue(form.getRepresentation().getRepresentation(), LANGUAGE_CODE)
         );

@@ -6,8 +6,9 @@ plugins {
 }
 
 mainClassName = 'ee.mkv.estonian.CliApplication'
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     implementation group: 'com.kakawait', name: 'picocli-spring-boot-starter', version: '0.2.0'
     implementation 'org.apache.commons:commons-lang3:3.13.0'
 

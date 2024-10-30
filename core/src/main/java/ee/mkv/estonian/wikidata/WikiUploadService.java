@@ -6,26 +6,25 @@ import ee.mkv.estonian.domain.PartOfSpeech;
 import ee.mkv.estonian.repository.LexemeRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 @Component
 @Slf4j
+@ConditionalOnProperty("wikidata.site")
 public class WikiUploadService {
 
     private static final Set<String> NAMES_AND_VERBS = initSet("Noun", "Verb", "Adjective");
 
     private static Set<String> initSet(String... members) {
-        Set<String> result = new HashSet<>();
-        for (String member : members) {
-            result.add(member);
-        }
-        return result;
+        return new HashSet<>(Arrays.asList(members));
     }
 
     private final WikidataReader wikidataReader;
@@ -51,12 +50,11 @@ public class WikiUploadService {
     }
 
     private void processLexeme(Lexeme lexeme) throws MediaWikiApiErrorException, IOException {
-        if (lexeme.getForms().isEmpty()) {
-            if (mustHaveForms(lexeme.getPartOfSpeech())) {
+        if (lexeme.getForms().isEmpty() && mustHaveForms(lexeme.getPartOfSpeech())) {
                 log.warn("Not going to create lexemes without forms! {}", lexeme);
                 return;
             }
-        }
+
 
         final Optional<String> wikidataId = wikidataReader.checkLexeme(lexeme);
 
