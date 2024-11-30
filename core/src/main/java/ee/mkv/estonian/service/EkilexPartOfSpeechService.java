@@ -23,14 +23,18 @@ public class EkilexPartOfSpeechService {
     private final PartOfSpeechRepository partOfSpeechRepository;
 
     public void manuallyAssignPartOfSpeechToEkilexWord(Long wordId, String partOfSpeechArgument) {
+        var partOfSpeech = partOfSpeechRepository.findByPartOfSpeech(partOfSpeechArgument)
+                .orElseThrow(() -> new RuntimeException("No part of speech found: " + partOfSpeechArgument));
+
+        assignPosToEkilexWord(wordId, partOfSpeech);
+    }
+
+    public void assignPosToEkilexWord(Long wordId, PartOfSpeech partOfSpeech) {
         final List<EkilexLexeme> ekilexLexemes = Lists.newArrayList(ekilexLexemeRepository.findAllByWordId(wordId).iterator());
         if (ekilexLexemes.size() > 1) {
             log.warn("More than 1 EkilexLexeme mapping for given word id {}", wordId);
             return;
         }
-        var partOfSpeech = partOfSpeechRepository.findByPartOfSpeech(partOfSpeechArgument)
-                .orElseThrow(() -> new RuntimeException("No part of speech found: " + partOfSpeechArgument));
-
         if (!ekilexLexemes.isEmpty()) {
             var ekilexLexeme = ekilexLexemes.get(0);
             if (!ekilexLexeme.getPos().isEmpty()) {

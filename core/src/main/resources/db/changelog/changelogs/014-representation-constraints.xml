@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="14-1" author="62mkv">
+        <addNotNullConstraint
+                tableName="representations"
+                columnName="representation"
+                validate="true"/>
+
+        <sql>
+            ALTER TABLE representations
+            ADD CONSTRAINT representation_not_empty
+            CHECK (LENGTH(TRIM(representation)) > 0);
+        </sql>
+    </changeSet>
+
+    <changeSet id="14-2" author="62mkv">
+        <addForeignKeyConstraint
+                baseColumnNames="representation_id"
+                baseTableName="lexeme_forms"
+                constraintName="FK_LEXEME_FORM_TO_REPRESENTATION"
+                referencedColumnNames="id"
+                referencedTableName="representations"
+                validate="true"/>
+    </changeSet>
+
+</databaseChangeLog>

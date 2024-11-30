@@ -25,6 +25,8 @@ public class LexemeFromEkiLexService {
     private final EkilexLexemeRepository ekilexLexemeRepository;
     private final LexemeToEkilexMappingRepository mappingRepository;
     private final FormTypeCombinationRepository formTypeCombinationRepository;
+    private final PartOfSpeechUserInputProvider partOfSpeechUserInputProvider;
+    private final EkilexPartOfSpeechService ekilexPartOfSpeechService;
 
     @Transactional
     public List<LexemeToEkiLexMapping> buildLexemesFromEkiLexDetails(String lemma) {
@@ -45,6 +47,13 @@ public class LexemeFromEkiLexService {
 
         EkilexWord word = ekilexWordRepository.findById(wordId).orElseThrow(() -> new WordNotFoundException(wordId));
         Set<PartOfSpeech> distinctPosForWord = getPartsOfSpeechForEkilexWordId(wordId);
+
+        if (distinctPosForWord.isEmpty()) {
+            log.warn("No parts of speech found for word {}:{}", wordId, word.getBaseForm());
+            PartOfSpeech pos = IterableUtils.getFirstValueOrFail(partOfSpeechUserInputProvider.getPartOfSpeech());
+            ekilexPartOfSpeechService.assignPosToEkilexWord(wordId, pos);
+            distinctPosForWord = Set.of(pos);
+        }
 
         List<EkilexParadigm> paradigmsForWord = getParadigmsForWordId(wordId);
 

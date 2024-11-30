@@ -69,6 +69,11 @@ public class CompoundNameSplitter implements LexemeSplitter {
                 .distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
 
+        if (representationCandidates.isEmpty()) {
+            log.warn("No representation candidates in splitting: {}", splittings);
+            return Collections.emptyList();
+        }
+
         log.info("Searching for forms for representation candidates: {}", representationCandidates);
 
         var forms = formRepository.findWhereRepresentationIn(representationCandidates);
@@ -249,6 +254,9 @@ public class CompoundNameSplitter implements LexemeSplitter {
             log.info("Splitting: {}", splitting);
             log.info("Forms for splitting: {}", entry.getValue());
             var leftover = word.substring(0, lastComponent.getStartIndex());
+            if (leftover.isEmpty()) {
+                continue;
+            }
             log.info("Leftover: {}", leftover);
             var formsForLeftover = internalFindForms(leftover, false);
             log.info("Forms for leftover: {}", formsForLeftover);
