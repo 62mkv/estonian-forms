@@ -1,0 +1,1 @@
+- kohus has 2 (noun) lexemes on sonaveeb but I have only one; and there's no menu to download the other one  

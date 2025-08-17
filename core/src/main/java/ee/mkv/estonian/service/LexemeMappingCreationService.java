@@ -19,7 +19,7 @@ import java.util.List;
 public class LexemeMappingCreationService {
     private final LexemeToEkilexMappingRepository mappingRepository;
     private final EkilexWordRepository wordRepository;
-    private final LexemePersistingService persistingService;
+    private final LexemePersistingService lexemePersistingService;
     private final LexemeFromEkiLexService fromEkiLexService;
     private final UserInputProvider userInputProvider;
 
@@ -67,13 +67,13 @@ public class LexemeMappingCreationService {
             log.info("Mapping for word {} exists already", wordId);
             for (LexemeToEkiLexMapping mapping : mappingRepository.findByEkilexWordId(wordId)) {
                 Lexeme newLexeme = fromEkiLexService.recoverLexemeFormsFromEkilexForms(mapping.getLexeme(), mapping.getEkilexWord());
-                persistingService.save(newLexeme);
+                lexemePersistingService.save(newLexeme);
                 log.info("Saved lexeme {}", newLexeme);
             }
         } else {
             log.info("Creating mappings for word id: {}", wordId);
             for (LexemeToEkiLexMapping mapping : fromEkiLexService.buildLexemesFromEkiLexWord(wordId)) {
-                persistingService.save(mapping);
+                lexemePersistingService.save(mapping);
                 log.info("Persisted mapping for word id: {}, mapping: {}", wordId, mapping);
             }
         }

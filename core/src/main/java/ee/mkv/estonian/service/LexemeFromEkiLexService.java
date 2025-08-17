@@ -2,9 +2,10 @@ package ee.mkv.estonian.service;
 
 import com.github.jsonldjava.shaded.com.google.common.collect.Streams;
 import ee.mkv.estonian.domain.*;
-import ee.mkv.estonian.error.WordNotFoundException;
+import ee.mkv.estonian.error.EkilexWordNotFoundException;
 import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.repository.*;
+import ee.mkv.estonian.service.lexeme.error.LexemeAlreadyHasFormsException;
 import ee.mkv.estonian.utils.IterableUtils;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class LexemeFromEkiLexService {
     public List<LexemeToEkiLexMapping> buildLexemesFromEkiLexWord(Long wordId) {
         List<LexemeToEkiLexMapping> result = new ArrayList<>();
 
-        EkilexWord word = ekilexWordRepository.findById(wordId).orElseThrow(() -> new WordNotFoundException(wordId));
+        EkilexWord word = ekilexWordRepository.findById(wordId).orElseThrow(() -> new EkilexWordNotFoundException(wordId));
         Set<PartOfSpeech> distinctPosForWord = getPartsOfSpeechForEkilexWordId(wordId);
 
         if (distinctPosForWord.isEmpty()) {
@@ -151,8 +152,8 @@ public class LexemeFromEkiLexService {
     @Transactional
     public Lexeme recoverLexemeFormsFromEkilexForms(Lexeme lexeme, EkilexWord ekilexWord) {
         if (!lexeme.getForms().isEmpty()) {
-            log.error("Lexeme {} already has {} forms", lexeme, lexeme.getForms().size());
-            throw new RuntimeException("Lexeme already has forms");
+            log.error("Lexeme {} already has [{}] forms", lexeme, lexeme.getForms());
+            throw new LexemeAlreadyHasFormsException(lexeme);
         }
 
         List<EkilexParadigm> paradigms = IterableUtils.iterableToList(ekilexParadigmRepository.findAllByWordId(ekilexWord.getId()));

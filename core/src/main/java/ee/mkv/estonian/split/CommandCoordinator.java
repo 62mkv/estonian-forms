@@ -89,6 +89,9 @@ public class CommandCoordinator {
                     log.info("Rejecting lexeme");
                     lexemeRejectionService.rejectLexemeAsLoanWord(lastLexeme);
                     return true;
+                case CONTINUE:
+                    log.info("Continuing with next lexeme");
+                    return true;
                 case BREAK:
                     return false;
             }
@@ -129,6 +132,7 @@ public class CommandCoordinator {
         ADD_RESTORABLE_ADJECTIVE,
         REJECT_LEXEME_AS_LOANWORD,
         ADD_ROOT_FOR_VERB,
+        CONTINUE,
         BREAK;
 
         public static Option from(int i) {

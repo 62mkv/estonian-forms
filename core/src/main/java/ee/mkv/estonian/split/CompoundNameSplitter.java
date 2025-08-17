@@ -158,6 +158,10 @@ public class CompoundNameSplitter implements LexemeSplitter {
     }
 
     private String logsRepresentationFor(Form form) {
+        assert form.getRepresentation() != null;
+        assert form.getLexeme() != null;
+        assert form.getFormTypeCombination() != null;
+        assert form.getLexeme().getPartOfSpeech() != null;
         return String.format("form{%s:%s:%s}",
                 form.getRepresentation().getRepresentation(),
                 form.getLexeme().getPartOfSpeech().getPartOfSpeech(),

@@ -16,5 +16,6 @@
     <include file="changelogs/012-combined-words.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/013-loan-words.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/014-representation-constraints.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/015-lexeme-forms-constraints.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
 

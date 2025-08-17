@@ -27,10 +27,10 @@ public class LexemePersistingService {
     public void save(LexemeToEkiLexMapping mapping) {
         final Lexeme lexeme = mapping.getLexeme();
 
+        lexemeRepository.save(lexeme);
         for (Form form : lexeme.getForms()) {
             formRepository.save(form);
         }
-        lexemeRepository.save(lexeme);
         mappingRepository.save(mapping);
     }
 

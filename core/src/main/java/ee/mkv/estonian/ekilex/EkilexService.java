@@ -1,6 +1,7 @@
 package ee.mkv.estonian.ekilex;
 
 import ee.mkv.estonian.domain.EkilexWord;
+import ee.mkv.estonian.ekilex.error.EkilexParadigmExistsException;
 import ee.mkv.estonian.repository.EkilexWordRepository;
 import ee.mkv.estonian.utils.IterableUtils;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +41,14 @@ public class EkilexService {
     private void processWord(String word, boolean force) {
         log.info("Processing word {}", word);
         List<EkilexWord> words = IterableUtils.iterableToList(ekilexWordRepository.findAllByBaseFormRepresentation(word));
-        if (!words.isEmpty()) {
+        if (!words.isEmpty() && !force) {
             for (EkilexWord ekilexWord : words) {
                 log.info("Retrieve by id {}", ekilexWord.getId());
-                retrievalService.retrieveById(ekilexWord.getId(), force);
+                try {
+                    retrievalService.retrieveById(ekilexWord.getId(), force);
+                } catch (EkilexParadigmExistsException e) {
+                    log.warn("Paradigm for word {} already exists, skipping", ekilexWord.getId());
+                }
             }
         } else {
             log.info("Retrieve by lemma {}", word);

@@ -2,6 +2,7 @@ package ee.mkv.estonian.ekilex;
 
 import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.ekilex.dto.*;
+import ee.mkv.estonian.ekilex.error.EkilexParadigmExistsException;
 import ee.mkv.estonian.error.FormTypeCombinationNotFound;
 import ee.mkv.estonian.error.LanguageNotSupportedException;
 import ee.mkv.estonian.error.PartOfSpeechNotFoundException;
@@ -37,8 +38,14 @@ public class EkiLexRetrievalService {
     @Transactional
     public List<EkilexWord> retrieveByLemma(String lemma, boolean existingWord) {
         List<EkilexWord> result = new ArrayList<>();
-        for (Long wordId : ekiLexClient.findWords(lemma)) {
-            result.add(retrieveById(wordId, existingWord));
+        final Set<Long> words = ekiLexClient.findWords(lemma);
+        log.info("Found [{}] for lemma '{}'", words, lemma);
+        for (Long wordId : words) {
+            try {
+                result.add(retrieveById(wordId, existingWord));
+            } catch (EkilexParadigmExistsException e) {
+                log.warn("Paradigm for word {} already exists, skipping", wordId);
+            }
         }
 
         return result;
@@ -70,7 +77,7 @@ public class EkiLexRetrievalService {
 
         if (existing && ekilexParadigmRepository.existsByWordId(wordId)) {
             // we must make sure there's no pre-existing records, to avoid overwriting those
-            throw new RuntimeException("Paradigm exists for word " + word);
+            throw new EkilexParadigmExistsException(wordId);
         }
 
         List<EkilexLexeme> myLexemes = new ArrayList<>();

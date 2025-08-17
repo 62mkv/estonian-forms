@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="015-lexeme-forms-constraints" author="62mkv">
+        <addNotNullConstraint tableName="lexeme_forms" columnName="lexeme_id"/>
+        <addNotNullConstraint tableName="lexeme_forms" columnName="form_type_combination_id"/>
+        <addNotNullConstraint tableName="lexeme_forms" columnName="representation_id"/>
+        <addForeignKeyConstraint baseTableName="lexeme_forms" baseColumnNames="lexeme_id"
+                                 constraintName="fk_forms_lexeme_id"
+                                 referencedTableName="lexemes"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
