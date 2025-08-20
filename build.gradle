@@ -30,4 +30,8 @@ subprojects {
                 '--add-exports', 'jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED'
         ]
     }
+
+    tasks.withType(JavaExec) {
+        jvmArgs '-ea'
+    }
 }

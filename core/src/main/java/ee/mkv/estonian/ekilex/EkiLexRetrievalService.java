@@ -3,6 +3,7 @@ package ee.mkv.estonian.ekilex;
 import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.ekilex.dto.*;
 import ee.mkv.estonian.ekilex.error.EkilexParadigmExistsException;
+import ee.mkv.estonian.ekilex.error.RepresentationNotAllowedException;
 import ee.mkv.estonian.error.FormTypeCombinationNotFound;
 import ee.mkv.estonian.error.LanguageNotSupportedException;
 import ee.mkv.estonian.error.PartOfSpeechNotFoundException;
@@ -101,7 +102,7 @@ public class EkiLexRetrievalService {
         ekilexParadigm.setWord(ekilexWord);
         var ekilexForm = new EkilexForm();
         ekilexForm.setEkilexParadigm(ekilexParadigm);
-        ekilexForm.setRepresentation(getRepresentation(word.getWordValue()));
+        ekilexForm.setRepresentation(getRepresentation(word.getWordValue()).get()); //here we should not get empty representation
         ekilexForm.setFormTypeCombination(
                 formTypeRepository.findByEkiRepresentation(PREFIX_FORM_TYPE_COMBINATION)
                         .orElseThrow(() -> new FormTypeCombinationNotFound(PREFIX_FORM_TYPE_COMBINATION))
@@ -140,8 +141,11 @@ public class EkiLexRetrievalService {
         }
 
         List<EkilexParadigm> myParadigms = new ArrayList<>();
-        for (DetailsParadigmDto paradigmDto : detailsDto.getWord().getParadigms()) {
-            myParadigms.add(saveEkiLexParadigm(word, paradigmDto));
+        final List<DetailsParadigmDto> paradigms = detailsDto.getWord().getParadigms();
+        if (paradigms != null) {
+            for (DetailsParadigmDto paradigmDto : paradigms) {
+                myParadigms.add(saveEkiLexParadigm(word, paradigmDto));
+            }
         }
 
         return word;
@@ -156,9 +160,11 @@ public class EkiLexRetrievalService {
         if (!wordDto.getLang().equalsIgnoreCase("est")) {
             throw new LanguageNotSupportedException(wordDto.getLang());
         }
+        var representation = getRepresentation(wordDto.getWordValue())
+                .orElseThrow(() -> new RepresentationNotAllowedException(wordDto.getWordValue()));
         EkilexWord word = new EkilexWord();
         word.setId(wordDto.getWordId());
-        word.setBaseForm(getRepresentation(wordDto.getWordValue()));
+        word.setBaseForm(representation);
         return ekilexWordRepository.save(word);
     }
 
@@ -179,12 +185,15 @@ public class EkiLexRetrievalService {
     }
 
     private void saveEkiLexForm(EkilexParadigm paradigm, FormDto formDto) {
-        EkilexForm form = new EkilexForm();
-        form.setEkilexParadigm(paradigm);
-        form.setRepresentation(getRepresentation(formDto.getValue()));
-        form.setFormTypeCombination(getFormTypeCombination(formDto.getMorphCode()));
-        ekilexFormRepository.save(form);
-        paradigm.getForms().add(form);
+        getRepresentation(formDto.getValue()).ifPresent(
+                representation -> {
+                    EkilexForm form = new EkilexForm();
+                    form.setEkilexParadigm(paradigm);
+                    form.setRepresentation(representation);
+                    form.setFormTypeCombination(getFormTypeCombination(formDto.getMorphCode()));
+                    ekilexFormRepository.save(form);
+                    paradigm.getForms().add(form);
+                });
     }
 
     private FormTypeCombination getFormTypeCombination(String morphCode) {
@@ -238,13 +247,25 @@ public class EkiLexRetrievalService {
         return result;
     }
 
-    private Representation getRepresentation(String word) {
-        return representationsRepository.findByRepresentation(word)
+    private Optional<Representation> getRepresentation(String word) {
+        if (word == null || word.isBlank()) {
+            return Optional.empty();
+        }
+        var word1 = word.trim();
+        if (word1.isEmpty()) {
+            log.warn("Empty representation requested, returning empty Optional");
+            return Optional.empty();
+        }
+        if (word1.endsWith("-")) {
+            log.warn("Representation ends with hyphen, not allowed: {}", word);
+            return Optional.empty();
+        }
+        return Optional.of(representationsRepository.findByRepresentation(word1)
                 .orElseGet(() -> {
                     Representation representation = new Representation();
-                    representation.setRepresentation(word);
+                    representation.setRepresentation(word1);
                     return representationsRepository.save(representation);
-                });
+                }));
     }
 
     private EkiPartOfSpeech showMenu() {

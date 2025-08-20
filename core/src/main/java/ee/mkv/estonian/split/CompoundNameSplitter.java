@@ -254,9 +254,17 @@ public class CompoundNameSplitter implements LexemeSplitter {
         for (var entry : entries) {
             var splitting = entry.getKey();
             var lastComponent = splitting.findLastComponent();
-            var formsForFinalComponent = entry.getValue().get(lastComponent);
+            var entryValue = entry.getValue();
             log.info("Splitting: {}", splitting);
-            log.info("Forms for splitting: {}", entry.getValue());
+            log.info("Forms for splitting: {}", entryValue);
+            log.info("Last component: {}", lastComponent);
+            var formsForFinalComponent = entryValue.get(lastComponent);
+            if (formsForFinalComponent == null || formsForFinalComponent.isEmpty()) {
+                log.info("No forms found for final component: {} (probably dues to filtering)", lastComponent);
+                continue;
+            }
+            log.info("Forms for final component: {}", logsRepresentationFor(formsForFinalComponent));
+            assert formsForFinalComponent != null && !formsForFinalComponent.isEmpty() : "Forms for final component should not be empty";
             var leftover = word.substring(0, lastComponent.getStartIndex());
             if (leftover.isEmpty()) {
                 continue;
@@ -286,6 +294,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
     }
 
     private List<CompoundWordComponent> combineComponentsWhenLeftoverIsToTheLeft(List<CompoundWordComponent> componentsForLeftover, WordComponent lastComponent, List<Form> formsForFinalComponent) {
+        assert formsForFinalComponent != null && !formsForFinalComponent.isEmpty() : "Forms for final component should not be empty";
         var result = new ArrayList<>(componentsForLeftover);
         var lastLeftoverComponentIndex = componentsForLeftover
                 .stream()
@@ -327,6 +336,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
         for (WordComponent component : splitting.getComponents()) {
             var forms = componentListMap.get(component);
             if (forms.isEmpty()) {
+                log.warn("No forms found for component: {} in splitting: {}", component, splitting);
                 return Collections.emptyList(); // this should not happen though
             }
             final var compoundWordComponent = buildCompoundWordComponent(component.getPosition(), component, forms);
