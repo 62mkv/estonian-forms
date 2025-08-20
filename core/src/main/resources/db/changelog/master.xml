@@ -17,5 +17,8 @@
     <include file="changelogs/013-loan-words.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/014-representation-constraints.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/015-lexeme-forms-constraints.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/016-ekilex-raw.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/017-lexeme-fk-representations.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/018-representation-not-empty.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
 

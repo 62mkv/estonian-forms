@@ -1,5 +1,9 @@
 spring:
-  jpa.hibernate.ddl-auto: none
+  jpa:
+    show-sql: false
+    properties:
+      hibernate.format_sql: true
+    hibernate.ddl-auto: none
   datasource:
     url:
     username: estonian

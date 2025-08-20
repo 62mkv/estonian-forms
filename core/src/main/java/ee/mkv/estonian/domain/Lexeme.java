@@ -15,6 +15,7 @@ import java.util.Set;
 @Table(name = "LEXEMES")
 @NoArgsConstructor
 public class Lexeme {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LEXEMES_SEQ")
     @SequenceGenerator(name = "LEXEMES_SEQ", sequenceName = "hibernate_sequence", allocationSize = 1)

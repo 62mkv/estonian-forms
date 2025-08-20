@@ -14,6 +14,10 @@ public class WordDto {
     private String wordClass;
     private Integer homonymNr;
     private List<DetailsParadigmDto> paradigms;
+    private List<String> wordTypeCodes;
+    private boolean prefixoid;
+    private boolean suffixoid;
+    private boolean foreign;
 
 
 /*

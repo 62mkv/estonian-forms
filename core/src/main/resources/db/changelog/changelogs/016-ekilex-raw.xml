@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="016-ekilex-raw" author="62mkv">
+        <createTable tableName="ekilex_raw">
+            <!--     Long id;
+
+    String endpoint;
+
+    String key;
+
+    // The raw JSON data as a string
+    @Lob
+    String rawData;
+
+    Instant createdAt;
+-->
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="endpoint" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="key" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="raw_data" type="jsonb">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+        <createIndex indexName="idx_ekilex_raw_endpoint" tableName="ekilex_raw">
+            <column name="endpoint"/>
+            <column name="key"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

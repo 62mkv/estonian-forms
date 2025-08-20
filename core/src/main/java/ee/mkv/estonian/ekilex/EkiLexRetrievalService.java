@@ -21,6 +21,7 @@ import java.util.*;
 public class EkiLexRetrievalService {
 
     public static final Long INITIAL_WORD_ID = 154_451L;
+    public static final String PREFIX_FORM_TYPE_COMBINATION = "ID";
     private final EkiLexClient ekiLexClient;
 
     private final RepresentationRepository representationsRepository;
@@ -38,13 +39,13 @@ public class EkiLexRetrievalService {
     @Transactional
     public List<EkilexWord> retrieveByLemma(String lemma, boolean existingWord) {
         List<EkilexWord> result = new ArrayList<>();
-        final Set<Long> words = ekiLexClient.findWords(lemma);
+        List<WordDto> words = ekiLexClient.findWords(lemma);
         log.info("Found [{}] for lemma '{}'", words, lemma);
-        for (Long wordId : words) {
+        for (WordDto word : words) {
             try {
-                result.add(retrieveById(wordId, existingWord));
+                result.add(processWord(word, existingWord));
             } catch (EkilexParadigmExistsException e) {
-                log.warn("Paradigm for word {} already exists, skipping", wordId);
+                log.warn("Paradigm for word {}:{} already exists, skipping", word.getWordId(), word.getWordValue());
             }
         }
 
@@ -53,7 +54,6 @@ public class EkiLexRetrievalService {
 
     @Transactional
     public EkilexWord retrieveById(Long wordId, boolean force) {
-
         if (ekilexWordRepository.existsById(wordId)) {
             if (!force) {
                 log.warn("EkilexWord with id {} already exists", wordId);
@@ -66,6 +66,51 @@ public class EkiLexRetrievalService {
 
         log.info("Word not found, retrieving from Ekilex: {}", wordId);
         return retrieveFromEkilex(wordId, false);
+    }
+
+    @Transactional
+    public EkilexWord processWord(WordDto word, boolean force) {
+        final Long wordId = word.getWordId();
+        boolean existing = ekilexWordRepository.existsById(wordId);
+        if (existing && !force) {
+            log.warn("EkilexWord with id {} already exists", wordId);
+            return ekilexWordRepository.findById(wordId).get();
+        }
+
+        if (word.isPrefixoid() && word.getWordTypeCodes().contains("pf")) {
+            log.info("Word {} is a prefixoid", wordId);
+            return buildPrefixoid(word, existing);
+        }
+
+        log.info("Word not found, retrieving from Ekilex: {}", wordId);
+        return retrieveFromEkilex(wordId, existing);
+    }
+
+    private EkilexWord buildPrefixoid(WordDto word, boolean existing) {
+        var ekilexWord = existing
+                ? updateEkilexWord(word.getWordId())
+                : insertEkilexWord(word);
+
+        var ekilexLexeme = new EkilexLexeme();
+        ekilexLexeme.setWord(ekilexWord);
+        ekilexLexeme.setPos(Set.of(
+                partOfSpeechRepository.findByPartOfSpeech(EkiPartOfSpeech.PREFIX.getRepresentation())
+                        .orElseThrow(() -> new PartOfSpeechNotFoundException(EkiPartOfSpeech.PREFIX.getEkiCodes()))
+        ));
+        var ekilexParadigm = new EkilexParadigm();
+        ekilexParadigm.setWord(ekilexWord);
+        var ekilexForm = new EkilexForm();
+        ekilexForm.setEkilexParadigm(ekilexParadigm);
+        ekilexForm.setRepresentation(getRepresentation(word.getWordValue()));
+        ekilexForm.setFormTypeCombination(
+                formTypeRepository.findByEkiRepresentation(PREFIX_FORM_TYPE_COMBINATION)
+                        .orElseThrow(() -> new FormTypeCombinationNotFound(PREFIX_FORM_TYPE_COMBINATION))
+        );
+        ekilexWordRepository.save(ekilexWord);
+        ekilexLexemeRepository.save(ekilexLexeme);
+        ekilexParadigmRepository.save(ekilexParadigm);
+        ekilexFormRepository.save(ekilexForm);
+        return ekilexWord;
     }
 
     private EkilexWord retrieveFromEkilex(Long wordId, boolean existing) {
