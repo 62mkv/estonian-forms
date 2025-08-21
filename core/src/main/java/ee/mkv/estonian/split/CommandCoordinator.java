@@ -37,8 +37,9 @@ public class CommandCoordinator {
         while (true) {
             switch (chosenOption) {
                 case ADD_PREFIX:
-                    log.info("Adding prefix");
+                    log.info("Adding prefix (first, read from EkiLex)");
                     String prefix = readWordFromUserInput();
+                    readFromEkilex(prefix);
                     immutableLexemeAdderService.addImmutableLexeme(prefix, InternalPartOfSpeech.PREFIX);
                     return true;
                 case ADD_HIDDEN_NOUN:
@@ -52,24 +53,20 @@ public class CommandCoordinator {
                     immutableLexemeAdderService.addImmutableLexeme(hiddenAdjective, InternalPartOfSpeech.ADJECTIVE);
                     return true;
                 case ADD_RESTORABLE_NOUN:
-                    log.info("Adding restorable noun");
+                    log.info("Adding restorable noun (first, read from EkiLex)");
                     String restorable = readWordFromUserInput();
+                    readFromEkilex(restorable);
                     lexemeInitializer.initializeLexeme(restorable, InternalPartOfSpeech.NOUN);
                     return true;
                 case ADD_RESTORABLE_ADJECTIVE:
-                    log.info("Adding restorable adjective");
+                    log.info("Adding restorable adjective (first, read from EkiLex)");
                     String restorableAdj = readWordFromUserInput();
+                    readFromEkilex(restorableAdj);
                     lexemeInitializer.initializeLexeme(restorableAdj, InternalPartOfSpeech.ADJECTIVE);
                     return true;
                 case RETRIEVE_FROM_EKILEX:
                     log.info("Retrieving from ekilex");
-                    String ekilex = readWordFromUserInput();
-                    try {
-                        ekiLexRetrievalService.retrieveByLemma(ekilex, true);
-                        lexemeMappingCreationService.createMissingMapping(ekilex);
-                    } catch (Exception e) {
-                        log.error("Error retrieving from EkiLex", e);
-                    }
+                    readFromEkilex(readWordFromUserInput());
                     return true;
                 case LEXEME_FROM_EKILEX:
                     log.info("Lexeme from ekilex");
@@ -95,6 +92,15 @@ public class CommandCoordinator {
                 case BREAK:
                     return false;
             }
+        }
+    }
+
+    private void readFromEkilex(String ekilex) {
+        try {
+            ekiLexRetrievalService.retrieveByLemma(ekilex, true);
+            lexemeMappingCreationService.createMissingMapping(ekilex);
+        } catch (Exception e) {
+            log.error("Error retrieving from EkiLex", e);
         }
     }
 

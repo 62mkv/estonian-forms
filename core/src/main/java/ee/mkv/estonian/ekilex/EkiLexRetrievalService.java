@@ -9,6 +9,7 @@ import ee.mkv.estonian.error.LanguageNotSupportedException;
 import ee.mkv.estonian.error.PartOfSpeechNotFoundException;
 import ee.mkv.estonian.model.EkiPartOfSpeech;
 import ee.mkv.estonian.repository.*;
+import ee.mkv.estonian.service.UserInputProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ public class EkiLexRetrievalService {
     private final EkilexParadigmRepository ekilexParadigmRepository;
     private final EkilexFormRepository ekilexFormRepository;
     private final FormTypeCombinationRepository formTypeRepository;
+    private final UserInputProvider userInputProvider;
 
     public long getLastPersistedWordId() {
         return ekilexWordRepository.getLastRetrievedWordId().orElse(INITIAL_WORD_ID);
@@ -140,11 +142,10 @@ public class EkiLexRetrievalService {
             myLexemes.add(generateLexemeWithUserChoice(word));
         }
 
-        List<EkilexParadigm> myParadigms = new ArrayList<>();
         final List<DetailsParadigmDto> paradigms = detailsDto.getWord().getParadigms();
         if (paradigms != null) {
             for (DetailsParadigmDto paradigmDto : paradigms) {
-                myParadigms.add(saveEkiLexParadigm(word, paradigmDto));
+                saveEkiLexParadigm(word, paradigmDto);
             }
         }
 
@@ -272,17 +273,13 @@ public class EkiLexRetrievalService {
         for (EkiPartOfSpeech option : EkiPartOfSpeech.values()) {
             log.info("{}: {}", option.ordinal() + 1, option.name());
         }
-        Scanner in = new Scanner(System.in);
-        int input = -1;
-        boolean validInput = false;
-        do {
-            try {
-                input = in.nextInt();
-                validInput = true;
-            } catch (NoSuchElementException e) {
-                log.error("Invalid input", e);
-            }
-        } while (!validInput);
+
+        int input = userInputProvider.getUserChoice(
+                Arrays.stream(EkiPartOfSpeech.values())
+                        .map(Enum::name)
+                        .toArray(String[]::new)
+        );
+
         return EkiPartOfSpeech.from(input);
     }
 

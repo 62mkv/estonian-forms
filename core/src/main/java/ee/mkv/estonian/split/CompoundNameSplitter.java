@@ -3,6 +3,7 @@ package ee.mkv.estonian.split;
 import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.repository.FormRepository;
+import ee.mkv.estonian.service.UserInputProvider;
 import ee.mkv.estonian.split.domain.Splitting;
 import ee.mkv.estonian.split.domain.WordComponent;
 import ee.mkv.estonian.utils.IterableUtils;
@@ -29,6 +30,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
             InternalPartOfSpeech.ADVERB
     );
 
+    private final UserInputProvider userInputProvider;
     private final FormRepository formRepository;
     private final WordSplitService wordSplitService;
 
@@ -235,11 +237,13 @@ public class CompoundNameSplitter implements LexemeSplitter {
                 }
 
                 // wait for user input
-                Scanner scanner = new Scanner(System.in);
                 log.info("Please select splitting index: ");
-                int selectedSplittingIndex = scanner.nextInt();
+                int selectedSplittingIndex = userInputProvider.getUserChoice(
+                        splittingsByIndex.keySet().stream()
+                                .map(Object::toString)
+                                .toArray(String[]::new)
+                );
                 log.info("You selected: {} {}", selectedSplittingIndex, format(splittingsByIndex.get(selectedSplittingIndex)));
-                scanner.close();
                 var selectedSplitting = splittingsByIndex.get(selectedSplittingIndex);
 
                 return translateResults(selectedSplitting, splittingWithAllMatches.get(selectedSplitting));
@@ -347,11 +351,13 @@ public class CompoundNameSplitter implements LexemeSplitter {
     }
 
     private boolean canBeLastComponentOfName(Form form) {
-        return form.getFormTypeCombination().getFormTypes()
+        boolean isNounForm = form.getFormTypeCombination().getFormTypes()
                 .stream()
                 .map(FormType::getEkiRepresentation)
                 .collect(Collectors.toSet())
                 .contains("N");
+        boolean isParticiple = form.getFormTypeCombination().getEkiRepresentation().equals("PtsPtIps");
+        return isNounForm || isParticiple;
     }
 
     private boolean hasMatchesForFinalComponent(Splitting splitting, Map<WordComponent, List<Form>> componentListMap) {

@@ -5,7 +5,6 @@ import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.error.EkilexWordNotFoundException;
 import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.repository.*;
-import ee.mkv.estonian.service.lexeme.error.LexemeAlreadyHasFormsException;
 import ee.mkv.estonian.utils.IterableUtils;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -102,6 +102,7 @@ public class LexemeFromEkiLexService {
     }
 
     private Set<Form> buildFormsFromParadigms(List<EkilexParadigm> paradigms, Lexeme lexeme) {
+        Set<Form> forms = Optional.ofNullable(lexeme.getForms()).orElseGet(HashSet::new);
         Map<MyFormForLexeme, Set<String>> inflectionTypesPerForm = new HashMap<>();
         for (EkilexParadigm paradigm : paradigms) {
             for (EkilexForm ekilexForm : paradigm.getForms()) {
@@ -116,7 +117,7 @@ public class LexemeFromEkiLexService {
             }
         }
 
-        Set<Form> result = new HashSet<>();
+        var formAccumulator = new FormAccumulator(forms, lexeme);
 
         if (inflectionTypesPerForm.isEmpty()) {
             if (InternalPartOfSpeech.fromEkiCodes(lexeme.getPartOfSpeech().getEkiCodes()) == InternalPartOfSpeech.PREFIX) {
@@ -126,12 +127,12 @@ public class LexemeFromEkiLexService {
                 form.setFormTypeCombination(formTypeCombinationRepository.findByEkiRepresentation(Constants.IMMUTABLE_FORM).orElseThrow());
                 lexeme.getForms().add(form);
 
-                result.add(form);
+                formAccumulator.accept(form);
             }
             log.warn("No forms found for lexeme {}", lexeme);
         } else {
 
-            for (Map.Entry<MyFormForLexeme, Set<String>> entry : inflectionTypesPerForm.entrySet()) {
+            for (var entry : inflectionTypesPerForm.entrySet()) {
                 String inflectionTypes = entry.getValue().stream().sorted().collect(Collectors.joining(","));
                 MyFormForLexeme formForLexeme = entry.getKey();
 
@@ -142,23 +143,49 @@ public class LexemeFromEkiLexService {
                 form.setFormTypeCombination(formForLexeme.getFormTypeCombination());
                 lexeme.getForms().add(form);
 
-                result.add(form);
+                formAccumulator.accept(form);
             }
         }
 
-        return result;
+        return formAccumulator.getAggregate();
     }
 
     @Transactional
     public Lexeme recoverLexemeFormsFromEkilexForms(Lexeme lexeme, EkilexWord ekilexWord) {
         if (!lexeme.getForms().isEmpty()) {
-            log.error("Lexeme {} already has [{}] forms", lexeme, lexeme.getForms());
-            throw new LexemeAlreadyHasFormsException(lexeme);
+            log.warn("Lexeme {} already has [{}] forms", lexeme, lexeme.getForms());
         }
 
         List<EkilexParadigm> paradigms = IterableUtils.iterableToList(ekilexParadigmRepository.findAllByWordId(ekilexWord.getId()));
         lexeme.setForms(buildFormsFromParadigms(paradigms, lexeme));
         return lexeme;
+    }
+
+    private static class FormAccumulator implements Consumer<Form> {
+        private final Set<Form> forms;
+        private final Lexeme lexeme;
+
+        public FormAccumulator(Set<Form> forms, Lexeme lexeme) {
+            this.forms = new HashSet<>(forms);
+            this.lexeme = lexeme;
+        }
+
+        @Override
+        public void accept(Form form) {
+            boolean alreadyExists = forms.stream()
+                    .anyMatch(existingForm -> existingForm.getRepresentation().equals(form.getRepresentation()) &&
+                            existingForm.getFormTypeCombination().equals(form.getFormTypeCombination()));
+            if (!alreadyExists) {
+                forms.add(form);
+            } else {
+                log.warn("Form with representation '{}' and type '{}' already exists in the lexeme {}, skipping addition",
+                        lexeme, form.getRepresentation(), form.getFormTypeCombination());
+            }
+        }
+
+        public Set<Form> getAggregate() {
+            return this.forms;
+        }
     }
 
     @Data
