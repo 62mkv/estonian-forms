@@ -2,8 +2,9 @@ id,description                                          ,group_id
 1 ,"Compound of two words, first part single nominative",1
 2 ,"Compound of two words, first part single genitive"  ,1
 3 ,"Compound of two words, first part plural nominative",1
-4 ,"Compound of two words, first part plural genitive"  ,1
-5 ,"Compound of two words, separated with hyphen"       ,1
-6 ,"Compound of several components"                     ,1
-7 ,"Derived word (name with suffix)"                    ,2
-8 ,"Derived word (verb with suffix)"                    ,2
+4 ,"Compound of two words, first part plural genitive",1
+5 ,"Compound of two words, separated with hyphen",1
+6 ,"Compound of several components",1
+7 ,"Derived word (name with suffix)",2
+8 ,"Derived word (verb with suffix)",2
+9 ,"Derived word (adjective with suffix)",2

@@ -166,7 +166,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
         assert form.getLexeme().getPartOfSpeech() != null;
         return String.format("form{%s:%s:%s}",
                 form.getRepresentation().getRepresentation(),
-                form.getLexeme().getPartOfSpeech().getPartOfSpeech(),
+                form.getLexeme().getPartOfSpeech().getPartOfSpeechName(),
                 form.getFormTypeCombination().getEkiRepresentation());
     }
 

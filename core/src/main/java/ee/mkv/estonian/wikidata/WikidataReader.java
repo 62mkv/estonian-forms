@@ -42,7 +42,7 @@ public class WikidataReader {
         try (TupleQueryResult lexemesResult = executor.executeQuery(query)) {
             List<BindingSet> results = lexemesResult.stream().collect(Collectors.toList());
             if (results.isEmpty()) {
-                log.info("Lexeme {}:{} not found", lexeme.getLemma().getRepresentation(), lexeme.getPartOfSpeech().getPartOfSpeech());
+                log.info("Lexeme {}:{} not found", lexeme.getLemma().getRepresentation(), lexeme.getPartOfSpeech().getPartOfSpeechName());
                 return Optional.empty();
             }
 

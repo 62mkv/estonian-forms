@@ -34,9 +34,8 @@ public class Form {
     public String toString() {
         return "Form{" +
                 "id=" + id +
-                ", wikidataId='" + wikidataId + '\'' +
                 ", representation=" + representation +
-                ", lexeme=" + lexeme +
+                ", lexeme=" + lexeme.getId() +
                 ", formTypeCombination=" + formTypeCombination +
                 ", declinationTypes='" + declinationTypes + '\'' +
                 '}';

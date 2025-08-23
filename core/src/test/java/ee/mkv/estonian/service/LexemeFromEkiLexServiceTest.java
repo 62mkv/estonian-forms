@@ -87,8 +87,8 @@ class LexemeFromEkiLexServiceTest {
                 .toList();
         assertThat(lexemeSet)
                 .hasSize(2)
-                .areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("noun")))
-                .areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeech().equalsIgnoreCase("adjective")))
+                .areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeechName().equalsIgnoreCase("noun")))
+                .areAtLeastOne(lc(lexeme -> lexeme.getPartOfSpeech().getPartOfSpeechName().equalsIgnoreCase("adjective")))
                 .allSatisfy(lexeme -> assertThat(lexeme.getForms()).hasSize(4));
 
         for (Lexeme lexeme : lexemeSet) {
@@ -118,7 +118,7 @@ class LexemeFromEkiLexServiceTest {
                 .allMatch(lexeme -> {
                     return lexeme.getForms().size() == 3
                             && lexeme.getId() > 0
-                            && lexeme.getPartOfSpeech().getPartOfSpeech().equals("Noun")
+                            && lexeme.getPartOfSpeech().getPartOfSpeechName().equals("Noun")
                             && lexeme.getLemma().getRepresentation().equals("ema")
                             && lexeme.getWikidataId() == null;
                 });
@@ -131,7 +131,7 @@ class LexemeFromEkiLexServiceTest {
                 .allMatch(mapping -> {
                     return mapping.getLexeme().equals(lexeme)
                             && mapping.getId() > 0
-                            && mapping.getPartOfSpeech().getPartOfSpeech().equals("Noun")
+                            && mapping.getPartOfSpeech().getPartOfSpeechName().equals("Noun")
                             && mapping.getEkilexWord().getId().equals(1000L);
                 });
 

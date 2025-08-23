@@ -1,14 +1,12 @@
 package ee.mkv.estonian.split;
 
 import ee.mkv.estonian.domain.*;
-import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.repository.FormRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,7 +26,7 @@ public class DerivedNameFromVerbSplitter implements LexemeSplitter {
     @Override
     public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
         log.info("Trying to split lexeme {} with {}", lexeme, this.getClass().getSimpleName());
-        if (isName(lexeme) && endsOnSupportedSuffix(lexeme)) {
+        if (lexeme.isName() && endsOnSupportedSuffix(lexeme)) {
             log.info("isName and ends on my suffix {}", lexeme);
             return buildCompoundWord(lexeme, SUFFIX);
         }
@@ -64,8 +62,4 @@ public class DerivedNameFromVerbSplitter implements LexemeSplitter {
         return lexeme.getLemma().getRepresentation().endsWith(SUFFIX);
     }
 
-    private boolean isName(Lexeme lexeme) {
-        return Objects.equals(InternalPartOfSpeech.fromEkiCodes(lexeme.getPartOfSpeech().getEkiCodes()), InternalPartOfSpeech.NOUN)
-                || Objects.equals(InternalPartOfSpeech.fromEkiCodes(lexeme.getPartOfSpeech().getEkiCodes()), InternalPartOfSpeech.ADJECTIVE);
-    }
 }

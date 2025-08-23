@@ -10,24 +10,11 @@ import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class FormFingerprintCalculator {
-
-    private static final Set<String> NAMES_EKI_CODES = new HashSet<>();
-    private static final Set<String> VERB_EKI_CODES = new HashSet<>();
-
-    static {
-        NAMES_EKI_CODES.add("AH"); // Adjective
-        NAMES_EKI_CODES.add("GS"); // Noun
-        NAMES_EKI_CODES.add("ON"); // Numeral
-        NAMES_EKI_CODES.add("P"); // Pronoun
-        VERB_EKI_CODES.add("XV"); // Verb
-    }
 
     private final FormTypeCombinationRepository formTypeCombinationRepository;
 
@@ -58,22 +45,14 @@ public class FormFingerprintCalculator {
     }
 
     private Optional<FormTypeCombination> getExcludedFormTypeCombinationPerPartOfSpeech(PartOfSpeech partOfSpeech) {
-        if (isName(partOfSpeech)) {
+        if (partOfSpeech.isName()) {
             return formTypeCombinationRepository.findByEkiRepresentation("SgN");
         } else {
-            if (isVerb(partOfSpeech)) {
+            if (partOfSpeech.isVerb()) {
                 return formTypeCombinationRepository.findByEkiRepresentation("Sup");
             }
         }
         return Optional.empty();
-    }
-
-    private boolean isVerb(PartOfSpeech partOfSpeech) {
-        return VERB_EKI_CODES.contains(partOfSpeech.getEkiCodes());
-    }
-
-    private boolean isName(PartOfSpeech partOfSpeech) {
-        return NAMES_EKI_CODES.contains(partOfSpeech.getEkiCodes());
     }
 
     @Getter
@@ -91,7 +70,7 @@ public class FormFingerprintCalculator {
     class SnapshotComparator implements Comparator<FormSnapshot> {
         @Override
         public int compare(FormSnapshot o1, FormSnapshot o2) {
-            if (o1.representation.getId() == o2.representation.getId()) {
+            if (o1.representation.getId().equals(o2.representation.getId())) {
                 return Long.compare(o1.formTypeCombination.getId(), o2.formTypeCombination.getId());
             }
             return Long.compare(o1.representation.getId(), o2.representation.getId());

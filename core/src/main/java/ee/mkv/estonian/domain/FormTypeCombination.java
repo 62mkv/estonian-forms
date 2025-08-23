@@ -31,10 +31,7 @@ public class FormTypeCombination {
 
     @Override
     public String toString() {
-        return "FormTypeCombination{" +
-                "id=" + id +
-                ", ekiRepresentation='" + ekiRepresentation + '\'' +
-                '}';
+        return ekiRepresentation;
     }
 
     @Override
@@ -49,4 +46,10 @@ public class FormTypeCombination {
     public int hashCode() {
         return getClass().hashCode();
     }
+
+    public boolean isImmutable() {
+        return ekiRepresentation != null && ekiRepresentation.equals("ID");
+    }
+
+
 }

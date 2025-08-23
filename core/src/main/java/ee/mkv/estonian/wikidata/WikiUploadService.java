@@ -84,6 +84,6 @@ public class WikiUploadService {
     }
 
     private boolean mustHaveForms(PartOfSpeech partOfSpeech) {
-        return NAMES_AND_VERBS.contains(partOfSpeech.getPartOfSpeech());
+        return NAMES_AND_VERBS.contains(partOfSpeech.getPartOfSpeechName());
     }
 }

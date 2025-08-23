@@ -98,7 +98,7 @@ public class FixPartsOfSpeechService {
         List<Lexeme> matchingByTail = new ArrayList<>();
         lexemeRepository.findByLemmaRepresentationIn(tails)
                 .forEach(lexeme -> {
-                    log.info("Found a lexeme for tail {} with part of speech {}", lexeme.getLemma().getRepresentation(), lexeme.getPartOfSpeech().getPartOfSpeech());
+                    log.info("Found a lexeme for tail {} with part of speech {}", lexeme.getLemma().getRepresentation(), lexeme.getPartOfSpeech().getPartOfSpeechName());
                     matchingByTail.add(lexeme);
                 });
 

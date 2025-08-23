@@ -83,7 +83,7 @@ class EkiLexRetrievalServiceTest {
         return ekilexLexeme
                 .getPos()
                 .stream()
-                .map(PartOfSpeech::getPartOfSpeech)
+                .map(PartOfSpeech::getPartOfSpeechName)
                 .collect(Collectors.toSet())
                 .contains(posName);
     }

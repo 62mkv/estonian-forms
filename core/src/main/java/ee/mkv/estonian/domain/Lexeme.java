@@ -48,4 +48,8 @@ public class Lexeme {
     public int hashCode() {
         return getClass().hashCode();
     }
+
+    public boolean isName() {
+        return partOfSpeech.isName();
+    }
 }
