@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static ee.mkv.estonian.split.SplitUtils.getCompoundWord;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -19,44 +21,29 @@ public class DerivedAdjectiveFromNounSplitter implements LexemeSplitter {
 
     private final FormRepository formRepository;
 
-    private static CompoundWord getCompoundWord(Lexeme lexeme, Form form) {
-        var result = new CompoundWord();
-        result.setCompoundRule(CompoundRule.DERIVED_FROM_NAME_WITH_SUFFIX);
-        result.setLexeme(lexeme);
-        var component = new CompoundWordComponent();
-        component.setForm(form);
-        component.setComponentIndex(0);
-        component.setComponentStartsAt(0);
-        component.setCompoundWord(result);
-        result.setComponents(List.of(component));
-        return result;
-    }
-
-    private static InternalPartOfSpeech getInternalPartOfSpeech(PartOfSpeech partOfSpeech) {
-        return InternalPartOfSpeech.fromEkiCodes(partOfSpeech.getEkiCodes());
-    }
-
-    private Optional<CompoundWord> processName(Lexeme lexeme) {
-        return endsOnSupportedSuffix(lexeme)
-                .flatMap(suffix -> buildCompoundWord(lexeme, suffix));
-    }
-
     @Override
     public int getPriority() {
         return 0;
+    }
+
+    @Override
+    public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
+        log.info("Trying to split lexeme {} with {}", lexeme, this.getClass().getSimpleName());
+        return processName(lexeme);
+    }
+
+    @Override
+    public boolean canProcess(Lexeme lexeme) {
+        return lexeme.isName() && endsOnSupportedSuffix(lexeme).isPresent();
     }
 
     private boolean isNoun(PartOfSpeech partOfSpeech) {
         return getInternalPartOfSpeech(partOfSpeech) == InternalPartOfSpeech.NOUN;
     }
 
-    @Override
-    public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
-        log.info("Trying to split lexeme {} with {}", lexeme, this.getClass().getSimpleName());
-        if (lexeme.isName()) {
-            return processName(lexeme);
-        }
-        return Optional.empty();
+    private Optional<CompoundWord> processName(Lexeme lexeme) {
+        return endsOnSupportedSuffix(lexeme)
+                .flatMap(suffix -> buildCompoundWord(lexeme, suffix));
     }
 
     private Optional<CompoundWord> buildCompoundWord(Lexeme lexeme, String suffix) {
@@ -74,7 +61,7 @@ public class DerivedAdjectiveFromNounSplitter implements LexemeSplitter {
                 .filter(SplitUtils::canBeNonLastComponentOfName)
                 .peek(form -> log.info("Form {} can be non-last component of name", form))
                 .findFirst()
-                .map(form -> getCompoundWord(lexeme, form));
+                .map(form -> getCompoundWord(lexeme, form, CompoundRule.DERIVED_FROM_NAME_WITH_SUFFIX));
     }
 
     private Optional<String> endsOnSupportedSuffix(Lexeme lexeme) {
@@ -89,4 +76,7 @@ public class DerivedAdjectiveFromNounSplitter implements LexemeSplitter {
         return suffixHolder;
     }
 
+    private static InternalPartOfSpeech getInternalPartOfSpeech(PartOfSpeech partOfSpeech) {
+        return InternalPartOfSpeech.fromEkiCodes(partOfSpeech.getEkiCodes());
+    }
 }

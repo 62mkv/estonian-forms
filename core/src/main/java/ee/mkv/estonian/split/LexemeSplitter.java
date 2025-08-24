@@ -10,4 +10,6 @@ public interface LexemeSplitter {
     int getPriority();
 
     Optional<CompoundWord> trySplitLexeme(Lexeme lexeme);
+
+    boolean canProcess(Lexeme lexeme);
 }

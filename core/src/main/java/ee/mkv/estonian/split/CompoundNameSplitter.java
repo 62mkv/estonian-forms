@@ -36,15 +36,6 @@ public class CompoundNameSplitter implements LexemeSplitter {
     private final WordSplitService wordSplitService;
     private final LexemeInitializer lexemeInitializer;
 
-    private static CompoundWordComponent buildCompoundWordComponent(int index, WordComponent component, List<Form> forms) {
-        log.info("Building compound word component for component{}: {} with forms: {}", index, component, forms);
-        var finalComponent = new CompoundWordComponent();
-        finalComponent.setForm(IterableUtils.getFirstValueOrFail(forms));
-        finalComponent.setComponentIndex(index);
-        finalComponent.setComponentStartsAt(component.getStartIndex());
-        return finalComponent;
-    }
-
     public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
         var word = lexeme.getLemma().getRepresentation();
         var iteration = new SplitterIteration();
@@ -76,6 +67,11 @@ public class CompoundNameSplitter implements LexemeSplitter {
         return 2;
     }
 
+    @Override
+    public boolean canProcess(Lexeme lexeme) {
+        return true;
+    }
+
     private boolean hasChances(SplitterIteration iteration) {
         var leftovers = iteration.leftovers;
         log.info("Leftovers visited: {}", leftovers);
@@ -93,6 +89,15 @@ public class CompoundNameSplitter implements LexemeSplitter {
             }
         }
         return hasChance;
+    }
+
+    private static CompoundWordComponent buildCompoundWordComponent(int index, WordComponent component, List<Form> forms) {
+        log.info("Building compound word component for component{}: {} with forms: {}", index, component, forms);
+        var finalComponent = new CompoundWordComponent();
+        finalComponent.setForm(IterableUtils.getFirstValueOrFail(forms));
+        finalComponent.setComponentIndex(index);
+        finalComponent.setComponentStartsAt(component.getStartIndex());
+        return finalComponent;
     }
 
     private class SplitterIteration {

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static ee.mkv.estonian.split.SplitUtils.getCompoundWord;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -26,24 +28,12 @@ public class DerivedNameFromVerbSplitter implements LexemeSplitter {
     @Override
     public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
         log.info("Trying to split lexeme {} with {}", lexeme, this.getClass().getSimpleName());
-        if (lexeme.isName() && endsOnSupportedSuffix(lexeme)) {
-            log.info("isName and ends on my suffix {}", lexeme);
-            return buildCompoundWord(lexeme, SUFFIX);
-        }
-        return Optional.empty();
+        return buildCompoundWord(lexeme, SUFFIX);
     }
 
-    private static CompoundWord getCompoundWord(Lexeme lexeme, Form form) {
-        var result = new CompoundWord();
-        result.setCompoundRule(CompoundRule.DERIVED_FROM_VERB_ROOT_WITH_SUFFIX);
-        result.setLexeme(lexeme);
-        var component = new CompoundWordComponent();
-        component.setForm(form);
-        component.setComponentIndex(0);
-        component.setComponentStartsAt(0);
-        component.setCompoundWord(result);
-        result.setComponents(List.of(component));
-        return result;
+    @Override
+    public boolean canProcess(Lexeme lexeme) {
+        return lexeme.isName() && endsOnSupportedSuffix(lexeme);
     }
 
     private Optional<CompoundWord> buildCompoundWord(Lexeme lexeme, String suffix) {
@@ -55,7 +45,7 @@ public class DerivedNameFromVerbSplitter implements LexemeSplitter {
                 .stream()
                 .filter(form -> form.getFormTypeCombination().getEkiRepresentation().equals(Constants.VERB_SUPINE_ROOT))
                 .findFirst()
-                .map(form -> getCompoundWord(lexeme, form));
+                .map(form -> getCompoundWord(lexeme, form, CompoundRule.DERIVED_FROM_VERB_ROOT_WITH_SUFFIX));
     }
 
     private boolean endsOnSupportedSuffix(Lexeme lexeme) {
