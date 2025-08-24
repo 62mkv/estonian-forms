@@ -18,7 +18,6 @@ public class LexemeDbService {
     private final LexemeRepository lexemeRepository;
     private final PartOfSpeechRepository partOfSpeechRepository;
     private final RepresentationRepository representationsRepository;
-    private boolean recursive;
 
     public LexemeDbService(LexemeRepository lexemeRepository, PartOfSpeechRepository partOfSpeechRepository, RepresentationRepository representationsRepository) {
         this.lexemeRepository = lexemeRepository;
@@ -40,10 +39,9 @@ public class LexemeDbService {
     }
 
     private List<Lexeme> getLexemes(String lemma, String partOfSpeech, boolean recursive) {
-        this.recursive = recursive;
         // try to find a lexeme in Db for our parameters
         final List<Lexeme> lexemeList = partOfSpeechRepository
-                .findByPartOfSpeech(partOfSpeech)
+                .findByPartOfSpeechName(partOfSpeech)
                 .flatMap(pos -> representationsRepository
                         .findByRepresentation(lemma)
                         .map(lemmaEntity -> lexemeRepository.findByLemmaAndPartOfSpeech(lemmaEntity, pos)))

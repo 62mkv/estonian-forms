@@ -4,6 +4,7 @@ import ee.mkv.estonian.domain.EkilexForm;
 import ee.mkv.estonian.domain.EkilexParadigm;
 import ee.mkv.estonian.domain.FormTypeCombination;
 import ee.mkv.estonian.domain.Representation;
+import ee.mkv.estonian.error.DuplicateParadigmFoundException;
 import ee.mkv.estonian.model.DiscrepancyProjection;
 import ee.mkv.estonian.repository.EkilexFormRepository;
 import ee.mkv.estonian.repository.EkilexParadigmRepository;
@@ -45,23 +46,23 @@ public class ExtractRootPluralService {
                 break;
             }
 
-            List<Long> ids = nextCandidatesForRootPlural.stream().map(DiscrepancyProjection::getId).collect(Collectors.toList());
+            List<Long> ids = nextCandidatesForRootPlural.stream().map(DiscrepancyProjection::getId).toList();
             var paradigms = new HashSet<>(ids);
 
             if (paradigms.size() < ids.size()) {
                 var map = ids.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
                 log.error("Found duplicated paradigm in results: {}", map);
-                throw new RuntimeException("Found duplicated paradigm in results");
+                throw new DuplicateParadigmFoundException(paradigms);
             }
             for (DiscrepancyProjection discrepancyProjection : nextCandidatesForRootPlural) {
                 String inflected = discrepancyProjection.getInflected();
-                Long paradigm = discrepancyProjection.getId();
-                log.info("Found paradigm {} with discrepancy {} ", paradigm, inflected);
+                Long paradigmId = discrepancyProjection.getId();
+                log.info("Found paradigm {} with discrepancy {} ", paradigmId, inflected);
 
                 var representation = addRepresentation(getRootFormFromInflected(inflected));
-                var newForm = newRootPluralForm(paradigm, representation);
+                var newForm = newRootPluralForm(paradigmId, representation);
 
-                log.info("Added new RPl form: paradigm {}, representation {}", newForm.getEkilexParadigm().getId(), newForm.getRepresentation().getRepresentation());
+                log.info("Added new RPl form: paradigm {}, representation {}", paradigmId, newForm.getRepresentation().getRepresentation());
             }
         }
     }

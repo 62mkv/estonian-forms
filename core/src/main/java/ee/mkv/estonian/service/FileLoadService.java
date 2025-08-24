@@ -58,10 +58,10 @@ public class FileLoadService {
 
     private void loadDeclinationTypes(String dirPath) throws IOException {
         log.info("Loading from {}", DECLINATION_TYPES);
-        for (String[] record : loadFile(dirPath, DECLINATION_TYPES)) {
-            UUID articleGuid = UUID.fromString(record[0]);
+        for (String[] row : loadFile(dirPath, DECLINATION_TYPES)) {
+            UUID articleGuid = UUID.fromString(row[0]);
             try {
-                Integer declinationType = Integer.parseInt(record[1]);
+                Integer declinationType = Integer.parseInt(row[1]);
                 setDeclinationTypePerArticle(articleGuid, declinationType);
             } catch (Exception e) {
                 log.error("Exception while applying declination type for article", e);
@@ -79,39 +79,39 @@ public class FileLoadService {
 
     private void loadForms(String dirPath) throws IOException {
         log.info("Loading from {}", WORD_FORMS);
-        for (String[] record : loadFile(dirPath, WORD_FORMS)) {
+        for (String[] row : loadFile(dirPath, WORD_FORMS)) {
             // GUID,Part of speech,Declination type,Options count,Parallel forms count,Form code,Form representation,Stem length
-            UUID articleGuid = UUID.fromString(record[0]);
-            String ekiPartOfSpeech = record[1];
-            Integer declinationType = Integer.parseInt(record[2]);
-            Integer optionsCount = Integer.parseInt(record[3]);
-            Integer parallelFormsCount = Integer.parseInt(record[4]);
-            String formCode = record[5];
-            String formRepresentation = record[6];
-            Integer stemLength = Integer.parseInt(record[7]);
-            createAndSaveForm(articleGuid, ekiPartOfSpeech, declinationType, optionsCount, parallelFormsCount, formCode, formRepresentation, stemLength);
+            UUID articleGuid = UUID.fromString(row[0]);
+            String ekiPartOfSpeech = row[1];
+            Integer declinationType = Integer.parseInt(row[2]);
+            Integer optionsCount = Integer.parseInt(row[3]);
+            Integer parallelFormsCount = Integer.parseInt(row[4]);
+            String formCode = row[5];
+            String formRepresentation = row[6];
+            Integer stemLength = Integer.parseInt(row[7]);
+            createAndSaveForm(articleGuid, ekiPartOfSpeech, declinationType, formCode, formRepresentation, stemLength);
         }
     }
 
     private void loadPartsOfSpeech(String dirPath) throws IOException {
         log.info("Loading from {}", ARTICLES_PART_OF_SPEECH);
-        for (String[] record : loadFile(dirPath, ARTICLES_PART_OF_SPEECH)) {
-            UUID articleGuid = UUID.fromString(record[0]);
-            String partOfSpeech = record[1];
+        for (String[] row : loadFile(dirPath, ARTICLES_PART_OF_SPEECH)) {
+            UUID articleGuid = UUID.fromString(row[0]);
+            String partOfSpeech = row[1];
             updateArticlePartOfSpeech(articleGuid, createAndSavePartOfSpeech(partOfSpeech));
         }
     }
 
     private void loadArticles(String dirPath) throws IOException {
         log.info("Loading from {}", ARTICLES);
-        for (String[] record : loadFile(dirPath, ARTICLES)) {
-            String baseForm = record[0];
-            UUID articleGuid = UUID.fromString(record[1]);
+        for (String[] row : loadFile(dirPath, ARTICLES)) {
+            String baseForm = row[0];
+            UUID articleGuid = UUID.fromString(row[1]);
             createAndSaveArticle(baseForm, articleGuid);
         }
     }
 
-    public void createAndSaveForm(UUID articleGuid, String ekiPartOfSpeech, Integer declinationType, Integer optionsCount, Integer parallelFormsCount, String formCode, String formRepresentation, Integer stemLength) {
+    public void createAndSaveForm(UUID articleGuid, String ekiPartOfSpeech, Integer declinationType, String formCode, String formRepresentation, Integer stemLength) {
         Article article = articleRepository.findByUuid(articleGuid).get();
         ArticleForm articleForm = new ArticleForm();
         articleForm.setArticle(article);
@@ -123,7 +123,7 @@ public class FileLoadService {
             }
         }
 
-        if (!formFitsArticle && article.getPartOfSpeech().size() > 0) {
+        if (!formFitsArticle && !article.getPartOfSpeech().isEmpty()) {
             log.warn("Form {}:{} does not fit article UUID {}", formRepresentation, ekiPartOfSpeech, articleGuid);
             return;
         }
@@ -169,7 +169,7 @@ public class FileLoadService {
     }
 
     private PartOfSpeech createAndSavePartOfSpeech(String partOfSpeech) {
-        return partOfSpeechRepository.findByPartOfSpeech(partOfSpeech).get();
+        return partOfSpeechRepository.findByPartOfSpeechName(partOfSpeech).get();
     }
 
     private void updateArticlePartOfSpeech(UUID articleGuid, PartOfSpeech partOfSpeech) {

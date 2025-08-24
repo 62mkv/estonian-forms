@@ -1,39 +1,34 @@
 package ee.mkv.estonian.split;
 
-
 import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.repository.FormRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-@Component
 @RequiredArgsConstructor
 @Slf4j
-public class DerivedNounFromAdjectiveSplitter implements LexemeSplitter {
+public abstract class AbstractDerivedNounFromAdjectiveSplitter implements LexemeSplitter {
+    protected final FormRepository formRepository;
 
-    public static final String SUFFIX = "us";
-    private final FormRepository formRepository;
+    protected abstract String getSuffix();
 
-    private static boolean formTypeMatches(Form form) {
-        var ekiRepresentation = form.getFormTypeCombination().getEkiRepresentation();
-        return ekiRepresentation.equals("SgG") || ekiRepresentation.equals("SgN");
-    }
+    protected abstract boolean formTypeMatches(Form form);
 
     @Override
     public int getPriority() {
         return 0;
     }
 
+    @Override
     public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
         log.info("Trying to split lexeme {} with {}", lexeme, this.getClass().getSimpleName());
-        if (isName(lexeme) && lexeme.getLemma().getRepresentation().endsWith(SUFFIX)) {
+        if (isName(lexeme) && lexeme.getLemma().getRepresentation().endsWith(getSuffix())) {
             return buildCompoundWord(lexeme);
         }
         return Optional.empty();
@@ -41,17 +36,19 @@ public class DerivedNounFromAdjectiveSplitter implements LexemeSplitter {
 
     private Optional<CompoundWord> buildCompoundWord(Lexeme lexeme) {
         String representation = lexeme.getLemma().getRepresentation();
-        String base = representation.substring(0, representation.length() - 1);
+        String base = getBase(representation);
         log.info("Looking for adjective forms for base {}, found", base);
         List<Form> forms = formRepository.findWhereRepresentationIn(Set.of(base));
         log.info("Found {} forms: [{}]", forms.size(), forms);
         return forms
                 .stream()
-                .filter(DerivedNounFromAdjectiveSplitter::formTypeMatches)
+                .filter(this::formTypeMatches)
                 .filter(form -> form.getLexeme().getPartOfSpeech().getEkiCodes().contains(InternalPartOfSpeech.ADJECTIVE.getEkiCodes()))
                 .findFirst()
                 .map(form -> getCompoundWord(lexeme, form));
     }
+
+    protected abstract String getBase(String representation);
 
     private boolean isName(Lexeme lexeme) {
         return Objects.equals(InternalPartOfSpeech.fromEkiCodes(lexeme.getPartOfSpeech().getEkiCodes()), InternalPartOfSpeech.NOUN);
@@ -69,5 +66,4 @@ public class DerivedNounFromAdjectiveSplitter implements LexemeSplitter {
         result.setComponents(List.of(component));
         return result;
     }
-
 }

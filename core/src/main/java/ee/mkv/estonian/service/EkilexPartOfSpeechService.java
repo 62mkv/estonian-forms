@@ -23,7 +23,7 @@ public class EkilexPartOfSpeechService {
     private final PartOfSpeechRepository partOfSpeechRepository;
 
     public void manuallyAssignPartOfSpeechToEkilexWord(Long wordId, String partOfSpeechArgument) {
-        var partOfSpeech = partOfSpeechRepository.findByPartOfSpeech(partOfSpeechArgument)
+        var partOfSpeech = partOfSpeechRepository.findByPartOfSpeechName(partOfSpeechArgument)
                 .orElseThrow(() -> new RuntimeException("No part of speech found: " + partOfSpeechArgument));
 
         assignPosToEkilexWord(wordId, partOfSpeech);

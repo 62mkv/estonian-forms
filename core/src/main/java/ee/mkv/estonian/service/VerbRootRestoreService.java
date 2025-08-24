@@ -23,7 +23,7 @@ public class VerbRootRestoreService {
     private final FormService formService;
 
     public void restoreVerbRoots(String lemma) {
-        var verbPoS = partOfSpeechRepository.findByPartOfSpeech("Verb").orElseThrow();
+        var verbPoS = partOfSpeechRepository.findByPartOfSpeechName("Verb").orElseThrow();
         var verbSupineRoot = formTypeCombinationRepository.findByEkiRepresentation(VERB_SUPINE_ROOT).orElseThrow();
         var representation = representationRepository.findByRepresentation(lemma).orElseThrow();
         List<Lexeme> lexemes = lexemeRepository.findByLemmaAndPartOfSpeech(representation, verbPoS);

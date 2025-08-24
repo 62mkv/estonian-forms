@@ -92,7 +92,7 @@ public class LexemeFormRestorer implements InitializingBean {
                 }
         );
 
-        partOfSpeechRepository.findByPartOfSpeech("Adjective").ifPresentOrElse(
+        partOfSpeechRepository.findByPartOfSpeechName("Adjective").ifPresentOrElse(
                 pos -> myPartOfSpeech = pos,
                 () -> {
                     log.error("Part of speech N not found");

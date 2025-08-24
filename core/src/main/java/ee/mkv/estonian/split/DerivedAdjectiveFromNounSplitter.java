@@ -15,7 +15,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Slf4j
 public class DerivedAdjectiveFromNounSplitter implements LexemeSplitter {
-    private static final Set<String> SUPPORTED_SUFFIXES = Set.of("line", "lane");
+    private static final Set<String> SUPPORTED_SUFFIXES = Set.of("line", "lane", "lik");
 
     private final FormRepository formRepository;
 
@@ -36,44 +36,57 @@ public class DerivedAdjectiveFromNounSplitter implements LexemeSplitter {
         return InternalPartOfSpeech.fromEkiCodes(partOfSpeech.getEkiCodes());
     }
 
-    @Override
-    public int getPriority() {
-        return 1;
-    }
-
-    @Override
-    public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
-        if (getInternalPartOfSpeech(lexeme.getPartOfSpeech()).isName()) {
-            return processName(lexeme);
-        }
-        return Optional.empty();
-    }
-
     private Optional<CompoundWord> processName(Lexeme lexeme) {
         return endsOnSupportedSuffix(lexeme)
                 .flatMap(suffix -> buildCompoundWord(lexeme, suffix));
     }
 
-    private Optional<CompoundWord> buildCompoundWord(Lexeme lexeme, String suffix) {
-        String representation = lexeme.getLemma().getRepresentation();
-        String base = representation.substring(0, representation.length() - suffix.length());
-
-        return formRepository.findWhereRepresentationIn(Set.of(base))
-                .stream()
-                .filter(form -> isNoun(form.getLexeme().getPartOfSpeech()))
-                .filter(SplitUtils::canBeNonLastComponentOfName)
-                .findFirst()
-                .map(form -> getCompoundWord(lexeme, form));
+    @Override
+    public int getPriority() {
+        return 0;
     }
 
     private boolean isNoun(PartOfSpeech partOfSpeech) {
         return getInternalPartOfSpeech(partOfSpeech) == InternalPartOfSpeech.NOUN;
     }
 
+    @Override
+    public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
+        log.info("Trying to split lexeme {} with {}", lexeme, this.getClass().getSimpleName());
+        if (lexeme.isName()) {
+            return processName(lexeme);
+        }
+        return Optional.empty();
+    }
+
+    private Optional<CompoundWord> buildCompoundWord(Lexeme lexeme, String suffix) {
+        log.info("Building compound word for lexeme {} with suffix {}", lexeme, suffix);
+        String representation = lexeme.getLemma().getRepresentation();
+        String base = representation.substring(0, representation.length() - suffix.length());
+
+        var forms = formRepository.findWhereRepresentationIn(Set.of(base));
+        log.info("Looking for forms for base {}, found [{}]", base, forms);
+        return forms
+                .stream()
+                .peek(form -> log.info("Considering form {} for lexeme {}", form, lexeme))
+                .filter(form -> isNoun(form.getLexeme().getPartOfSpeech()))
+                .peek(form -> log.info("Lexeme {} is Noun", lexeme))
+                .filter(SplitUtils::canBeNonLastComponentOfName)
+                .peek(form -> log.info("Form {} can be non-last component of name", form))
+                .findFirst()
+                .map(form -> getCompoundWord(lexeme, form));
+    }
+
     private Optional<String> endsOnSupportedSuffix(Lexeme lexeme) {
-        return SUPPORTED_SUFFIXES.stream()
+        var suffixHolder = SUPPORTED_SUFFIXES.stream()
                 .filter(suffix -> lexeme.getLemma().getRepresentation().endsWith(suffix))
                 .findFirst();
+        if (suffixHolder.isEmpty()) {
+            log.info("Lexeme {} does not end on any of my suffixes {}", lexeme, SUPPORTED_SUFFIXES);
+        } else {
+            log.info("Lexeme {} ends on my suffix {}", lexeme, suffixHolder.get());
+        }
+        return suffixHolder;
     }
 
 }

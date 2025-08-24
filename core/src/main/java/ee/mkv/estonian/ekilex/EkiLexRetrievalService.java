@@ -97,13 +97,12 @@ public class EkiLexRetrievalService {
         var ekilexLexeme = new EkilexLexeme();
         ekilexLexeme.setWord(ekilexWord);
         ekilexLexeme.setPos(Set.of(
-                partOfSpeechRepository.findByPartOfSpeech(EkiPartOfSpeech.PREFIX.getRepresentation())
+                partOfSpeechRepository.findByPartOfSpeechName(EkiPartOfSpeech.PREFIX.getRepresentation())
                         .orElseThrow(() -> new PartOfSpeechNotFoundException(EkiPartOfSpeech.PREFIX.getEkiCodes()))
         ));
         var ekilexParadigm = new EkilexParadigm();
         ekilexParadigm.setWord(ekilexWord);
         var ekilexForm = new EkilexForm();
-        ekilexForm.setEkilexParadigm(ekilexParadigm);
         ekilexForm.setRepresentation(getRepresentation(word.getWordValue()).get()); //here we should not get empty representation
         ekilexForm.setFormTypeCombination(
                 formTypeRepository.findByEkiRepresentation(PREFIX_FORM_TYPE_COMBINATION)
@@ -161,6 +160,9 @@ public class EkiLexRetrievalService {
         if (!wordDto.getLang().equalsIgnoreCase("est")) {
             throw new LanguageNotSupportedException(wordDto.getLang());
         }
+        if (wordDto.getWordId() == null) {
+            throw new IllegalArgumentException("Word id must be defined");
+        }
         var representation = getRepresentation(wordDto.getWordValue())
                 .orElseThrow(() -> new RepresentationNotAllowedException(wordDto.getWordValue()));
         EkilexWord word = new EkilexWord();
@@ -209,7 +211,7 @@ public class EkiLexRetrievalService {
         if (partOfSpeeches.isEmpty()) {
             log.info("Please choose one of the following parts of speech:");
             var chosenPos = showMenu();
-            var pos = partOfSpeechRepository.findByPartOfSpeech(chosenPos.getRepresentation())
+            var pos = partOfSpeechRepository.findByPartOfSpeechName(chosenPos.getRepresentation())
                     .orElseThrow(() -> new PartOfSpeechNotFoundException(chosenPos.getRepresentation()));
             partOfSpeeches.add(pos);
         }
@@ -223,7 +225,7 @@ public class EkiLexRetrievalService {
         var partOfSpeeches = new HashSet<PartOfSpeech>();
         log.info("Please choose one of the following parts of speech:");
         var chosenPos = showMenu();
-        var pos = partOfSpeechRepository.findByPartOfSpeech(chosenPos.getRepresentation())
+        var pos = partOfSpeechRepository.findByPartOfSpeechName(chosenPos.getRepresentation())
                 .orElseThrow(() -> new PartOfSpeechNotFoundException(chosenPos.getRepresentation()));
         partOfSpeeches.add(pos);
         lexeme.setPos(partOfSpeeches);
@@ -239,7 +241,7 @@ public class EkiLexRetrievalService {
                 EkiPartOfSpeech posEnum = EkiPartOfSpeech.fromEkilexCode(classifierDto.getCode())
                         .orElseThrow(() -> new PartOfSpeechNotFoundException(classifierDto.getCode()));
 
-                PartOfSpeech pos = partOfSpeechRepository.findByPartOfSpeech(posEnum.getRepresentation())
+                PartOfSpeech pos = partOfSpeechRepository.findByPartOfSpeechName(posEnum.getRepresentation())
                         .orElseThrow(() -> new PartOfSpeechNotFoundException(posEnum.getRepresentation()));
 
                 result.add(pos);

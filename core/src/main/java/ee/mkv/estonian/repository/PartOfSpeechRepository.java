@@ -13,5 +13,5 @@ public interface PartOfSpeechRepository extends CrudRepository<PartOfSpeech, Lon
     @Query("SELECT p from PartOfSpeech p where p.ekiCodes like CONCAT('%',:ekiCode,'%')")
     List<PartOfSpeech> findByEkiCode(String ekiCode);
 
-    Optional<PartOfSpeech> findByPartOfSpeech(String partOfSpeech);
+    Optional<PartOfSpeech> findByPartOfSpeechName(String partOfSpeechName);
 }

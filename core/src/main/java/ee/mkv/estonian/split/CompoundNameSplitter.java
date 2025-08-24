@@ -332,7 +332,12 @@ public class CompoundNameSplitter implements LexemeSplitter {
     private boolean canBeNonLastComponentOfName(Form form) {
         var partOfSpeech = InternalPartOfSpeech.fromEkiCodes(form.getLexeme().getPartOfSpeech().getEkiCodes());
 
-        return SplitUtils.canBeNonLastComponentOfName(form) && SUITABLE_PART_OF_SPEECH_FOR_NON_LAST_COMPONENTS.contains(partOfSpeech);
+        return SplitUtils.canBeNonLastComponentOfName(form) && SUITABLE_PART_OF_SPEECH_FOR_NON_LAST_COMPONENTS.contains(partOfSpeech)
+                || isExceptionGranted(form);
+    }
+
+    private boolean isExceptionGranted(Form form) {
+        return form.getRepresentation().getRepresentation().equals("midagi");
     }
 
     private List<CompoundWordComponent> translateResults(Splitting splitting, Map<WordComponent, List<Form>> componentListMap) {
