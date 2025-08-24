@@ -48,6 +48,14 @@ public class PartOfSpeech {
         return NAMES_EKI_CODES.contains(this.getEkiCodes());
     }
 
+    public boolean isAdjective() {
+        return "AH".equals(this.getEkiCodes());
+    }
+
+    public boolean isNoun() {
+        return "GS".equals(this.getEkiCodes());
+    }
+
     @Override
     public String toString() {
         return partOfSpeechName;

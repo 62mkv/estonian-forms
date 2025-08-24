@@ -34,6 +34,11 @@ public abstract class AbstractDerivedNounFromAdjectiveSplitter implements Lexeme
         return Optional.empty();
     }
 
+    @Override
+    public boolean canProcess(Lexeme lexeme) {
+        return lexeme.getPartOfSpeech().isNoun() && lexeme.getLemma().getRepresentation().endsWith(getSuffix());
+    }
+
     private Optional<CompoundWord> buildCompoundWord(Lexeme lexeme) {
         String representation = lexeme.getLemma().getRepresentation();
         String base = getBase(representation);

@@ -1,13 +1,14 @@
 package ee.mkv.estonian.split;
 
-import ee.mkv.estonian.domain.*;
-import ee.mkv.estonian.model.InternalPartOfSpeech;
+import ee.mkv.estonian.domain.CompoundRule;
+import ee.mkv.estonian.domain.CompoundWord;
+import ee.mkv.estonian.domain.Lexeme;
+import ee.mkv.estonian.domain.PartOfSpeech;
 import ee.mkv.estonian.repository.FormRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -34,11 +35,11 @@ public class DerivedAdjectiveFromNounSplitter implements LexemeSplitter {
 
     @Override
     public boolean canProcess(Lexeme lexeme) {
-        return lexeme.isName() && endsOnSupportedSuffix(lexeme).isPresent();
+        return lexeme.isAdjective() && endsOnSupportedSuffix(lexeme).isPresent();
     }
 
     private boolean isNoun(PartOfSpeech partOfSpeech) {
-        return getInternalPartOfSpeech(partOfSpeech) == InternalPartOfSpeech.NOUN;
+        return partOfSpeech.isNoun();
     }
 
     private Optional<CompoundWord> processName(Lexeme lexeme) {
@@ -76,7 +77,4 @@ public class DerivedAdjectiveFromNounSplitter implements LexemeSplitter {
         return suffixHolder;
     }
 
-    private static InternalPartOfSpeech getInternalPartOfSpeech(PartOfSpeech partOfSpeech) {
-        return InternalPartOfSpeech.fromEkiCodes(partOfSpeech.getEkiCodes());
-    }
 }

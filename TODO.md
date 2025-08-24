@@ -1,1 +1,1 @@
-- distsiplineerimatu - no splitter for that? 
+- numeral as first component 

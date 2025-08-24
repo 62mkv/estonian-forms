@@ -47,7 +47,7 @@ public class DerivedAdjectiveFromVerbSplitter implements LexemeSplitter {
                         .filter(form -> form.getFormTypeCombination().getEkiRepresentation().equals(EKI_SUPINE_VERB))
                         .peek(form -> log.info("Form {} is verb supine root", form))
                         .findFirst()
-                        .map(form -> SplitUtils.getCompoundWord(lexeme, form, CompoundRule.DERIVED_ADJECTIVE_FROM_VERB_SUPINE_ROOT_WITH_SUFFIX));
+                        .map(form -> SplitUtils.getCompoundWord(lexeme, form, CompoundRule.DERIVED_FROM_VERB_SUPINE));
             }
         }
         return Optional.empty();

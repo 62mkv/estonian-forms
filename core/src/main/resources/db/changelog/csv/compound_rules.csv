@@ -6,5 +6,6 @@ id,description                                          ,group_id
 5 ,"Compound of two words, separated with hyphen",1
 6 ,"Compound of several components",1
 7 ,"Derived word (name with suffix)",2
-8 ,"Derived word (verb with suffix)",2
+8 ,"Derived word (verb root with suffix)",2
 9 ,"Derived word (adjective with suffix)",2
+10,"Derived word (verb supine with suffix)",2
