@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="020-ekilex-word-pos" author="62mkv">
+        <addColumn tableName="ekilex_words">
+            <column name="parts_of_speech" type="jsonb">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <sql dbms="postgresql">
+            create view ekilex_lexemes_pos_migration_view as
+            with aggview as(
+            with disview as (
+            select distinct el.word_id, elp.part_of_speech_id
+            from ekilex_lexemes_pos elp
+            join ekilex_lexemes el on elp.ekilex_lexeme_id = el.id
+            order by 1)
+            select word_id, jsonb_agg(part_of_speech_id) as pos_array
+            from disview
+            group by word_id)
+            select * from aggview
+            ;
+        </sql>
+        <sql dbms="postgresql">
+            UPDATE ekilex_words
+            SET parts_of_speech = ekilex_lexemes_pos_migration_view.pos_array
+            FROM ekilex_lexemes_pos_migration_view
+            WHERE ekilex_words.id = ekilex_lexemes_pos_migration_view.word_id;
+        </sql>
+        <sql dbms="postgresql">
+            drop view ekilex_lexemes_pos_migration_view;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

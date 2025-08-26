@@ -111,6 +111,7 @@ public class EkiLexRetrievalService {
         ekilexWordRepository.save(ekilexWord);
         ekilexLexemeRepository.save(ekilexLexeme);
         ekilexParadigmRepository.save(ekilexParadigm);
+        ekilexForm.setEkilexParadigm(ekilexParadigm);
         ekilexFormRepository.save(ekilexForm);
         return ekilexWord;
     }

@@ -87,4 +87,7 @@ public class EkilexService {
         }
     }
 
+    public List<EkilexWord> findEkilexWordsByIds(List<Long> ids) {
+        return IterableUtils.iterableToList(ekilexWordRepository.findAllById(ids));
+    }
 }

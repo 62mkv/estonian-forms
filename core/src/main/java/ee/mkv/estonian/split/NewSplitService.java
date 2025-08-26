@@ -66,6 +66,7 @@ public class NewSplitService {
     private Optional<CompoundWord> tryFindCompoundWord(Lexeme lexeme) {
         return lexemeSplitters.stream()
                 .sorted(Comparator.comparing(LexemeSplitter::getPriority))
+                .filter(lexemeSplitter -> lexemeSplitter.canProcess(lexeme))
                 .map(lexemeSplitter -> lexemeSplitter.trySplitLexeme(lexeme))
                 .filter(Optional::isPresent)
                 .map(Optional::get)

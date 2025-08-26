@@ -21,5 +21,6 @@
     <include file="changelogs/017-lexeme-fk-representations.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/018-representation-not-empty.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/019-fk-lexeme-ekilex-mapping.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/020-ekilex-word-pos.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
 

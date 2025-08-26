@@ -18,7 +18,7 @@ import static ee.mkv.estonian.split.SplitUtils.getCompoundWord;
 @RequiredArgsConstructor
 @Slf4j
 public class DerivedAdjectiveFromNounSplitter implements LexemeSplitter {
-    private static final Set<String> SUPPORTED_SUFFIXES = Set.of("line", "lane", "lik");
+    private static final Set<String> SUPPORTED_SUFFIXES = Set.of("line", "lane", "lik", "aalne");
 
     private final FormRepository formRepository;
 
