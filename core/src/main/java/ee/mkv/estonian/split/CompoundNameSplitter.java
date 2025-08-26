@@ -28,7 +28,8 @@ public class CompoundNameSplitter implements LexemeSplitter {
             InternalPartOfSpeech.NOUN,
             InternalPartOfSpeech.PRONOUN,
             InternalPartOfSpeech.PREFIX,
-            InternalPartOfSpeech.ADVERB
+            InternalPartOfSpeech.ADVERB,
+            InternalPartOfSpeech.NUMERAL
     );
 
     private final UserInputProvider userInputProvider;
