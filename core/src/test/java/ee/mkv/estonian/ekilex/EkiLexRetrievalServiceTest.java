@@ -1,12 +1,11 @@
 package ee.mkv.estonian.ekilex;
 
-import ee.mkv.estonian.domain.EkilexLexeme;
 import ee.mkv.estonian.domain.EkilexParadigm;
 import ee.mkv.estonian.domain.EkilexWord;
-import ee.mkv.estonian.domain.PartOfSpeech;
 import ee.mkv.estonian.ekilex.dto.*;
+import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.repository.*;
-import org.assertj.core.api.Condition;
+import ee.mkv.estonian.service.UserInputProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -39,9 +37,6 @@ class EkiLexRetrievalServiceTest {
     private EkilexWordRepository wordRepository;
 
     @Autowired
-    private EkilexLexemeRepository lexemeRepository;
-
-    @Autowired
     private PartOfSpeechRepository partOfSpeechRepository;
 
     @Autowired
@@ -53,16 +48,20 @@ class EkiLexRetrievalServiceTest {
     @Autowired
     private FormTypeCombinationRepository formTypeRepository;
 
+    @MockBean
+    UserInputProvider userInputProvider;
+
     @BeforeEach
-    public void setUp() {
-        sut = new EkiLexRetrievalService(ekiLexClient, representationsRepository, wordRepository, lexemeRepository, partOfSpeechRepository, paradigmRepository, ekilexFormRepository, formTypeRepository);
+    void setUp() {
+        sut = new EkiLexRetrievalService(ekiLexClient, representationsRepository, wordRepository, paradigmRepository, ekilexFormRepository, formTypeRepository, userInputProvider);
     }
 
     @Test
     @Sql("classpath:sql/retrieval-koer.sql")
     void testKoer() {
         final long wordId = 1L;
-        given(this.ekiLexClient.findWords("koer")).willReturn(Collections.singleton(wordId));
+        var wordDto = getWordDto(wordId, "koer");
+        given(this.ekiLexClient.findWords("koer")).willReturn(List.of(wordDto));
         given(this.ekiLexClient.getDetails(wordId)).willReturn(getKoerDetailsDto());
         final List<EkilexWord> ekilexWords = sut.retrieveByLemma("koer", false);
         assertThat(ekilexWords).hasSize(1);
@@ -72,20 +71,9 @@ class EkiLexRetrievalServiceTest {
                 .hasSize(3)
                 .allMatch(ekilexParadigm -> ekilexParadigm.getForms().size() == 3);
 
-        Iterable<EkilexLexeme> lexemes = lexemeRepository.findAllByWordId(wordId);
-        assertThat(lexemes)
-                .hasSize(2)
-                .areAtLeastOne(new Condition<>(ekilexLexeme -> hasPos(ekilexLexeme, "Noun"), "has Noun POS"))
-                .areAtLeastOne(new Condition<>(ekilexLexeme -> hasPos(ekilexLexeme, "Adjective"), "has Adjective POS"));
-    }
-
-    private boolean hasPos(EkilexLexeme ekilexLexeme, String posName) {
-        return ekilexLexeme
-                .getPos()
-                .stream()
-                .map(PartOfSpeech::getPartOfSpeechName)
-                .collect(Collectors.toSet())
-                .contains(posName);
+        EkilexWord ekilexWord = wordRepository.findById(wordId).orElseThrow();
+        assertThat(ekilexWord.getPartsOfSpeech())
+                .containsExactlyInAnyOrder(InternalPartOfSpeech.ADJECTIVE, InternalPartOfSpeech.NOUN);
     }
 
     private DetailsDto getKoerDetailsDto() {

@@ -7,7 +7,9 @@ import ee.mkv.estonian.ekilex.error.RepresentationNotAllowedException;
 import ee.mkv.estonian.error.FormTypeCombinationNotFound;
 import ee.mkv.estonian.error.LanguageNotSupportedException;
 import ee.mkv.estonian.error.PartOfSpeechNotFoundException;
+import ee.mkv.estonian.mapping.PartOfSpeechMapper;
 import ee.mkv.estonian.model.EkiPartOfSpeech;
+import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.repository.*;
 import ee.mkv.estonian.service.UserInputProvider;
 import jakarta.transaction.Transactional;
@@ -24,12 +26,10 @@ public class EkiLexRetrievalService {
 
     public static final Long INITIAL_WORD_ID = 154_451L;
     public static final String PREFIX_FORM_TYPE_COMBINATION = "ID";
-    private final EkiLexClient ekiLexClient;
 
+    private final EkiLexClient ekiLexClient;
     private final RepresentationRepository representationsRepository;
     private final EkilexWordRepository ekilexWordRepository;
-    private final EkilexLexemeRepository ekilexLexemeRepository;
-    private final PartOfSpeechRepository partOfSpeechRepository;
     private final EkilexParadigmRepository ekilexParadigmRepository;
     private final EkilexFormRepository ekilexFormRepository;
     private final FormTypeCombinationRepository formTypeRepository;
@@ -57,18 +57,18 @@ public class EkiLexRetrievalService {
 
     @Transactional
     public EkilexWord retrieveById(Long wordId, boolean force) {
-        if (ekilexWordRepository.existsById(wordId)) {
-            if (!force) {
-                log.warn("EkilexWord with id {} already exists", wordId);
-                return ekilexWordRepository.findById(wordId).get();
-            } else {
+
+        return ekilexWordRepository.findById(wordId).map(ekilexWord -> {
+            if (force) {
                 log.info("Force retrieval for word {}", wordId);
                 return retrieveFromEkilex(wordId, true);
+            } else {
+                return ekilexWord;
             }
-        }
-
-        log.info("Word not found, retrieving from Ekilex: {}", wordId);
-        return retrieveFromEkilex(wordId, false);
+        }).orElseGet(() -> {
+            log.info("Word not found, retrieving from Ekilex: {}", wordId);
+            return retrieveFromEkilex(wordId, false);
+        });
     }
 
     @Transactional
@@ -94,12 +94,7 @@ public class EkiLexRetrievalService {
                 ? updateEkilexWord(word.getWordId())
                 : insertEkilexWord(word);
 
-        var ekilexLexeme = new EkilexLexeme();
-        ekilexLexeme.setWord(ekilexWord);
-        ekilexLexeme.setPos(Set.of(
-                partOfSpeechRepository.findByPartOfSpeechName(EkiPartOfSpeech.PREFIX.getRepresentation())
-                        .orElseThrow(() -> new PartOfSpeechNotFoundException(EkiPartOfSpeech.PREFIX.getEkiCodes()))
-        ));
+        ekilexWord.setPartsOfSpeech(Set.of(InternalPartOfSpeech.PREFIX));
         var ekilexParadigm = new EkilexParadigm();
         ekilexParadigm.setWord(ekilexWord);
         var ekilexForm = new EkilexForm();
@@ -109,7 +104,6 @@ public class EkiLexRetrievalService {
                         .orElseThrow(() -> new FormTypeCombinationNotFound(PREFIX_FORM_TYPE_COMBINATION))
         );
         ekilexWordRepository.save(ekilexWord);
-        ekilexLexemeRepository.save(ekilexLexeme);
         ekilexParadigmRepository.save(ekilexParadigm);
         ekilexForm.setEkilexParadigm(ekilexParadigm);
         ekilexFormRepository.save(ekilexForm);
@@ -128,20 +122,16 @@ public class EkiLexRetrievalService {
             throw new EkilexParadigmExistsException(wordId);
         }
 
-        List<EkilexLexeme> myLexemes = new ArrayList<>();
+        var partsOfSpeech = new HashSet<InternalPartOfSpeech>();
         for (DetailsLexemeDto lexemeDto : detailsDto.getLexemes()) {
             try {
-                myLexemes.add(saveEkiLexLexeme(word, lexemeDto));
+                partsOfSpeech.addAll(getPartsOfSpeechFromLexemeDto(lexemeDto));
             } catch (Exception e) {
                 log.error("Error while saving a lexeme: {}", e.getMessage());
             }
         }
 
-        if (myLexemes.isEmpty()) {
-            log.warn("No lexemes found for word {}", wordId);
-            myLexemes.add(generateLexemeWithUserChoice(word));
-        }
-
+        word.setPartsOfSpeech(partsOfSpeech);
         final List<DetailsParadigmDto> paradigms = detailsDto.getWord().getParadigms();
         if (paradigms != null) {
             for (DetailsParadigmDto paradigmDto : paradigms) {
@@ -205,47 +195,28 @@ public class EkiLexRetrievalService {
                 .orElseThrow(() -> new FormTypeCombinationNotFound(morphCode));
     }
 
-    private EkilexLexeme saveEkiLexLexeme(EkilexWord word, DetailsLexemeDto lexemeDto) {
-        EkilexLexeme lexeme = new EkilexLexeme();
-        lexeme.setWord(word);
+    private Set<InternalPartOfSpeech> getPartsOfSpeechFromLexemeDto(DetailsLexemeDto lexemeDto) {
         var partOfSpeeches = getPos(lexemeDto.getPos());
         if (partOfSpeeches.isEmpty()) {
             log.info("Please choose one of the following parts of speech:");
             var chosenPos = showMenu();
-            var pos = partOfSpeechRepository.findByPartOfSpeechName(chosenPos.getRepresentation())
-                    .orElseThrow(() -> new PartOfSpeechNotFoundException(chosenPos.getRepresentation()));
-            partOfSpeeches.add(pos);
+            var pos = PartOfSpeechMapper.fromEkiPartOfSpeech(chosenPos);
+            return Set.of(pos);
         }
-        lexeme.setPos(partOfSpeeches);
-        return ekilexLexemeRepository.save(lexeme);
+
+        return partOfSpeeches;
     }
 
-    private EkilexLexeme generateLexemeWithUserChoice(EkilexWord word) {
-        EkilexLexeme lexeme = new EkilexLexeme();
-        lexeme.setWord(word);
-        var partOfSpeeches = new HashSet<PartOfSpeech>();
-        log.info("Please choose one of the following parts of speech:");
-        var chosenPos = showMenu();
-        var pos = partOfSpeechRepository.findByPartOfSpeechName(chosenPos.getRepresentation())
-                .orElseThrow(() -> new PartOfSpeechNotFoundException(chosenPos.getRepresentation()));
-        partOfSpeeches.add(pos);
-        lexeme.setPos(partOfSpeeches);
-        return ekilexLexemeRepository.save(lexeme);
-    }
-
-    private Set<PartOfSpeech> getPos(List<DetailsClassifierDto> posList) {
+    private Set<InternalPartOfSpeech> getPos(List<DetailsClassifierDto> posList) {
         Objects.requireNonNull(posList, "pos field must be defined");
-        Set<PartOfSpeech> result = new HashSet<>();
+        Set<InternalPartOfSpeech> result = new HashSet<>();
         for (DetailsClassifierDto classifierDto : posList) {
             if (classifierDto.getName().equalsIgnoreCase("POS")) {
 
                 EkiPartOfSpeech posEnum = EkiPartOfSpeech.fromEkilexCode(classifierDto.getCode())
                         .orElseThrow(() -> new PartOfSpeechNotFoundException(classifierDto.getCode()));
 
-                PartOfSpeech pos = partOfSpeechRepository.findByPartOfSpeechName(posEnum.getRepresentation())
-                        .orElseThrow(() -> new PartOfSpeechNotFoundException(posEnum.getRepresentation()));
-
-                result.add(pos);
+                result.add(PartOfSpeechMapper.fromEkiPartOfSpeech(posEnum));
             }
         }
         return result;

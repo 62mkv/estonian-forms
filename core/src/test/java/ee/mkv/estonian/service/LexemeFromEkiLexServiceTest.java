@@ -29,9 +29,6 @@ class LexemeFromEkiLexServiceTest {
     private EkilexFormRepository ekilexFormRepository;
 
     @Autowired
-    private EkilexLexemeRepository ekilexLexemeRepository;
-
-    @Autowired
     private EkilexWordRepository ekilexWordRepository;
 
     @Autowired
@@ -46,12 +43,21 @@ class LexemeFromEkiLexServiceTest {
     @Autowired
     private FormRepository formRepository;
 
+    @Autowired
+    private PartOfSpeechUserInputProvider partOfSpeechUserInputProvider;
+
+    @Autowired
+    private PartOfSpeechRepository partOfSpeechRepository;
+
+    @Autowired
+    private EkilexPartOfSpeechService partOfSpeechService;
+
     private LexemeFromEkiLexService lexemeFromEkiLexService;
     private LexemePersistingService lexemePersistingService;
 
     @BeforeEach
-    public void setUp() {
-        this.lexemeFromEkiLexService = new LexemeFromEkiLexService(ekilexWordRepository, ekilexParadigmRepository, ekilexLexemeRepository, mappingRepository, formTypeCombinationRepository);
+    void setUp() {
+        this.lexemeFromEkiLexService = new LexemeFromEkiLexService(ekilexWordRepository, ekilexParadigmRepository, mappingRepository, formTypeCombinationRepository, partOfSpeechUserInputProvider, partOfSpeechRepository, partOfSpeechService);
         this.lexemePersistingService = new LexemePersistingService(lexemeRepository, formRepository, mappingRepository);
     }
 

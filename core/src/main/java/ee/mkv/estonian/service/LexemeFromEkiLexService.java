@@ -23,10 +23,10 @@ public class LexemeFromEkiLexService {
 
     private final EkilexWordRepository ekilexWordRepository;
     private final EkilexParadigmRepository ekilexParadigmRepository;
-    private final EkilexLexemeRepository ekilexLexemeRepository;
     private final LexemeToEkilexMappingRepository mappingRepository;
     private final FormTypeCombinationRepository formTypeCombinationRepository;
     private final PartOfSpeechUserInputProvider partOfSpeechUserInputProvider;
+    private final PartOfSpeechRepository partOfSpeechRepository;
     private final EkilexPartOfSpeechService ekilexPartOfSpeechService;
 
     @Transactional
@@ -47,18 +47,17 @@ public class LexemeFromEkiLexService {
         List<LexemeToEkiLexMapping> result = new ArrayList<>();
 
         EkilexWord word = ekilexWordRepository.findById(wordId).orElseThrow(() -> new EkilexWordNotFoundException(wordId));
-        Set<PartOfSpeech> distinctPosForWord = getPartsOfSpeechForEkilexWordId(wordId);
+        var wordPos = word.getPartsOfSpeech();
 
-        if (distinctPosForWord.isEmpty()) {
+        if (wordPos.isEmpty()) {
             log.warn("No parts of speech found for word {}:{}", wordId, word.getBaseForm());
             PartOfSpeech pos = IterableUtils.getFirstValueOrFail(partOfSpeechUserInputProvider.getPartOfSpeech());
             ekilexPartOfSpeechService.assignPosToEkilexWord(wordId, pos);
-            distinctPosForWord = Set.of(pos);
         }
 
         List<EkilexParadigm> paradigmsForWord = getParadigmsForWordId(wordId);
 
-        for (PartOfSpeech partOfSpeech : distinctPosForWord) {
+        for (var partOfSpeech : wordPos) {
             result.add(lexemeFromParadigms(paradigmsForWord, word, partOfSpeech));
         }
 
@@ -73,14 +72,8 @@ public class LexemeFromEkiLexService {
                 .toList();
     }
 
-    private Set<PartOfSpeech> getPartsOfSpeechForEkilexWordId(Long wordId) {
-        final Iterable<EkilexLexeme> allByWordId = ekilexLexemeRepository.findAllByWordId(wordId);
-        return Streams.stream(allByWordId)
-                .flatMap(lexeme -> lexeme.getPos().stream())
-                .collect(Collectors.toSet());
-    }
-
-    private LexemeToEkiLexMapping lexemeFromParadigms(List<EkilexParadigm> paradigms, EkilexWord word, PartOfSpeech partOfSpeech) {
+    private LexemeToEkiLexMapping lexemeFromParadigms(List<EkilexParadigm> paradigms, EkilexWord word, InternalPartOfSpeech pos) {
+        var partOfSpeech = partOfSpeechRepository.findByEkiCodes(pos.getEkiCodes()).orElseThrow();
         return mappingRepository.findByEkilexWordAndPartOfSpeech(word, partOfSpeech)
                 .orElseGet(() -> {
                     Lexeme lexeme = new Lexeme();
