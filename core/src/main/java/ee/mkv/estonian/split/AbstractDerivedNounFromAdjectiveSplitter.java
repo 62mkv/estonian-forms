@@ -29,7 +29,17 @@ public abstract class AbstractDerivedNounFromAdjectiveSplitter implements Lexeme
     public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
         log.info("Trying to split lexeme {} with {}", lexeme, this.getClass().getSimpleName());
         if (isName(lexeme) && lexeme.getLemma().getRepresentation().endsWith(getSuffix())) {
-            return buildCompoundWord(lexeme);
+            String representation = lexeme.getLemma().getRepresentation();
+            String base = getBase(representation);
+            log.info("Looking for adjective forms for base {}, found", base);
+            List<Form> forms = formRepository.findWhereRepresentationIn(Set.of(base));
+            log.info("Found {} forms: [{}]", forms.size(), forms);
+            return forms
+                    .stream()
+                    .filter(this::formTypeMatches)
+                    .filter(form -> form.getLexeme().getPartOfSpeech().getEkiCodes().contains(InternalPartOfSpeech.ADJECTIVE.getEkiCodes()))
+                    .findFirst()
+                    .map(form -> getCompoundWord(lexeme, form));
         }
         return Optional.empty();
     }
@@ -37,20 +47,6 @@ public abstract class AbstractDerivedNounFromAdjectiveSplitter implements Lexeme
     @Override
     public boolean canProcess(Lexeme lexeme) {
         return lexeme.getPartOfSpeech().isNoun() && lexeme.getLemma().getRepresentation().endsWith(getSuffix());
-    }
-
-    private Optional<CompoundWord> buildCompoundWord(Lexeme lexeme) {
-        String representation = lexeme.getLemma().getRepresentation();
-        String base = getBase(representation);
-        log.info("Looking for adjective forms for base {}, found", base);
-        List<Form> forms = formRepository.findWhereRepresentationIn(Set.of(base));
-        log.info("Found {} forms: [{}]", forms.size(), forms);
-        return forms
-                .stream()
-                .filter(this::formTypeMatches)
-                .filter(form -> form.getLexeme().getPartOfSpeech().getEkiCodes().contains(InternalPartOfSpeech.ADJECTIVE.getEkiCodes()))
-                .findFirst()
-                .map(form -> getCompoundWord(lexeme, form));
     }
 
     protected abstract String getBase(String representation);

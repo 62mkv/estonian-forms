@@ -52,6 +52,11 @@ public class CommandCoordinator {
                     String hiddenAdjective = readWordFromUserInput();
                     immutableLexemeAdderService.addImmutableLexeme(hiddenAdjective, InternalPartOfSpeech.ADJECTIVE);
                     return true;
+                case ADD_HIDDEN_VERB:
+                    log.info("Adding hidden verb");
+                    String hiddenVerb = readWordFromUserInput();
+                    immutableLexemeAdderService.addImmutableLexeme(hiddenVerb, InternalPartOfSpeech.VERB);
+                    return true;
                 case ADD_RESTORABLE_NOUN:
                     log.info("Adding restorable noun (first, read from EkiLex)");
                     String restorable = readWordFromUserInput();
@@ -132,6 +137,7 @@ public class CommandCoordinator {
         ADD_PREFIX,
         ADD_HIDDEN_NOUN,
         ADD_HIDDEN_ADJECTIVE,
+        ADD_HIDDEN_VERB,
         RETRIEVE_FROM_EKILEX,
         LEXEME_FROM_EKILEX,
         ADD_RESTORABLE_NOUN,

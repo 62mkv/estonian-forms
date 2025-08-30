@@ -16,13 +16,15 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class ImmutableLexemeAdderService implements InitializingBean {
 
-    private static final Set<InternalPartOfSpeech> SUPPORTED_POS = Set.of(InternalPartOfSpeech.PREFIX, InternalPartOfSpeech.NOUN, InternalPartOfSpeech.ADJECTIVE);
+    private static final Set<InternalPartOfSpeech> SUPPORTED_POS = Set.of(InternalPartOfSpeech.PREFIX,
+            InternalPartOfSpeech.NOUN, InternalPartOfSpeech.ADJECTIVE, InternalPartOfSpeech.VERB);
     private static final Map<InternalPartOfSpeech, PartOfSpeech> POS_MAPPING = new EnumMap(InternalPartOfSpeech.class);
     private final LexemeRepository lexemeRepository;
     private final FormRepository formRepository;
@@ -31,11 +33,12 @@ public class ImmutableLexemeAdderService implements InitializingBean {
     private final FormTypeCombinationRepository formTypeCombinationRepository;
     private FormTypeCombination immutableFtc;
     private FormTypeCombination singularNominative;
+    private FormTypeCombination supinRootFtc;
 
     public void addImmutableLexeme(String lemma, InternalPartOfSpeech partOfSpeech) {
         log.info("Adding immutable lexeme for lemma: {}, part of speech: {}", lemma, partOfSpeech);
         if (!SUPPORTED_POS.contains(partOfSpeech)) {
-            throw new RuntimeException("Unsupported part of speech: " + partOfSpeech);
+            throw new UnsupportedOperationException("Unsupported part of speech: " + partOfSpeech);
         }
 
         var rep = representationRepository.findOrCreate(lemma);
@@ -53,9 +56,13 @@ public class ImmutableLexemeAdderService implements InitializingBean {
     }
 
     private FormTypeCombination getFtc(InternalPartOfSpeech partOfSpeech) {
-        return partOfSpeech == InternalPartOfSpeech.PREFIX
-                ? this.immutableFtc
-                : this.singularNominative;
+        return switch (partOfSpeech) {
+            case InternalPartOfSpeech.NOUN -> this.singularNominative;
+            case InternalPartOfSpeech.ADJECTIVE -> this.singularNominative;
+            case InternalPartOfSpeech.VERB -> this.supinRootFtc;
+            case InternalPartOfSpeech.PREFIX -> this.immutableFtc;
+            default -> throw new UnsupportedOperationException("Unsupported part of speech: " + partOfSpeech);
+        };
     }
 
     private PartOfSpeech findPartOfSpeech(InternalPartOfSpeech partOfSpeech) {
@@ -70,19 +77,17 @@ public class ImmutableLexemeAdderService implements InitializingBean {
             POS_MAPPING.put(InternalPartOfSpeech.fromEkiCodes(partOfSpeech.getEkiCodes()), partOfSpeech);
         }
 
-        formTypeCombinationRepository.findByEkiRepresentation(Constants.IMMUTABLE_FORM)
+        initializeFormTypeCombination(Constants.IMMUTABLE_FORM, ftc -> this.immutableFtc = ftc);
+        initializeFormTypeCombination("SgN", ftc -> this.singularNominative = ftc);
+        initializeFormTypeCombination("Sup", ftc -> this.supinRootFtc = ftc);
+    }
+
+    private void initializeFormTypeCombination(String ekiRepresentation, Consumer<FormTypeCombination> fieldInitializer) {
+        formTypeCombinationRepository.findByEkiRepresentation(ekiRepresentation)
                 .ifPresentOrElse(
-                        ftc -> this.immutableFtc = ftc,
+                        fieldInitializer,
                         () -> {
                             throw new RuntimeException("No immutable form type combination found for immutable");
-                        }
-                );
-
-        formTypeCombinationRepository.findByEkiRepresentation("SgN")
-                .ifPresentOrElse(
-                        ftc -> this.singularNominative = ftc,
-                        () -> {
-                            throw new RuntimeException("No immutable form type combination found for SgN");
                         }
                 );
     }
