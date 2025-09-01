@@ -1,5 +1,6 @@
 package ee.mkv.estonian.split;
 
+import ee.mkv.estonian.domain.CompoundRule;
 import ee.mkv.estonian.domain.Form;
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.repository.FormRepository;
@@ -33,5 +34,10 @@ public class DerivedNounFromVerbSplitter extends AbstractDerivedSplitter {
     protected String findBase(Lexeme lexeme, String suffix) {
         var representation = lexeme.getLemma().getRepresentation();
         return representation.substring(0, representation.length() - suffix.length()) + "ma";
+    }
+
+    @Override
+    protected CompoundRule getCompoundRule() {
+        return CompoundRule.DERIVED_FROM_VERB_SUPINE;
     }
 }

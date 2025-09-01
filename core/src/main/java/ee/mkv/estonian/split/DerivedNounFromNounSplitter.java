@@ -1,5 +1,6 @@
 package ee.mkv.estonian.split;
 
+import ee.mkv.estonian.domain.CompoundRule;
 import ee.mkv.estonian.domain.Form;
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.repository.FormRepository;
@@ -27,5 +28,10 @@ public class DerivedNounFromNounSplitter extends AbstractDerivedSplitter {
     @Override
     protected boolean isLexemeAccepted(Lexeme lexeme) {
         return lexeme.getPartOfSpeech().isNoun();
+    }
+
+    @Override
+    protected CompoundRule getCompoundRule() {
+        return CompoundRule.DERIVED_FROM_NAME_WITH_SUFFIX;
     }
 }

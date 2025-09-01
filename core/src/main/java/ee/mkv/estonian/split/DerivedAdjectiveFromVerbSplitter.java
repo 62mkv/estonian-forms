@@ -1,5 +1,6 @@
 package ee.mkv.estonian.split;
 
+import ee.mkv.estonian.domain.CompoundRule;
 import ee.mkv.estonian.domain.Form;
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.repository.FormRepository;
@@ -43,5 +44,10 @@ public class DerivedAdjectiveFromVerbSplitter extends AbstractDerivedSplitter {
     @Override
     protected boolean isLexemeAccepted(Lexeme lexeme) {
         return lexeme.isAdjective();
+    }
+
+    @Override
+    protected CompoundRule getCompoundRule() {
+        return CompoundRule.DERIVED_FROM_VERB_SUPINE;
     }
 }

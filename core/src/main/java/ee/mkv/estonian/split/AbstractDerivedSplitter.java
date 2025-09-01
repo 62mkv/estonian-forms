@@ -37,11 +37,13 @@ abstract class AbstractDerivedSplitter implements LexemeSplitter {
                         .filter(this::isSuitable)
                         .peek(form -> log.info("Form {} is verb supine root", form))
                         .findFirst()
-                        .map(form -> SplitUtils.getCompoundWord(lexeme, form, CompoundRule.DERIVED_FROM_VERB_SUPINE));
+                        .map(form -> SplitUtils.getCompoundWord(lexeme, form, getCompoundRule()));
             }
         }
         return Optional.empty();
     }
+
+    protected abstract CompoundRule getCompoundRule();
 
     protected abstract boolean isSuitable(Form form);
 
