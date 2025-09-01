@@ -6,6 +6,7 @@ import ee.mkv.estonian.domain.CompoundWord;
 import ee.mkv.estonian.domain.Form;
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.repository.FormRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 abstract class AbstractDerivedSplitter implements LexemeSplitter {
 
     private final FormRepository formRepository;
