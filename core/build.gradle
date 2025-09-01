@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '3.2.8'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java-library'
+    id 'jacoco'
 }
 
 dependencies {
@@ -25,4 +26,21 @@ dependencies {
 
 bootJar {
     enabled = false
+}
+
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
 }

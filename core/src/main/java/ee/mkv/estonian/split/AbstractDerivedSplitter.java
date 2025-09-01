@@ -35,7 +35,7 @@ abstract class AbstractDerivedSplitter implements LexemeSplitter {
                         .stream()
                         .peek(form -> log.info("Considering form {} for lexeme {}", form, lexeme))
                         .filter(this::isSuitable)
-                        .peek(form -> log.info("Form {} is verb supine root", form))
+                        .peek(form -> log.info("Form {} is suitable", form))
                         .findFirst()
                         .map(form -> SplitUtils.getCompoundWord(lexeme, form, getCompoundRule()));
             }

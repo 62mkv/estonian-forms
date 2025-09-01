@@ -57,10 +57,10 @@ public class ImmutableLexemeAdderService implements InitializingBean {
 
     private FormTypeCombination getFtc(InternalPartOfSpeech partOfSpeech) {
         return switch (partOfSpeech) {
-            case InternalPartOfSpeech.NOUN -> this.singularNominative;
-            case InternalPartOfSpeech.ADJECTIVE -> this.singularNominative;
-            case InternalPartOfSpeech.VERB -> this.supinRootFtc;
-            case InternalPartOfSpeech.PREFIX -> this.immutableFtc;
+            case NOUN -> this.singularNominative;
+            case ADJECTIVE -> this.singularNominative;
+            case VERB -> this.supinRootFtc;
+            case PREFIX -> this.immutableFtc;
             default -> throw new UnsupportedOperationException("Unsupported part of speech: " + partOfSpeech);
         };
     }
