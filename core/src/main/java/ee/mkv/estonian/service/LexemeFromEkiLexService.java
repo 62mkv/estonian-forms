@@ -50,7 +50,7 @@ public class LexemeFromEkiLexService {
         var wordPos = word.getPartsOfSpeech();
 
         if (wordPos.isEmpty()) {
-            log.warn("No parts of speech found for word {}:{}", wordId, word.getBaseForm());
+            log.warn("No parts of speech found for Ekilex word {}", word);
             PartOfSpeech pos = IterableUtils.getFirstValueOrFail(partOfSpeechUserInputProvider.getPartOfSpeech());
             ekilexPartOfSpeechService.assignPosToEkilexWord(wordId, pos);
         }

@@ -92,9 +92,8 @@ public class EkiLexRetrievalService {
     private EkilexWord buildPrefixoid(WordDto word, boolean existing) {
         var ekilexWord = existing
                 ? updateEkilexWord(word.getWordId())
-                : insertEkilexWord(word);
+                : insertEkilexWord(word, Set.of(InternalPartOfSpeech.PREFIX));
 
-        ekilexWord.setPartsOfSpeech(Set.of(InternalPartOfSpeech.PREFIX));
         var ekilexParadigm = new EkilexParadigm();
         ekilexParadigm.setWord(ekilexWord);
         var ekilexForm = new EkilexForm();
@@ -113,14 +112,6 @@ public class EkiLexRetrievalService {
     private EkilexWord retrieveFromEkilex(Long wordId, boolean existing) {
         DetailsDto detailsDto = ekiLexClient.getDetails(wordId);
         log.debug("Details for word {}: {}", wordId, detailsDto);
-        EkilexWord word = existing
-                ? updateEkilexWord(wordId)
-                : insertEkilexWord(detailsDto.getWord());
-
-        if (existing && ekilexParadigmRepository.existsByWordId(wordId)) {
-            // we must make sure there's no pre-existing records, to avoid overwriting those
-            throw new EkilexParadigmExistsException(wordId);
-        }
 
         var partsOfSpeech = new HashSet<InternalPartOfSpeech>();
         for (DetailsLexemeDto lexemeDto : detailsDto.getLexemes()) {
@@ -131,7 +122,15 @@ public class EkiLexRetrievalService {
             }
         }
 
-        word.setPartsOfSpeech(partsOfSpeech);
+        EkilexWord word = existing
+                ? updateEkilexWord(wordId)
+                : insertEkilexWord(detailsDto.getWord(), partsOfSpeech);
+
+        if (existing && ekilexParadigmRepository.existsByWordId(wordId)) {
+            // we must make sure there's no pre-existing records, to avoid overwriting those
+            throw new EkilexParadigmExistsException(wordId);
+        }
+
         final List<DetailsParadigmDto> paradigms = detailsDto.getWord().getParadigms();
         if (paradigms != null) {
             for (DetailsParadigmDto paradigmDto : paradigms) {
@@ -147,7 +146,7 @@ public class EkiLexRetrievalService {
                 .orElseThrow(() -> new RuntimeException("This should not happen here"));
     }
 
-    private EkilexWord insertEkilexWord(WordDto wordDto) {
+    private EkilexWord insertEkilexWord(WordDto wordDto, Set<InternalPartOfSpeech> partsOfSpeech) {
         if (!wordDto.getLang().equalsIgnoreCase("est")) {
             throw new LanguageNotSupportedException(wordDto.getLang());
         }
@@ -159,6 +158,7 @@ public class EkiLexRetrievalService {
         EkilexWord word = new EkilexWord();
         word.setId(wordDto.getWordId());
         word.setBaseForm(representation);
+        word.setPartsOfSpeech(partsOfSpeech);
         return ekilexWordRepository.save(word);
     }
 

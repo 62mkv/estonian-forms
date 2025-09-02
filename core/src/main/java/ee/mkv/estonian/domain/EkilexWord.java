@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Data
 @Entity
 @Table(name = "EKILEX_WORDS")
+@Slf4j
 public class EkilexWord {
 
     @Id
@@ -39,10 +41,13 @@ public class EkilexWord {
     @PrePersist
     @PreUpdate
     private void convertToIntegerSet() {
+        log.info("Converting partsOfSpeech {} to posArray", partsOfSpeech);
         if (partsOfSpeech != null) {
             this.posArray = partsOfSpeech.stream()
                     .map(InternalPartOfSpeech::getId)
                     .collect(Collectors.toSet());
+        } else {
+            throw new UnsupportedOperationException("partsOfSpeech is null when saving EkilexWord: " + this);
         }
     }
 
