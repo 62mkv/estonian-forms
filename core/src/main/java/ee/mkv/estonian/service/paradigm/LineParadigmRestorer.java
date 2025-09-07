@@ -5,51 +5,45 @@ import ee.mkv.estonian.model.FormTypeCombinationEnum;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class LineParadigmRestorer extends AbstractNameParadigmRestorer {
 
-    private static final EnumMap<FormTypeCombinationEnum, String> ENDINGS = new EnumMap<>(FormTypeCombinationEnum.class);
+    private static final EnumMap<FormTypeCombinationEnum, List<String>> ENDINGS = new EnumMap<>(FormTypeCombinationEnum.class);
 
     static {
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_GENITIVE, "lise");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_PARTITIVE, "list");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ADITIVE, "lisse");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ILLATIVE, "lisesse");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_INESSIVE, "lises");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ELATIVE, "lisest");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ALLATIVE, "lisele");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ADESSIVE, "lisel");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ABLATIVE, "liselt");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_TRANSLATIVE, "liseks");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_TERMINATIVE, "liseni");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ESSIVE, "lisena");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ABESSIVE, "liseta");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_COMITATIVE, "lisega");
-        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_GENITIVE_REDUCED, "lis");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_NOMINATIVE, "lised");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_GENITIVE, "liste");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_PARTITIVE, "lisi");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ILLATIVE, "listesse");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ILLATIVE, "lisisse");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_INESSIVE, "listes");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_INESSIVE, "lisis");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ELATIVE, "listest");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ELATIVE, "lisist");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ALLATIVE, "listele");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ALLATIVE, "lisile");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ADESSIVE, "listel");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ADESSIVE, "lisil");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ABLATIVE, "listelt");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ABLATIVE, "lisilt");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_TRANSLATIVE, "listeks");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_TRANSLATIVE, "lisiks");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_TERMINATIVE, "listeni");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ESSIVE, "listena");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ABESSIVE, "listeta");
-        ENDINGS.put(FormTypeCombinationEnum.PLURAL_COMITATIVE, "listega");
-        ENDINGS.put(FormTypeCombinationEnum.ROOT_PLURAL, "lisi");
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_GENITIVE, List.of("lise"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_PARTITIVE, List.of("list"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ADITIVE, List.of("lisse"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ILLATIVE, List.of("lisesse"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_INESSIVE, List.of("lises"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ELATIVE, List.of("lisest"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ALLATIVE, List.of("lisele"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ADESSIVE, List.of("lisel"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ABLATIVE, List.of("liselt"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_TRANSLATIVE, List.of("liseks"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_TERMINATIVE, List.of("liseni"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ESSIVE, List.of("lisena"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_ABESSIVE, List.of("liseta"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_COMITATIVE, List.of("lisega"));
+        ENDINGS.put(FormTypeCombinationEnum.SINGULAR_GENITIVE_REDUCED, List.of("lis"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_NOMINATIVE, List.of("lised"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_GENITIVE, List.of("liste"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_PARTITIVE, List.of("lisi"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ILLATIVE, List.of("listesse", "lisisse"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_INESSIVE, List.of("listes", "lisis"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ELATIVE, List.of("listest", "lisist"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ALLATIVE, List.of("listele", "lisile"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ADESSIVE, List.of("listel", "lisil"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ABLATIVE, List.of("listelt", "lisilt"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_TRANSLATIVE, List.of("listeks", "lisiks"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_TERMINATIVE, List.of("listeni"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ESSIVE, List.of("listena"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_ABESSIVE, List.of("listeta"));
+        ENDINGS.put(FormTypeCombinationEnum.PLURAL_COMITATIVE, List.of("listega"));
+        ENDINGS.put(FormTypeCombinationEnum.ROOT_PLURAL, List.of("lisi"));
     }
 
     @Override
@@ -58,7 +52,7 @@ public class LineParadigmRestorer extends AbstractNameParadigmRestorer {
     }
 
     @Override
-    protected Map<FormTypeCombinationEnum, String> getMyEndings() {
+    protected Map<FormTypeCombinationEnum, List<String>> getMyEndings() {
         return ENDINGS;
     }
 
