@@ -75,9 +75,11 @@ public class EkiLexRetrievalService {
     public EkilexWord processWord(WordDto word, boolean force) {
         final Long wordId = word.getWordId();
         boolean existing = ekilexWordRepository.existsById(wordId);
-        if (existing && !force) {
-            log.warn("EkilexWord with id {} already exists", wordId);
-            return ekilexWordRepository.findById(wordId).get();
+        if (existing) {
+            log.info("EkilexWord with id {} already exists", wordId);
+            if (!force) {
+                return ekilexWordRepository.findById(wordId).get();
+            }
         }
 
         if (word.isPrefixoid() && word.getWordTypeCodes().contains("pf")) {
@@ -102,7 +104,9 @@ public class EkiLexRetrievalService {
                 formTypeRepository.findByEkiRepresentation(PREFIX_FORM_TYPE_COMBINATION)
                         .orElseThrow(() -> new FormTypeCombinationNotFound(PREFIX_FORM_TYPE_COMBINATION))
         );
-        ekilexWordRepository.save(ekilexWord);
+        log.info("Saving prefixoid paradigm and form for word {}", ekilexWord);
+        ekilexWord = ekilexWordRepository.save(ekilexWord);
+        log.info("Word {} after saving", ekilexWord);
         ekilexParadigmRepository.save(ekilexParadigm);
         ekilexForm.setEkilexParadigm(ekilexParadigm);
         ekilexFormRepository.save(ekilexForm);
@@ -120,6 +124,12 @@ public class EkiLexRetrievalService {
             } catch (Exception e) {
                 log.error("Error while saving a lexeme: {}", e.getMessage());
             }
+        }
+
+        if (partsOfSpeech.isEmpty()) {
+            log.info("Please choose one of the following parts of speech:");
+            var chosenPos = showMenu();
+            partsOfSpeech.add(PartOfSpeechMapper.fromEkiPartOfSpeech(chosenPos));
         }
 
         EkilexWord word = existing
@@ -158,8 +168,11 @@ public class EkiLexRetrievalService {
         EkilexWord word = new EkilexWord();
         word.setId(wordDto.getWordId());
         word.setBaseForm(representation);
-        word.setPartsOfSpeech(partsOfSpeech);
-        return ekilexWordRepository.save(word);
+        word.setPartsOfSpeech(new HashSet<>(partsOfSpeech));
+        log.info("Inserting new EkilexWord: {}", word);
+        var result = ekilexWordRepository.save(word);
+        log.info("EkilexWord after save: {}", result);
+        return result;
     }
 
     private EkilexParadigm saveEkiLexParadigm(EkilexWord word, DetailsParadigmDto paradigmDto) {
@@ -196,15 +209,7 @@ public class EkiLexRetrievalService {
     }
 
     private Set<InternalPartOfSpeech> getPartsOfSpeechFromLexemeDto(DetailsLexemeDto lexemeDto) {
-        var partOfSpeeches = getPos(lexemeDto.getPos());
-        if (partOfSpeeches.isEmpty()) {
-            log.info("Please choose one of the following parts of speech:");
-            var chosenPos = showMenu();
-            var pos = PartOfSpeechMapper.fromEkiPartOfSpeech(chosenPos);
-            return Set.of(pos);
-        }
-
-        return partOfSpeeches;
+        return getPos(lexemeDto.getPos());
     }
 
     private Set<InternalPartOfSpeech> getPos(List<DetailsClassifierDto> posList) {

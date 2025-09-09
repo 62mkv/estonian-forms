@@ -101,12 +101,8 @@ public class CommandCoordinator {
     }
 
     private void readFromEkilex(String ekilex) {
-        try {
-            ekiLexRetrievalService.retrieveByLemma(ekilex, true);
-            lexemeMappingCreationService.createMissingMapping(ekilex);
-        } catch (Exception e) {
-            log.error("Error retrieving from EkiLex", e);
-        }
+        ekiLexRetrievalService.retrieveByLemma(ekilex, true);
+        lexemeMappingCreationService.createMissingMapping(ekilex);
     }
 
     // produce array based on Option.values()

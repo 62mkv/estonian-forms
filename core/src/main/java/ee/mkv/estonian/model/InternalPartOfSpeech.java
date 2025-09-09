@@ -64,7 +64,8 @@ public enum InternalPartOfSpeech {
             case 8 -> PREPOSITION;
             case 9 -> PRONOUN;
             case 10 -> VERB;
-            default -> null;
+            case 11 -> PREFIX;
+            default -> throw new IllegalStateException("Unexpected value: " + id.intValue());
         };
     }
 }

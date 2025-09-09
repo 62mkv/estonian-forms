@@ -35,29 +35,26 @@ public class EkilexWord {
     @Setter(AccessLevel.PRIVATE)
     Set<Long> posArray = new HashSet<>();
 
-    @Transient
-    Set<InternalPartOfSpeech> partsOfSpeech = new HashSet<>();
+    public Set<InternalPartOfSpeech> getPartsOfSpeech() {
+        log.info("Getting parts of speech from posArray: {}", posArray);
+        return new HashSet<>(posArray == null
+                ? Set.of()
+                : posArray.stream()
+                .map(InternalPartOfSpeech::fromId)
+                .collect(Collectors.toSet()));
+    }
+
+    public void setPartsOfSpeech(Set<InternalPartOfSpeech> partsOfSpeech) {
+        this.posArray = partsOfSpeech.stream()
+                .map(InternalPartOfSpeech::getId)
+                .collect(Collectors.toSet());
+    }
 
     @PrePersist
     @PreUpdate
-    private void convertToIntegerSet() {
-        log.info("Converting partsOfSpeech {} to posArray", partsOfSpeech);
-        if (partsOfSpeech != null) {
-            this.posArray = partsOfSpeech.stream()
-                    .map(InternalPartOfSpeech::getId)
-                    .collect(Collectors.toSet());
-        } else {
-            throw new UnsupportedOperationException("partsOfSpeech is null when saving EkilexWord: " + this);
-        }
-    }
-
-    // Convert Set<Integer> back to Set<PartOfSpeech> after loading
-    @PostLoad
-    private void convertToEnumSet() {
-        if (posArray != null) {
-            this.partsOfSpeech = posArray.stream()
-                    .map(InternalPartOfSpeech::fromId)
-                    .collect(Collectors.toSet());
+    private void validate() {
+        if (posArray == null || posArray.isEmpty()) {
+            throw new IllegalStateException("posArray must not be null or empty before persisting EkilexWord");
         }
     }
 }
