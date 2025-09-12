@@ -1,8 +1,10 @@
 package ee.mkv.estonian.split;
 
 import ee.mkv.estonian.domain.*;
+import ee.mkv.estonian.ekilex.EkiLexRetrievalService;
 import ee.mkv.estonian.model.InternalPartOfSpeech;
 import ee.mkv.estonian.repository.FormRepository;
+import ee.mkv.estonian.service.LexemeMappingCreationService;
 import ee.mkv.estonian.service.UserInputProvider;
 import ee.mkv.estonian.service.lexeme.LexemeInitializer;
 import ee.mkv.estonian.split.domain.Splitting;
@@ -23,19 +25,12 @@ import java.util.stream.Stream;
 @Slf4j
 public class CompoundNameSplitter implements LexemeSplitter {
 
-    private static final Set<InternalPartOfSpeech> SUITABLE_PART_OF_SPEECH_FOR_NON_LAST_COMPONENTS = Set.of(
-            InternalPartOfSpeech.ADJECTIVE,
-            InternalPartOfSpeech.NOUN,
-            InternalPartOfSpeech.PRONOUN,
-            InternalPartOfSpeech.PREFIX,
-            InternalPartOfSpeech.ADVERB,
-            InternalPartOfSpeech.NUMERAL
-    );
-
     private final UserInputProvider userInputProvider;
     private final FormRepository formRepository;
     private final WordSplitService wordSplitService;
     private final LexemeInitializer lexemeInitializer;
+    private final EkiLexRetrievalService ekiLexRetrievalService;
+    private final LexemeMappingCreationService lexemeMappingCreationService;
 
     public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
         var word = lexeme.getLemma().getRepresentation();
@@ -86,8 +81,22 @@ public class CompoundNameSplitter implements LexemeSplitter {
                 } catch (Exception e) {
                     log.error("Failed to initialize lexeme '{}'", candidate, e);
                 }
-
             }
+        }
+        try {
+            if (!hasChance) {
+                for (var leftover : leftovers) {
+                    log.info("Trying to read leftover '{}' from EkiLex", leftover);
+                    var words = ekiLexRetrievalService.retrieveByLemma(leftover, true);
+                    if (!words.isEmpty()) {
+                        hasChance = true;
+                        log.info("Found in EkiLex: {}", words);
+                        lexemeMappingCreationService.createMissingMapping(leftover);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error trying to restore from EkiLex based on leftovers", e);
         }
         return hasChance;
     }
@@ -102,7 +111,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
     }
 
     private class SplitterIteration {
-        private final List<String> leftovers = new ArrayList<>();
+        private final Set<String> leftovers = new HashSet<>();
 
         private List<CompoundWordComponent> internalFindForms(String word, boolean isFullName) {
             var splittings = wordSplitService.findAllSplittings(word);
@@ -257,7 +266,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
 
             if (!splittingWithAllMatches.isEmpty()) {
 
-                if (splittingWithAllMatches.keySet().size() == 1) {
+                if (splittingWithAllMatches.size() == 1) {
                     var splitting = splittingWithAllMatches.keySet().stream().findFirst().get();
                     final Map<WordComponent, List<Form>> componentListMap = splittingWithAllMatches.get(splitting);
                     log.info("Found splitting {} with forms for all components: {}", splitting, componentListMap);
@@ -278,11 +287,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
 
                     // wait for user input
                     log.info("Please select splitting index: ");
-                    int selectedSplittingIndex = userInputProvider.getUserChoice(
-                            splittingsByIndex.keySet().stream()
-                                    .map(Object::toString)
-                                    .toArray(String[]::new)
-                    );
+                    int selectedSplittingIndex = userInputProvider.getUserChoice();
                     log.info("You selected: {} {}", selectedSplittingIndex, format(splittingsByIndex.get(selectedSplittingIndex)));
                     var selectedSplitting = splittingsByIndex.get(selectedSplittingIndex);
 
@@ -308,7 +313,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
                     continue;
                 }
                 log.info("Forms for final component: {}", logsRepresentationFor(formsForFinalComponent));
-                assert formsForFinalComponent != null && !formsForFinalComponent.isEmpty() : "Forms for final component should not be empty";
+                assert !formsForFinalComponent.isEmpty() : "Forms for final component should not be empty";
                 var leftover = word.substring(0, lastComponent.getStartIndex());
                 if (leftover.isEmpty()) {
                     continue;
@@ -371,9 +376,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
         }
 
         private boolean canBeNonLastComponentOfName(Form form) {
-            var partOfSpeech = InternalPartOfSpeech.fromEkiCodes(form.getLexeme().getPartOfSpeech().getEkiCodes());
-
-            return SplitUtils.canBeNonLastComponentOfName(form) && SUITABLE_PART_OF_SPEECH_FOR_NON_LAST_COMPONENTS.contains(partOfSpeech)
+            return SplitUtils.canBeNonLastComponentOfName(form)
                     || isExceptionGranted(form);
         }
 

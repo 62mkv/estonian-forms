@@ -9,7 +9,7 @@ import java.util.Set;
 @UtilityClass
 public class SplitUtils {
     private static final Set<String> SUITABLE_FTC_FOR_NON_LAST_COMPONENTS = Set.of("SgN", "SgG", "PlN", "PlG",
-            Constants.IMMUTABLE_FORM, "RSgG", "SgEl");
+            Constants.IMMUTABLE_FORM, "RSgG", "SgEl", "PtsPrPs");
 
     public boolean canBeNonLastComponentOfName(Form form) {
         return SUITABLE_FTC_FOR_NON_LAST_COMPONENTS.contains(form.getFormTypeCombination().getEkiRepresentation());

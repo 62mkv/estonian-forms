@@ -13,21 +13,24 @@ public class ScannerBasedUserInputProvider implements UserInputProvider {
     private static final Scanner scanner = new Scanner(System.in);
 
     @Override
-    public int getUserChoice(String[] options) {
-        scanner.reset();
+    public int getUserChoice() {
         int input = -1;
         boolean validInput = false;
-        do {
-            try {
-                input = scanner.nextInt();
-                validInput = true;
-            } catch (NoSuchElementException e) {
-                scanner.reset();
-                log.error("Invalid input", e);
-            }
-        } while (!validInput);
-        scanner.nextLine(); // Clear the newline character from the input buffer
-        scanner.reset();
+        try {
+            do {
+                try {
+                    input = scanner.nextInt();
+                    validInput = true;
+                } catch (NoSuchElementException e) {
+                    scanner.nextLine(); // Clear the newline character from the input buffer
+                    scanner.reset();
+                    log.error("Invalid input", e);
+                }
+            } while (!validInput);
+        } finally {
+            scanner.nextLine(); // Clear the newline character from the input buffer
+            scanner.reset();
+        }
         return input;
     }
 

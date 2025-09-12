@@ -39,7 +39,7 @@ public class LexemeMappingCreationService {
                 options[index] = candidate.getId().toString();
                 log.info("{}: {}", index, candidate);
             }
-            int choice = userInputProvider.getUserChoice(options);
+            int choice = userInputProvider.getUserChoice();
             log.info("Chosen option was {}", choice);
 
             final long wordId = Long.parseLong(options[choice]);
@@ -52,7 +52,7 @@ public class LexemeMappingCreationService {
             return;
         }
 
-        createMissingMapping(candidateWords.get(0).getId());
+        createMissingMapping(candidateWords.getFirst().getId());
     }
 
     public void createMissingMappings() {

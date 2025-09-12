@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DummyInputProvider implements UserInputProvider {
     @Override
-    public int getUserChoice(String[] options) {
+    public int getUserChoice() {
         return 0;
     }
 

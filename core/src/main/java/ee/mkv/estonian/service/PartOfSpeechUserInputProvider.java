@@ -19,12 +19,10 @@ public class PartOfSpeechUserInputProvider {
 
     public List<PartOfSpeech> getPartOfSpeech() {
         var options = InternalPartOfSpeech.values();
-        var optionStrings = new String[options.length];
         for (int i = 0; i < options.length; i++) {
-            optionStrings[i] = options[i].name();
             log.info("{}: {}", i, options[i]);
         }
-        var choice = userInputProvider.getUserChoice(optionStrings);
+        var choice = userInputProvider.getUserChoice();
         return partOfSpeechRepository.findByEkiCode(options[choice].getEkiCodes());
     }
 }

@@ -4,6 +4,7 @@ import ee.mkv.estonian.domain.*;
 import ee.mkv.estonian.ekilex.dto.*;
 import ee.mkv.estonian.ekilex.error.EkilexParadigmExistsException;
 import ee.mkv.estonian.ekilex.error.RepresentationNotAllowedException;
+import ee.mkv.estonian.ekilex.error.UnsupportedEkilexWordException;
 import ee.mkv.estonian.error.FormTypeCombinationNotFound;
 import ee.mkv.estonian.error.LanguageNotSupportedException;
 import ee.mkv.estonian.error.PartOfSpeechNotFoundException;
@@ -18,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static ee.mkv.estonian.utils.CollectionUtils.isEmpty;
 
 @Service
 @Slf4j
@@ -91,10 +94,25 @@ public class EkiLexRetrievalService {
         return retrieveFromEkilex(wordId, existing);
     }
 
+    private static void validate(Long wordId, DetailsDto detailsDto) {
+        Optional.ofNullable(detailsDto)
+                .map(DetailsDto::getWord)
+                .map(WordDto::getWordTypeCodes)
+                .filter(wordTypeCodes -> wordTypeCodes.contains("l"))
+                .ifPresent(wordTypeCodes -> {
+                    log.warn("Word {} is marked as 'l' (loanword), please check manually", wordId);
+                    throw new UnsupportedEkilexWordException(detailsDto.getWord().getWordValue());
+                });
+    }
+
     private EkilexWord buildPrefixoid(WordDto word, boolean existing) {
+        var prefixPoses = Set.of(InternalPartOfSpeech.PREFIX);
         var ekilexWord = existing
-                ? updateEkilexWord(word.getWordId())
-                : insertEkilexWord(word, Set.of(InternalPartOfSpeech.PREFIX));
+                ? updateEkilexWord(word.getWordId(), prefixPoses)
+                : insertEkilexWord(word, prefixPoses);
+        if (isEmpty(ekilexWord.getPartsOfSpeech())) {
+            ekilexWord.setPartsOfSpeech(prefixPoses);
+        }
 
         var ekilexParadigm = new EkilexParadigm();
         ekilexParadigm.setWord(ekilexWord);
@@ -116,6 +134,12 @@ public class EkiLexRetrievalService {
     private EkilexWord retrieveFromEkilex(Long wordId, boolean existing) {
         DetailsDto detailsDto = ekiLexClient.getDetails(wordId);
         log.debug("Details for word {}: {}", wordId, detailsDto);
+        try {
+            validate(wordId, detailsDto);
+        } catch (Exception e) {
+            log.error("Error while validating word {}: {}", wordId, e.getMessage());
+            return null;
+        }
 
         var partsOfSpeech = new HashSet<InternalPartOfSpeech>();
         for (DetailsLexemeDto lexemeDto : detailsDto.getLexemes()) {
@@ -127,13 +151,13 @@ public class EkiLexRetrievalService {
         }
 
         if (partsOfSpeech.isEmpty()) {
-            log.info("Please choose one of the following parts of speech:");
-            var chosenPos = showMenu();
+            log.info("Please choose one of the following parts of speech for word {}:{}:", wordId, detailsDto.getWord().getWordValue());
+            var chosenPos = requestPartOfSpeech();
             partsOfSpeech.add(PartOfSpeechMapper.fromEkiPartOfSpeech(chosenPos));
         }
 
         EkilexWord word = existing
-                ? updateEkilexWord(wordId)
+                ? updateEkilexWord(wordId, partsOfSpeech)
                 : insertEkilexWord(detailsDto.getWord(), partsOfSpeech);
 
         if (existing && ekilexParadigmRepository.existsByWordId(wordId)) {
@@ -151,8 +175,16 @@ public class EkiLexRetrievalService {
         return word;
     }
 
-    private EkilexWord updateEkilexWord(Long wordId) {
+    private EkilexWord updateEkilexWord(Long wordId, Set<InternalPartOfSpeech> additionalPartsOfSpeech) {
         return ekilexWordRepository.findById(wordId)
+                .map(w -> {
+                    if (isEmpty(w.getPartsOfSpeech())) {
+                        w.setPartsOfSpeech(additionalPartsOfSpeech);
+                        return ekilexWordRepository.save(w);
+                    } else {
+                        return w;
+                    }
+                })
                 .orElseThrow(() -> new RuntimeException("This should not happen here"));
     }
 
@@ -248,16 +280,12 @@ public class EkiLexRetrievalService {
                 }));
     }
 
-    private EkiPartOfSpeech showMenu() {
+    private EkiPartOfSpeech requestPartOfSpeech() {
         for (EkiPartOfSpeech option : EkiPartOfSpeech.values()) {
             log.info("{}: {}", option.ordinal() + 1, option.name());
         }
 
-        int input = userInputProvider.getUserChoice(
-                Arrays.stream(EkiPartOfSpeech.values())
-                        .map(Enum::name)
-                        .toArray(String[]::new)
-        );
+        int input = userInputProvider.getUserChoice();
 
         return EkiPartOfSpeech.from(input);
     }

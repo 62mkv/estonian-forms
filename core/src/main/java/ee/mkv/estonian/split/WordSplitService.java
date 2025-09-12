@@ -9,7 +9,7 @@ import java.util.*;
 @Component
 public class WordSplitService {
 
-    private static final int MIN_COMPONENT_LENGTH = 3;
+    private static final int MIN_COMPONENT_LENGTH = 2;
 
     private static Set<Splitting> classicSplitting(String word) {
         final int length = word.length();
@@ -29,8 +29,8 @@ public class WordSplitService {
     /**
      * Will find all possible (2-component max) splittings where any component is longer than MIN_COMPONENT_LENGTH
      *
-     * @param word
-     * @return
+     * @param word word to split
+     * @return set of splittings (can be empty)
      */
     public Set<Splitting> findAllSplittings(String word) {
         if (word.contains("-")) {
