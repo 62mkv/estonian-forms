@@ -12,6 +12,7 @@ import ee.mkv.estonian.split.domain.WordComponent;
 import ee.mkv.estonian.utils.IterableUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -32,13 +33,37 @@ public class CompoundNameSplitter implements LexemeSplitter {
     private final EkiLexRetrievalService ekiLexRetrievalService;
     private final LexemeMappingCreationService lexemeMappingCreationService;
 
+    @Nullable
+    private static InternalPartOfSpeech getInternalPartOfSpeech(Lexeme lexeme) {
+        return InternalPartOfSpeech.fromEkiCodes(lexeme.getPartOfSpeech().getEkiCodes());
+    }
+
+    private static CompoundWordComponent buildCompoundWordComponent(int index, WordComponent component, List<Form> forms) {
+        log.info("Building compound word component for component{}: {} with forms: {}", index, component, forms);
+        var finalComponent = new CompoundWordComponent();
+        finalComponent.setForm(IterableUtils.getFirstValueOrFail(forms));
+        finalComponent.setComponentIndex(index);
+        finalComponent.setComponentStartsAt(component.getStartIndex());
+        return finalComponent;
+    }
+
+    @Override
+    public int getPriority() {
+        return 2;
+    }
+
+    @Override
+    public boolean canProcess(Lexeme lexeme) {
+        return true;
+    }
+
     public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
         var word = lexeme.getLemma().getRepresentation();
-        var iteration = new SplitterIteration();
+        var iteration = new SplitterIteration(lexeme);
         var components = iteration.internalFindForms(word, true);
         if (components.isEmpty()) {
             if (hasChances(iteration)) {
-                var components2 = new SplitterIteration().internalFindForms(word, true);
+                var components2 = new SplitterIteration(lexeme).internalFindForms(word, true);
                 if (components2.isEmpty()) {
                     return Optional.empty();
                 } else {
@@ -58,16 +83,6 @@ public class CompoundNameSplitter implements LexemeSplitter {
         return Optional.of(compoundWord);
     }
 
-    @Override
-    public int getPriority() {
-        return 2;
-    }
-
-    @Override
-    public boolean canProcess(Lexeme lexeme) {
-        return true;
-    }
-
     private boolean hasChances(SplitterIteration iteration) {
         var leftovers = iteration.leftovers;
         log.info("Leftovers visited: {}", leftovers);
@@ -85,7 +100,11 @@ public class CompoundNameSplitter implements LexemeSplitter {
         }
         try {
             if (!hasChance) {
-                for (var leftover : leftovers) {
+                var leftover_candidates = leftovers.stream()
+                        .sorted(Comparator.comparing(String::length))
+                        .limit(3)
+                        .toList();
+                for (var leftover : leftover_candidates) {
                     log.info("Trying to read leftover '{}' from EkiLex", leftover);
                     var words = ekiLexRetrievalService.retrieveByLemma(leftover, true);
                     if (!words.isEmpty()) {
@@ -101,17 +120,10 @@ public class CompoundNameSplitter implements LexemeSplitter {
         return hasChance;
     }
 
-    private static CompoundWordComponent buildCompoundWordComponent(int index, WordComponent component, List<Form> forms) {
-        log.info("Building compound word component for component{}: {} with forms: {}", index, component, forms);
-        var finalComponent = new CompoundWordComponent();
-        finalComponent.setForm(IterableUtils.getFirstValueOrFail(forms));
-        finalComponent.setComponentIndex(index);
-        finalComponent.setComponentStartsAt(component.getStartIndex());
-        return finalComponent;
-    }
-
+    @RequiredArgsConstructor
     private class SplitterIteration {
         private final Set<String> leftovers = new HashSet<>();
+        private final Lexeme lexeme;
 
         private List<CompoundWordComponent> internalFindForms(String word, boolean isFullName) {
             var splittings = wordSplitService.findAllSplittings(word);
@@ -362,7 +374,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
             for (WordComponent component : splitting.getComponents()) {
                 var foundForms = componentListMap.get(component);
                 Predicate<Form> filterCondition = isFullName && lastComponent.equals(component)
-                        ? this::canBeLastComponentOfName
+                        ? form -> canBeLastComponentOfPos(form, getInternalPartOfSpeech(lexeme))
                         : this::canBeNonLastComponentOfName;
 
                 final List<Form> filteredForms = foundForms.stream()
@@ -399,14 +411,17 @@ public class CompoundNameSplitter implements LexemeSplitter {
             return result;
         }
 
-        private boolean canBeLastComponentOfName(Form form) {
+        private boolean canBeLastComponentOfPos(Form form, InternalPartOfSpeech partOfSpeech) {
             boolean isNounForm = form.getFormTypeCombination().getFormTypes()
                     .stream()
                     .map(FormType::getEkiRepresentation)
                     .collect(Collectors.toSet())
                     .contains("N");
             boolean isParticiple = form.getFormTypeCombination().getEkiRepresentation().equals("PtsPtIps");
-            return isNounForm || isParticiple;
+            if (partOfSpeech.isName()) {
+                return isNounForm || isParticiple;
+            }
+            return getInternalPartOfSpeech(form.getLexeme()) == partOfSpeech;
         }
 
         private boolean hasMatchesForFinalComponent(Splitting splitting, Map<WordComponent, List<Form>> componentListMap) {
