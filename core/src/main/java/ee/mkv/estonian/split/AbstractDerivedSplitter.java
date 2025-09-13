@@ -30,8 +30,10 @@ abstract class AbstractDerivedSplitter implements LexemeSplitter {
         for (String suffix : getSupportedSuffixes()) {
             if (lexeme.getLemma().getRepresentation().endsWith(suffix)) {
                 String base = findBase(lexeme, suffix);
-                var forms = formRepository.findWhereRepresentationIn(Set.of(base));
-                log.info("Looking for forms for base {}, found [{}", base, forms);
+                var candidates = getCandidates(base, lexeme, suffix);
+                log.info("Looking for Forms with representations {}", candidates);
+                var forms = formRepository.findWhereRepresentationIn(candidates);
+                log.info("Found forms: {}", forms);
                 return forms
                         .stream()
                         .peek(form -> log.info("Considering form {} for lexeme {}", form, lexeme))
@@ -42,6 +44,10 @@ abstract class AbstractDerivedSplitter implements LexemeSplitter {
             }
         }
         return Optional.empty();
+    }
+
+    protected Set<String> getCandidates(String base, Lexeme lexeme, String suffix) {
+        return Set.of(base);
     }
 
     protected abstract CompoundRule getCompoundRule();
@@ -65,6 +71,7 @@ abstract class AbstractDerivedSplitter implements LexemeSplitter {
     protected abstract String[] getSupportedSuffixes();
 
     protected String findBase(Lexeme lexeme, String suffix) {
-        return lexeme.getLemma().getRepresentation().substring(0, lexeme.getLemma().getRepresentation().length() - suffix.length());
+        var representation = lexeme.getLemma().getRepresentation();
+        return representation.substring(0, representation.length() - suffix.length());
     }
 }

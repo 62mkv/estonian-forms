@@ -56,4 +56,8 @@ public class Lexeme {
     public boolean isAdjective() {
         return partOfSpeech.isAdjective();
     }
+
+    public boolean isVerb() {
+        return partOfSpeech.isVerb();
+    }
 }

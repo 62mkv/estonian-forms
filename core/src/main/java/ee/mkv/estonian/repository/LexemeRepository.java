@@ -27,7 +27,6 @@ public interface LexemeRepository extends CrudRepository<Lexeme, Long> {
                     select l.*
                     from lexemes l
                     join representations r on r.id  = l.representation_id\s
-                    where part_of_speech_id in (1,5)\s
                     and not r.representation like '% %'\s
                     and not exists(select 1 from compound_words cw where cw.lexeme_id = l.id)
                     and not exists(select 1 from loan_words lw where lw.lexeme_id = l.id)
