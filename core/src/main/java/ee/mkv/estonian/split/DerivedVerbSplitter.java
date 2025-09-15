@@ -11,7 +11,7 @@ import java.util.Set;
 @Component
 public class DerivedVerbSplitter extends AbstractDerivedSplitter {
 
-    private static final String[] SUFFIXES = {"iseerima"};
+    private static final String[] SUFFIXES = {"aliseerima", "aliseeruma", "iseerima", "iseeruma"};
 
     protected DerivedVerbSplitter(FormRepository formRepository) {
         super(formRepository);
@@ -41,7 +41,7 @@ public class DerivedVerbSplitter extends AbstractDerivedSplitter {
 
     @Override
     protected Set<String> getCandidates(String base, Lexeme lexeme, String suffix) {
-        if (base.endsWith("al") && suffix.equals("iseerima")) {
+        if (base.endsWith("al") && suffix.startsWith("ise")) {
             // e.g. "professionaliseerima" <- "professionaal" or "professional"
             return Set.of(base, base.substring(0, base.length() - 2) + "aal");
         } else {

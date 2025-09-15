@@ -13,7 +13,8 @@ public enum CompoundRule {
     DERIVED_FROM_VERB_ROOT_WITH_SUFFIX(8),
     DERIVED_NAME_FROM_ADJECTIVE(9),
     DERIVED_FROM_VERB_SUPINE(10),
-    DERIVED_VERB(11);
+    DERIVED_VERB(11),
+    DERIVED_ADVERB(12);
 
     @Getter
     private final int id;

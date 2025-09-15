@@ -56,8 +56,13 @@ public class PartOfSpeech {
         return "GS".equals(this.getEkiCodes());
     }
 
+    public boolean isAdverb() {
+        return "D".equals(this.getEkiCodes());
+    }
+
     @Override
     public String toString() {
         return partOfSpeechName;
     }
+
 }

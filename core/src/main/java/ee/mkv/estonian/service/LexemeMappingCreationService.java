@@ -31,28 +31,15 @@ public class LexemeMappingCreationService {
     @Transactional
     public void createMissingMapping(String word) {
         List<EkilexWord> candidateWords = Lists.newArrayList(wordRepository.findAllByBaseFormRepresentation(word).iterator());
-        if (candidateWords.size() > 1) {
-            log.warn("More than 1 candidate form found, please provide an id: {}", candidateWords);
-            String[] options = new String[candidateWords.size()];
-            for (EkilexWord candidate : candidateWords) {
-                final int index = candidateWords.indexOf(candidate);
-                options[index] = candidate.getId().toString();
-                log.info("{}: {}", index, candidate);
-            }
-            int choice = userInputProvider.getUserChoice();
-            log.info("Chosen option was {}", choice);
-
-            final long wordId = Long.parseLong(options[choice]);
-            log.info("Word id is {}", wordId);
-            createMissingMapping(wordId);
-        }
-
         if (candidateWords.isEmpty()) {
             log.error("No EkilexWord found for '{}'", word);
             return;
         }
 
-        createMissingMapping(candidateWords.getFirst().getId());
+        for (EkilexWord candidate : candidateWords) {
+            log.info("Found candidate EkilexWord: {}", candidate);
+            createMappingForWord(candidate.getId());
+        }
     }
 
     public void createMissingMappings() {
