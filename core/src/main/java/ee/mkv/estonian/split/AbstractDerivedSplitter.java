@@ -34,18 +34,22 @@ abstract class AbstractDerivedSplitter implements LexemeSplitter {
                 log.info("Looking for Forms with representations {}", candidates);
                 var forms = formRepository.findWhereRepresentationIn(candidates);
                 log.info("Found forms: {}", forms);
-                return forms
+                final Optional<CompoundWord> compoundWord = forms
                         .stream()
                         .peek(form -> log.info("Considering form {} for lexeme {}", form, lexeme))
                         .filter(this::isSuitable)
                         .peek(form -> log.info("Form {} is suitable", form))
                         .findFirst()
                         .map(form -> SplitUtils.getCompoundWord(lexeme, form, getCompoundRule()));
+                if (compoundWord.isPresent()) {
+                    return compoundWord;
+                }
             }
         }
         return Optional.empty();
     }
 
+    @SuppressWarnings("java:S1172")
     protected Set<String> getCandidates(String base, Lexeme lexeme, String suffix) {
         return Set.of(base);
     }

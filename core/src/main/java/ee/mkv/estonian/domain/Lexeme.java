@@ -64,4 +64,8 @@ public class Lexeme {
     public boolean isAdverb() {
         return partOfSpeech.isAdverb();
     }
+
+    public boolean isNoun() {
+        return partOfSpeech.isNoun();
+    }
 }

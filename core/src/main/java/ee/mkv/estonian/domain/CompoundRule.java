@@ -14,7 +14,8 @@ public enum CompoundRule {
     DERIVED_NAME_FROM_ADJECTIVE(9),
     DERIVED_FROM_VERB_SUPINE(10),
     DERIVED_VERB(11),
-    DERIVED_ADVERB(12);
+    DERIVED_ADVERB(12),
+    DERIVED_NOUN_FROM_VERB_TUS(13);
 
     @Getter
     private final int id;
