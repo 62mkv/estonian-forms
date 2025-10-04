@@ -58,7 +58,7 @@ public class CompoundNameSplitter implements LexemeSplitter {
     }
 
     public Optional<CompoundWord> trySplitLexeme(Lexeme lexeme) {
-        var word = lexeme.getLemma().getRepresentation();
+        var word = lexeme.getLemma().getRepresentation().toLowerCase();
         var iteration = new SplitterIteration(lexeme);
         var components = iteration.internalFindForms(word, true);
         if (components.isEmpty()) {
@@ -100,11 +100,11 @@ public class CompoundNameSplitter implements LexemeSplitter {
         }
         try {
             if (!hasChance) {
-                var leftover_candidates = leftovers.stream()
+                var leftoverCandidates = leftovers.stream()
                         .sorted(Comparator.comparing(String::length))
                         .limit(3)
                         .toList();
-                for (var leftover : leftover_candidates) {
+                for (var leftover : leftoverCandidates) {
                     log.info("Trying to read leftover '{}' from EkiLex", leftover);
                     var words = ekiLexRetrievalService.retrieveByLemma(leftover, true);
                     if (!words.isEmpty()) {

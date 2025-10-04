@@ -66,4 +66,11 @@ class StringUtilsTest {
         assertThat(getHeadForTail("word", "ord"), Matchers.is("w"));
         assertThat(getHeadForTail("agrotoostkoondis", "koondis"), Matchers.is("agrotoost"));
     }
+
+    @Test
+    void testLastCharacter() {
+        assertThat(lastCharacter("word"), Matchers.is("d"));
+        assertThat(lastCharacter("word", 2), Matchers.is("r"));
+        assertThat(lastCharacter("word", 3), Matchers.is("o"));
+    }
 }

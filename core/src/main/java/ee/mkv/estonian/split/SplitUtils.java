@@ -2,17 +2,21 @@ package ee.mkv.estonian.split;
 
 import ee.mkv.estonian.domain.*;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Set;
 
 @UtilityClass
+@Slf4j
 public class SplitUtils {
     private static final Set<String> SUITABLE_FTC_FOR_NON_LAST_COMPONENTS = Set.of("SgN", "SgG", "PlN", "PlG",
             Constants.IMMUTABLE_FORM, "RSgG", "SgEl", "PtsPrPs");
 
     public boolean canBeNonLastComponentOfName(Form form) {
-        return SUITABLE_FTC_FOR_NON_LAST_COMPONENTS.contains(form.getFormTypeCombination().getEkiRepresentation());
+        var ekiRepresentation = form.getFormTypeCombination().getEkiRepresentation();
+        log.info("Checking if form {} with FTC {} can be non-last component of name", form, ekiRepresentation);
+        return SUITABLE_FTC_FOR_NON_LAST_COMPONENTS.contains(ekiRepresentation);
     }
 
     public static CompoundWord getCompoundWord(Lexeme lexeme, Form form, CompoundRule compoundRule) {

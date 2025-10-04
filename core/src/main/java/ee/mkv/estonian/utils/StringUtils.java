@@ -31,7 +31,7 @@ public class StringUtils {
     public static String adaptBaseForm(String form) {
         return form
                 .replaceAll("\\+", "")
-                .replaceAll("\\!", "");
+                .replaceAll("!", "");
     }
 
     public static Set<String> getTails(String word, int minimalLength) {
@@ -49,4 +49,13 @@ public class StringUtils {
     public static boolean isEmpty(String word) {
         return word == null || word.isEmpty();
     }
+
+    public static String lastCharacter(String base) {
+        return lastCharacter(base, 1);
+    }
+
+    public static String lastCharacter(String base, int i) {
+        return base.substring(base.length() - i, base.length() - i + 1);
+    }
+
 }

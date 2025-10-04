@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -51,8 +52,8 @@ public class DerivedAdjectiveFromNounSplitter implements LexemeSplitter {
         log.info("Building compound word for lexeme {} with suffix {}", lexeme, suffix);
         String representation = lexeme.getLemma().getRepresentation();
         String base = representation.substring(0, representation.length() - suffix.length());
-
-        var forms = formRepository.findWhereRepresentationIn(Set.of(base));
+        var possibleBases = new HashSet<>(Set.of(base));
+        var forms = formRepository.findWhereRepresentationIn(possibleBases);
         log.info("Looking for forms for base {}, found [{}]", base, forms);
         return forms
                 .stream()

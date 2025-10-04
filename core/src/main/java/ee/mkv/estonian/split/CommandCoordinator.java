@@ -2,7 +2,9 @@ package ee.mkv.estonian.split;
 
 import ee.mkv.estonian.domain.Lexeme;
 import ee.mkv.estonian.ekilex.EkiLexRetrievalService;
+import ee.mkv.estonian.model.FormTypeCombinationEnum;
 import ee.mkv.estonian.model.InternalPartOfSpeech;
+import ee.mkv.estonian.service.FormService;
 import ee.mkv.estonian.service.LexemeMappingCreationService;
 import ee.mkv.estonian.service.UserInputProvider;
 import ee.mkv.estonian.service.VerbRootRestoreService;
@@ -23,6 +25,7 @@ public class CommandCoordinator {
     private final LexemeMappingCreationService lexemeMappingCreationService;
     private final LexemeRejectionService lexemeRejectionService;
     private final VerbRootRestoreService verbRootRestoreService;
+    private final FormService formService;
     private final UserInputProvider userInputProvider;
 
     /**
@@ -84,6 +87,14 @@ public class CommandCoordinator {
                 String verbRoot = readWordFromUserInput();
                 verbRootRestoreService.restoreVerbRoots(verbRoot);
                 return true;
+            case ADD_REDUCED_FORM:
+                log.info("Adding reduced form");
+                log.info("Provide lemma for which to add the reduced form:");
+                String lemma = readWordFromUserInput();
+                log.info("Provide the reduced form to add:");
+                String reducedForm = readWordFromUserInput();
+                formService.addReducedForm(lemma, reducedForm, FormTypeCombinationEnum.SINGULAR_GENITIVE_REDUCED);
+                return true;
             case REJECT_LEXEME_AS_LOANWORD:
                 log.info("Rejecting lexeme");
                 lexemeRejectionService.rejectLexemeAsLoanWord(lastLexeme);
@@ -127,6 +138,7 @@ public class CommandCoordinator {
         LEXEME_FROM_EKILEX,
         ADD_RESTORABLE_NOUN,
         ADD_RESTORABLE_ADJECTIVE,
+        ADD_REDUCED_FORM,
         REJECT_LEXEME_AS_LOANWORD,
         ADD_ROOT_FOR_VERB,
         CONTINUE,
